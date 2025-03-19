@@ -99,25 +99,47 @@ const ChartBox: React.FC<ChartBoxProps> = ({
             </span>
             <button
               onClick={() =>
-                toast('Ngapain?', {
-                  icon: '😋',
+                toast('View detailed analytics', {
+                  icon: '📊',
                 })
               }
-              className="px-0 py-0 min-h-0 max-h-5 btn btn-link font-medium text-base-content no-underline m-0"
+              className="px-0 py-0 min-h-0 max-h-5 btn btn-link font-medium text-base-content no-underline m-0 hover:text-primary transition-colors"
             >
               View All
             </button>
           </div>
           <div className="flex h-full grow flex-col justify-between items-end">
-            <div className="w-full h-full xl:h-[60%]">
+            <div className="w-full h-full xl:h-[60%] group">
               <ResponsiveContainer width="99%" height="100%">
-                <LineChart width={300} height={100} data={chartData}>
+                <LineChart 
+                  width={300} 
+                  height={100} 
+                  data={chartData}
+                  margin={{ top: 5, right: 5, bottom: 5, left: 5 }}
+                >
+                  <XAxis 
+                    dataKey="name" 
+                    hide={false} 
+                    axisLine={false}
+                    tickLine={false}
+                    tick={{ fontSize: 10, fill: '#888' }}
+                    dy={5}
+                  />
+                  <YAxis hide={true} />
                   <Line
                     type="monotone"
                     dataKey={dataKey}
                     stroke={color}
                     strokeWidth={2}
                     dot={false}
+                    activeDot={{ 
+                      r: 6, 
+                      strokeWidth: 0,
+                      fill: color,
+                      className: "animate-pulse"
+                    }}
+                    animationDuration={1500}
+                    animationEasing="ease-in-out"
                   />
                   <Tooltip
                     contentStyle={{
@@ -125,11 +147,16 @@ const ChartBox: React.FC<ChartBoxProps> = ({
                       border: 'none',
                       color: 'white',
                       borderRadius: '8px',
-                      paddingTop: '0px',
-                      paddingBottom: '0px',
+                      paddingTop: '8px',
+                      paddingBottom: '8px',
+                      boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
                     }}
-                    itemStyle={{ color: 'white' }}
-                    labelStyle={{ display: 'none' }}
+                    itemStyle={{ color: 'white', fontWeight: 'bold' }}
+                    labelStyle={{ color: 'white', fontWeight: 'normal', marginBottom: '5px' }}
+                    formatter={(value) => [`${value} ${dataKey === 'kWh' ? 'kWh' : ''}`]}
+                    animationDuration={300}
+                    animationEasing="ease-out"
+                    cursor={{ stroke: color, strokeWidth: 1, strokeDasharray: '3 3' }}
                   />
                 </LineChart>
               </ResponsiveContainer>
@@ -140,7 +167,7 @@ const ChartBox: React.FC<ChartBoxProps> = ({
                   percentage && percentage > 0
                     ? 'text-success'
                     : 'text-error'
-                } text-2xl xl:text-xl 2xl:text-3xl font-bold`}
+                } text-2xl xl:text-xl 2xl:text-3xl font-bold transition-all duration-300 hover:scale-110`}
               >
                 {percentage || ''}%
               </span>
@@ -233,40 +260,76 @@ const ChartBox: React.FC<ChartBoxProps> = ({
                   <Tooltip
                     contentStyle={{
                       background: 'white',
-                      borderRadius: '5px',
+                      borderRadius: '8px',
+                      boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+                      padding: '8px 12px',
+                      border: 'none'
                     }}
+                    formatter={(value, name, props) => {
+                      return [
+                        `${value} facilities`,
+                        <span style={{ color: props.payload.color }}>{name}</span>
+                      ];
+                    }}
+                    animationDuration={300}
+                    animationEasing="ease-out"
                   />
                   <Pie
                     data={chartPieData}
                     innerRadius={'70%'}
                     outerRadius={'90%'}
-                    paddingAngle={3}
+                    paddingAngle={5}
                     dataKey="value"
+                    animationDuration={1500}
+                    animationEasing="ease-in-out"
+                    label={({ cx, cy, midAngle, innerRadius, outerRadius, percent, name }) => {
+                      const RADIAN = Math.PI / 180;
+                      const radius = innerRadius + (outerRadius - innerRadius) * 1.2;
+                      const x = cx + radius * Math.cos(-midAngle * RADIAN);
+                      const y = cy + radius * Math.sin(-midAngle * RADIAN);
+                      
+                      return percent > 0.15 ? (
+                        <text
+                          x={x}
+                          y={y}
+                          fill="#888"
+                          textAnchor={x > cx ? 'start' : 'end'}
+                          dominantBaseline="central"
+                          fontSize={12}
+                          fontWeight="medium"
+                        >
+                          {name}
+                        </text>
+                      ) : null;
+                    }}
                   >
-                    {chartPieData?.map((item) => (
-                      <Cell key={item.name} fill={item.color} />
+                    {chartPieData?.map((item, index) => (
+                      <Cell 
+                        key={`cell-${index}`} 
+                        fill={item.color} 
+                        className="hover:opacity-80 transition-opacity cursor-pointer"
+                        stroke="white"
+                        strokeWidth={2}
+                      />
                     ))}
                   </Pie>
                 </PieChart>
               </ResponsiveContainer>
             ) : (
-              'no data'
+              <span>No data</span>
             )}
           </div>
           <div className="w-full flex flex-col 2xl:flex-row justify-between gap-2 items-start 2xl:items-center 2xl:flex-wrap">
             {chartPieData?.map((item) => (
               <div
-                className="flex flex-row 2xl:flex-col gap-2 items-center"
                 key={item.name}
+                className="flex items-center gap-2 transition-transform hover:translate-x-1"
               >
-                <div className="flex flex-row gap-2 items-center">
-                  <div
-                    className="w-3 h-3 rounded-full"
-                    style={{ backgroundColor: item.color }}
-                  />
-                  <span>{item.name}</span>
-                </div>
-                <span>({item.value})</span>
+                <div
+                  className="w-3 h-3 rounded-full"
+                  style={{ backgroundColor: item.color }}
+                ></div>
+                <span className="text-sm font-medium">{item.name}</span>
               </div>
             ))}
           </div>

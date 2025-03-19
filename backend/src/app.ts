@@ -44,7 +44,7 @@ app.get('/', (req, res) => {
   };
 
   let htmlResponse =
-    '<h3>🦄🌈✨ React Dashboard Admin V1 API ✨🌈🦄</h3>';
+    '<h3>🦄🌈✨ Imperium Solis API ✨🌈🦄</h3>';
   htmlResponse += '<ul>';
   for (const [route, url] of Object.entries(navigationLinks)) {
     htmlResponse += `<li><a href="${url}">${route}</a></li>`;

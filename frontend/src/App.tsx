@@ -6,24 +6,18 @@ import {
   ScrollRestoration,
 } from 'react-router-dom';
 import Home from './pages/Home';
-import Users from './pages/Users';
-import Products from './pages/Products';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import Menu from './components/menu/Menu';
 import Error from './pages/Error';
-import Profile from './pages/Profile';
-import Orders from './pages/Orders';
-import Posts from './pages/Posts';
-import Notes from './pages/Notes';
-import Calendar from './pages/Calendar';
-import Charts from './pages/Charts';
-import Logs from './pages/Logs';
 import ToasterProvider from './components/ToasterProvider';
-import EditProfile from './pages/EditProfile';
-import User from './pages/User';
-import Product from './pages/Product';
 import Login from './pages/Login';
+import FacilityDataScraper from './pages/FacilityDataScraper';
+import FacilityAIAnalysis from './pages/FacilityAIAnalysis';
+import EnergyUsageEstimation from './pages/EnergyUsageEstimation';
+import SolarPanelPotential from './pages/SolarPanelPotential';
+import EmailAutomation from './pages/EmailAutomation';
+import OutreachTracking from './pages/OutreachTracking';
 
 function App() {
   const Layout = () => {
@@ -60,52 +54,32 @@ function App() {
           element: <Home />,
         },
         {
-          path: '/profile',
-          element: <Profile />,
+          path: '/facility-data-scraper',
+          element: <FacilityDataScraper />,
         },
         {
-          path: '/profile/edit',
-          element: <EditProfile />,
+          path: '/facility-ai-analysis',
+          element: <FacilityAIAnalysis />,
         },
         {
-          path: '/users',
-          element: <Users />,
+          path: '/facility-ai-analysis/:facilityId',
+          element: <FacilityAIAnalysis />,
         },
         {
-          path: '/users/:id',
-          element: <User />,
+          path: '/energy-usage-estimation',
+          element: <EnergyUsageEstimation />,
         },
         {
-          path: '/products',
-          element: <Products />,
+          path: '/solar-panel-potential',
+          element: <SolarPanelPotential />,
         },
         {
-          path: '/products/:id',
-          element: <Product />,
+          path: '/email-automation',
+          element: <EmailAutomation />,
         },
         {
-          path: '/orders',
-          element: <Orders />,
-        },
-        {
-          path: '/posts',
-          element: <Posts />,
-        },
-        {
-          path: '/notes',
-          element: <Notes />,
-        },
-        {
-          path: '/calendar',
-          element: <Calendar />,
-        },
-        {
-          path: '/charts',
-          element: <Charts />,
-        },
-        {
-          path: '/logs',
-          element: <Logs />,
+          path: '/outreach-tracking',
+          element: <OutreachTracking />,
         },
       ],
       errorElement: <Error />,

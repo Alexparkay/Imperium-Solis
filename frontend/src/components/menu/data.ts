@@ -1,18 +1,17 @@
 // import toast from 'react-hot-toast';
 import {
   HiOutlineHome,
-  HiOutlineUser,
-  HiOutlineUsers,
-  HiOutlineCube,
-  HiOutlineClipboardDocumentList,
-  HiOutlineDocumentChartBar,
-  HiOutlinePencilSquare,
-  HiOutlineCalendarDays,
-  HiOutlinePresentationChartBar,
-  HiOutlineDocumentText,
   HiOutlineArrowLeftOnRectangle,
 } from 'react-icons/hi2';
-// import { IoSettingsOutline } from 'react-icons/io5';
+import { 
+  MdSolarPower, 
+  MdFactory, 
+  MdLocationOn, 
+  MdElectricBolt, 
+  MdOutlineAnalytics,
+  MdOutlineEmail,
+  MdOutlineTrackChanges
+} from 'react-icons/md';
 
 export const menu = [
   {
@@ -22,88 +21,54 @@ export const menu = [
         isLink: true,
         url: '/',
         icon: HiOutlineHome,
-        label: 'homepage',
-      },
-      {
-        isLink: true,
-        url: '/profile',
-        icon: HiOutlineUser,
-        label: 'profile',
+        label: 'dashboard',
       },
     ],
   },
   {
-    catalog: 'lists',
+    catalog: 'imperum solis workflow',
     listItems: [
       {
         isLink: true,
-        url: '/users',
-        icon: HiOutlineUsers,
-        label: 'users',
+        url: '/facility-data-scraper',
+        icon: MdLocationOn,
+        label: 'facility data scraper',
       },
       {
         isLink: true,
-        url: '/products',
-        icon: HiOutlineCube,
-        label: 'products',
+        url: '/facility-ai-analysis',
+        icon: MdFactory,
+        label: 'facility ai analysis',
       },
       {
         isLink: true,
-        url: '/orders',
-        icon: HiOutlineClipboardDocumentList,
-        label: 'orders',
+        url: '/energy-usage-estimation',
+        icon: MdElectricBolt,
+        label: 'energy usage estimation',
       },
       {
         isLink: true,
-        url: '/posts',
-        icon: HiOutlineDocumentChartBar,
-        label: 'posts',
-      },
-    ],
-  },
-  {
-    catalog: 'general',
-    listItems: [
-      {
-        isLink: true,
-        url: '/notes',
-        icon: HiOutlinePencilSquare,
-        label: 'notes',
+        url: '/solar-panel-potential',
+        icon: MdSolarPower,
+        label: 'solar panel potential',
       },
       {
         isLink: true,
-        url: '/calendar',
-        icon: HiOutlineCalendarDays,
-        label: 'calendar',
-      },
-    ],
-  },
-  {
-    catalog: 'analytics',
-    listItems: [
-      {
-        isLink: true,
-        url: '/charts',
-        icon: HiOutlinePresentationChartBar,
-        label: 'charts',
+        url: '/email-automation',
+        icon: MdOutlineEmail,
+        label: 'email automation',
       },
       {
         isLink: true,
-        url: '/logs',
-        icon: HiOutlineDocumentText,
-        label: 'logs',
+        url: '/outreach-tracking',
+        icon: MdOutlineTrackChanges,
+        label: 'outreach tracking',
       },
     ],
   },
   {
     catalog: 'miscellaneous',
     listItems: [
-      // {
-      //   isLink: true,
-      //   url: '/settings',
-      //   icon: IoSettingsOutline,
-      //   label: 'settings',
-      // },
       {
         isLink: true,
         url: '/login',
