@@ -2,6 +2,7 @@
 import {
   HiOutlineHome,
   HiOutlineArrowLeftOnRectangle,
+  HiOutlineUser,
 } from 'react-icons/hi2';
 import { 
   MdSolarPower, 
@@ -10,7 +11,8 @@ import {
   MdElectricBolt, 
   MdOutlineAnalytics,
   MdOutlineEmail,
-  MdOutlineTrackChanges
+  MdOutlineTrackChanges,
+  MdAttachMoney
 } from 'react-icons/md';
 
 export const menu = [
@@ -22,6 +24,12 @@ export const menu = [
         url: '/',
         icon: HiOutlineHome,
         label: 'dashboard',
+      },
+      {
+        isLink: true,
+        url: '/profile',
+        icon: HiOutlineUser,
+        label: 'company profile',
       },
     ],
   },
@@ -44,7 +52,7 @@ export const menu = [
         isLink: true,
         url: '/energy-usage-estimation',
         icon: MdElectricBolt,
-        label: 'energy usage estimation',
+        label: 'energy usage\nestimation',
       },
       {
         isLink: true,

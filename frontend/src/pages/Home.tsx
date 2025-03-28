@@ -14,7 +14,18 @@ import {
   MdOutlineWbSunny,
   MdOutlineEmail,
   MdOutlineTrackChanges,
-  MdArrowForward
+  MdArrowForward,
+  MdArrowOutward,
+  MdOutlineSettings,
+  MdPieChart,
+  MdInsights,
+  MdOutlineAnalytics,
+  MdOutlineLightbulb,
+  MdOutlineEnergySavingsLeaf,
+  MdCheck,
+  MdChevronRight,
+  MdOutlineArrowUpward,
+  MdTrendingUp
 } from 'react-icons/md';
 import { useNavigate } from 'react-router-dom';
 
@@ -140,13 +151,88 @@ const dashboardData = {
 const Home = () => {
   const navigate = useNavigate();
 
-  const WorkflowStep = ({ 
+  const FeatureCard = ({ 
+    icon, 
+    title, 
+    description,
+    bgColor = 'bg-white dark:bg-slate-800'
+  }: { 
+    icon: React.ReactNode; 
+    title: string; 
+    description: string;
+    bgColor?: string;
+  }) => {
+    return (
+      <div className={`${bgColor} rounded-2xl p-6 shadow-sm transition-all duration-300 hover:shadow-md hover:-translate-y-1 relative overflow-hidden group border border-slate-100 dark:border-slate-700`}>
+        {/* Decorative corner shape */}
+        <div className="absolute -top-10 -right-10 w-20 h-20 rounded-full bg-amber-500/10"></div>
+        
+        <div className="relative z-10">
+          <div className="rounded-2xl bg-gradient-to-tr from-amber-500 to-amber-400 p-4 mb-5 text-white shadow-sm inline-flex items-center justify-center">
+            <span className="text-2xl">{icon}</span>
+          </div>
+          
+          <h3 className="text-xl font-semibold text-slate-800 dark:text-white mb-3">{title}</h3>
+          <p className="text-slate-600 dark:text-slate-300 text-sm leading-relaxed mb-4">{description}</p>
+          
+          <div className="flex items-center mt-2 group-hover:translate-x-1 transition-transform duration-300">
+            <div className="w-6 h-6 rounded-full bg-amber-500 flex items-center justify-center mr-2">
+              <MdChevronRight className="text-white text-sm" />
+            </div>
+            <span className="text-amber-500 text-sm font-medium">Learn more</span>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  const StatsCard = ({ 
+    title, 
+    value, 
+    change, 
+    icon, 
+    colorClass,
+    borderColor = 'border-amber-500' 
+  }: { 
+    title: string; 
+    value: string; 
+    change?: string;
+    icon: React.ReactNode;
+    colorClass: string;
+    borderColor?: string;
+  }) => {
+    return (
+      <div className={`bg-white dark:bg-slate-800 rounded-2xl shadow-sm p-6 hover:shadow-md transition-all duration-300 border ${borderColor} hover:-translate-y-1 relative overflow-hidden group`}>
+        {/* Subtle gradient background */}
+        <div className="absolute inset-0 bg-gradient-to-br from-slate-50/40 to-transparent dark:from-slate-700/20 rounded-2xl pointer-events-none"></div>
+        
+        <div className="flex justify-between items-start relative z-10">
+          <div>
+            <p className="text-sm font-medium text-slate-500 dark:text-slate-400 mb-1">{title}</p>
+            <h3 className="text-2xl font-bold text-slate-800 dark:text-white">{value}</h3>
+            {change && (
+              <div className="flex items-center text-xs font-medium text-emerald-500 mt-2">
+                <MdTrendingUp className="mr-1" /> {change}
+              </div>
+            )}
+          </div>
+          <div className={`rounded-2xl p-3 ${colorClass} shadow-sm group-hover:scale-110 transition-transform duration-300`}>
+            {icon}
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  const WorkflowCard = ({ 
     number, 
     title, 
     description, 
     icon, 
     route, 
-    stats 
+    stats,
+    chartData,
+    chartType = 'bar' // 'bar', 'progress', 'metric', 'sparkline'
   }: { 
     number: number; 
     title: string; 
@@ -154,33 +240,141 @@ const Home = () => {
     icon: React.ReactNode; 
     route: string;
     stats: React.ReactNode;
+    chartData: { name: string; value: number }[];
+    chartType?: 'bar' | 'progress' | 'metric' | 'sparkline';
   }) => {
+    const renderChart = () => {
+      switch (chartType) {
+        case 'progress':
+          const total = chartData.reduce((sum, item) => sum + item.value, 0);
+          return (
+            <div className="space-y-3">
+              {chartData.map((item, index) => {
+                const percentage = (item.value / total) * 100;
+                return (
+                  <div key={index} className="space-y-1">
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm text-slate-600 dark:text-slate-300">{item.name}</span>
+                      <span className="text-sm font-medium text-slate-800 dark:text-white">{item.value}</span>
+                    </div>
+                    <div className="h-2 bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden">
+                      <div 
+                        className="h-full bg-gradient-to-r from-amber-500 to-amber-400 rounded-full transition-all duration-300"
+                        style={{ width: `${percentage}%` }}
+                      />
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          );
+
+        case 'metric':
+          const currentValue = chartData[0].value;
+          const previousValue = chartData[1].value;
+          const change = ((currentValue - previousValue) / previousValue) * 100;
+          return (
+            <div className="flex flex-col items-center justify-center h-full">
+              <div className="text-3xl font-bold text-slate-800 dark:text-white mb-2">
+                {currentValue.toLocaleString()}
+              </div>
+              <div className="flex items-center gap-2">
+                <div className={`flex items-center gap-1 text-sm ${
+                  change >= 0 ? 'text-emerald-500' : 'text-rose-500'
+                }`}>
+                  {change >= 0 ? '↑' : '↓'} {Math.abs(change).toFixed(1)}%
+                </div>
+                <span className="text-sm text-slate-500 dark:text-slate-400">vs last period</span>
+              </div>
+            </div>
+          );
+
+        case 'sparkline':
+          const maxValue = Math.max(...chartData.map(d => d.value));
+          return (
+            <div className="relative h-16">
+              <div className="absolute inset-0 flex items-end">
+                {chartData.map((item, index) => (
+                  <div key={index} className="flex-1 flex flex-col items-center">
+                    <div 
+                      className="w-1 bg-gradient-to-t from-amber-500 to-amber-300 rounded-full transition-all duration-300 group-hover:from-amber-400 group-hover:to-amber-200"
+                      style={{ 
+                        height: `${(item.value / maxValue) * 100}%`,
+                        minHeight: '4px'
+                      }}
+                    />
+                  </div>
+                ))}
+              </div>
+              <div className="absolute -bottom-6 left-0 right-0 flex justify-between text-xs text-slate-500 dark:text-slate-400">
+                <span>{chartData[0].name}</span>
+                <span>{chartData[chartData.length - 1].name}</span>
+              </div>
+            </div>
+          );
+
+        default: // bar
+          const barMaxValue = Math.max(...chartData.map(d => d.value));
+          return (
+            <div className="h-32">
+              <div className="flex items-end justify-between h-full">
+                {chartData.map((item, index) => (
+                  <div key={index} className="flex flex-col items-center">
+                    <div 
+                      className="w-4 bg-gradient-to-t from-amber-500 to-amber-300 rounded-t transition-all duration-300 group-hover:from-amber-400 group-hover:to-amber-200"
+                      style={{ 
+                        height: `${(item.value / barMaxValue) * 100}%`,
+                        minHeight: '4px'
+                      }}
+                    />
+                    <span className="text-xs text-slate-500 dark:text-slate-400 mt-1">{item.name}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          );
+      }
+    };
+
     return (
-      <div className="card bg-base-100 shadow-xl">
-        <div className="card-body">
-          <div className="flex items-center gap-4">
-            <div className="bg-primary text-white rounded-full w-10 h-10 flex items-center justify-center text-xl font-bold">
+      <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-sm overflow-hidden hover:shadow-md transition-all duration-300 hover:-translate-y-1 border border-slate-100 dark:border-slate-700 group relative">
+        {/* Background gradient */}
+        <div className="absolute inset-0 bg-gradient-to-br from-white to-slate-50/70 dark:from-slate-800 dark:to-slate-800/80 pointer-events-none"></div>
+        
+        {/* Decorative corner accent */}
+        <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-amber-500/5 to-transparent"></div>
+        
+        <div className="p-6 relative z-10">
+          <div className="flex items-center gap-4 mb-5">
+            <div className="bg-gradient-to-r from-amber-500 to-amber-400 text-white rounded-xl w-10 h-10 flex items-center justify-center text-lg font-bold shrink-0 shadow-sm group-hover:scale-110 transition-transform duration-300">
               {number}
             </div>
-            <h2 className="card-title">{title}</h2>
+            <h2 className="text-lg font-bold text-slate-800 dark:text-white">{title}</h2>
           </div>
           
-          <div className="flex items-center gap-3 text-2xl mt-2 text-primary">
-            {icon}
-            <div className="text-base text-base-content">{description}</div>
+          <div className="flex items-center gap-3 mb-5">
+            <div className="text-amber-500 text-xl">
+              {icon}
+            </div>
+            <p className="text-slate-600 dark:text-slate-300 text-sm">{description}</p>
           </div>
           
-          <div className="mt-4">
+          {/* Chart Visualization */}
+          <div className="h-32 mb-5 px-2">
+            {renderChart()}
+          </div>
+          
+          <div className="bg-slate-50 dark:bg-slate-700/50 rounded-xl p-4 mb-5 shadow-sm">
             {stats}
           </div>
           
-          <div className="card-actions justify-end mt-4">
+          <div className="flex justify-end">
             <button 
               onClick={() => navigate(route)}
-              className="btn btn-primary"
+              className="text-sm text-amber-500 hover:text-amber-600 transition-colors flex items-center gap-1 group font-medium"
             >
-              Go to {title}
-              <MdArrowForward />
+              View Details
+              <MdArrowForward className="text-sm group-hover:translate-x-1 transition-transform duration-300" />
             </button>
           </div>
         </div>
@@ -190,40 +384,51 @@ const Home = () => {
 
   const TopFacilitiesBox = () => {
     return (
-      <div className="card bg-base-100 shadow-xl col-span-1 md:col-span-2">
-        <div className="card-body">
-          <h2 className="card-title">Top Facilities by Potential Savings</h2>
+      <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-sm overflow-hidden border border-slate-100 dark:border-slate-700 hover:shadow-md transition-all duration-300 relative">
+        {/* Background gradient */}
+        <div className="absolute inset-0 bg-gradient-to-br from-white to-slate-50/70 dark:from-slate-800 dark:to-slate-800/80 pointer-events-none"></div>
+        
+        {/* Decorative corner accent */}
+        <div className="absolute top-0 right-0 w-40 h-40 bg-gradient-to-bl from-amber-500/5 to-transparent"></div>
+        
+        <div className="p-6 relative z-10">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="bg-gradient-to-r from-amber-500 to-amber-400 p-3 rounded-xl text-white shadow-sm">
+              <MdBarChart className="text-xl" />
+            </div>
+            <h2 className="text-xl font-bold text-slate-800 dark:text-white">Top Facilities by Potential Savings</h2>
+          </div>
           
-          <div className="overflow-x-auto mt-4">
-            <table className="table w-full">
-              <thead>
+          <div className="overflow-x-auto rounded-xl border border-slate-100 dark:border-slate-700">
+            <table className="w-full">
+              <thead className="bg-slate-50 dark:bg-slate-700/50">
                 <tr>
-                  <th>Facility</th>
-                  <th>Location</th>
-                  <th>Annual Savings</th>
-                  <th>ROI</th>
-                  <th>Status</th>
+                  <th className="py-3 px-4 text-left text-sm font-medium text-slate-500 dark:text-slate-300 tracking-wider">Facility</th>
+                  <th className="py-3 px-4 text-left text-sm font-medium text-slate-500 dark:text-slate-300 tracking-wider">Location</th>
+                  <th className="py-3 px-4 text-left text-sm font-medium text-slate-500 dark:text-slate-300 tracking-wider">Annual Savings</th>
+                  <th className="py-3 px-4 text-left text-sm font-medium text-slate-500 dark:text-slate-300 tracking-wider">ROI</th>
+                  <th className="py-3 px-4 text-left text-sm font-medium text-slate-500 dark:text-slate-300 tracking-wider">Status</th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody className="divide-y divide-slate-100 dark:divide-slate-700">
                 {dashboardData.topFacilities.map(facility => (
-                  <tr key={facility.id}>
-                    <td className="font-medium">{facility.name}</td>
-                    <td>
+                  <tr key={facility.id} className="hover:bg-slate-50 dark:hover:bg-slate-700/30">
+                    <td className="py-3 px-4 text-sm font-medium text-slate-800 dark:text-white">{facility.name}</td>
+                    <td className="py-3 px-4 text-sm text-slate-500 dark:text-slate-300">
                       <div className="flex items-center gap-1">
-                        <MdLocationOn className="text-primary" />
+                        <MdLocationOn className="text-amber-500" />
                         {facility.location}
                       </div>
                     </td>
-                    <td className="text-success">{facility.savings}</td>
-                    <td>{facility.roi}</td>
-                    <td>
-                      <span className={`badge ${
-                        facility.status === "Interested" ? "badge-success" :
-                        facility.status === "Follow-up Scheduled" ? "badge-info" :
-                        facility.status === "Email Opened" ? "badge-warning" :
-                        facility.status === "Email Sent" ? "badge-primary" :
-                        "badge-ghost"
+                    <td className="py-3 px-4 text-sm font-medium text-emerald-600 dark:text-emerald-400">{facility.savings}</td>
+                    <td className="py-3 px-4 text-sm text-slate-500 dark:text-slate-300">{facility.roi}</td>
+                    <td className="py-3 px-4 text-sm">
+                      <span className={`inline-flex rounded-full px-3 py-1 text-xs font-medium ${
+                        facility.status === "Interested" ? "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-300" :
+                        facility.status === "Follow-up Scheduled" ? "bg-sky-100 text-sky-800 dark:bg-sky-900/40 dark:text-sky-300" :
+                        facility.status === "Email Opened" ? "bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-300" :
+                        facility.status === "Email Sent" ? "bg-blue-100 text-blue-800 dark:bg-blue-900/40 dark:text-blue-300" :
+                        "bg-slate-100 text-slate-800 dark:bg-slate-700 dark:text-slate-300"
                       }`}>
                         {facility.status}
                       </span>
@@ -234,12 +439,13 @@ const Home = () => {
             </table>
           </div>
           
-          <div className="card-actions justify-end mt-4">
+          <div className="mt-6 flex justify-end">
             <button 
               onClick={() => navigate('/outreach-tracking')}
-              className="btn btn-outline"
+              className="flex items-center gap-2 text-amber-500 hover:text-amber-600 font-medium transition-colors group"
             >
               View All Facilities
+              <MdArrowOutward className="group-hover:translate-x-1 transition-transform duration-300" />
             </button>
           </div>
         </div>
@@ -248,137 +454,247 @@ const Home = () => {
   };
 
   return (
-    <div className="w-full">
-      <div className="flex flex-col gap-6">
-        <div className="flex flex-col gap-2">
-          <h1 className="text-3xl font-bold">Imperum Solis Dashboard</h1>
-          <p className="text-gray-500">
-            Automate solar sales with facility data scraping, energy analysis, and personalized outreach
-          </p>
-        </div>
+    <div className="w-full px-1 py-2">
+      {/* Hero Section */}
+      <div 
+        className="w-full rounded-2xl mb-8 overflow-hidden relative shadow-sm" 
+        style={{ 
+          background: 'linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.7)), linear-gradient(110deg, #2563eb, #0ea5e9, #0f172a)',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center'
+        }}
+      >
+        {/* Solar panel pattern overlay */}
+        <div className="absolute inset-0 opacity-10 mix-blend-overlay" 
+          style={{
+            backgroundImage: 'repeating-linear-gradient(0deg, transparent, transparent 40px, #ffffff 40px, #ffffff 42px), repeating-linear-gradient(90deg, transparent, transparent 40px, #ffffff 40px, #ffffff 42px)',
+            backgroundSize: '42px 42px'
+          }}
+        ></div>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <WorkflowStep 
+        {/* Decorative elements */}
+        <div className="absolute top-0 left-0 w-64 h-64 bg-gradient-to-br from-amber-500/20 to-transparent rounded-br-full"></div>
+        <div className="absolute bottom-0 right-0 w-64 h-64 bg-gradient-to-tl from-amber-500/10 to-transparent rounded-tl-full"></div>
+        
+        <div className="p-8 md:p-10 relative z-10">
+          <div className="max-w-3xl">
+            <div className="inline-block bg-gradient-to-r from-amber-500 to-amber-400 text-white text-sm font-medium py-1 px-4 rounded-full mb-6 shadow-sm">
+              Solar Energy Solutions
+            </div>
+            <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-5 leading-tight">
+              Powering Your Future<br/>
+              With Advanced Solar Technology
+            </h1>
+            <p className="text-slate-200 text-base lg:text-lg mb-7 max-w-2xl leading-relaxed">
+              Automate solar sales with facility data scraping, energy analysis, and personalized outreach designed for maximum efficiency and ROI.
+            </p>
+            <button 
+              onClick={() => navigate('/facility-data-scraper')}
+              className="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white py-2.5 px-7 rounded-xl font-medium transition-all shadow-sm hover:shadow-md inline-flex items-center gap-2 group"
+            >
+              Get Started
+              <MdArrowForward className="group-hover:translate-x-1 transition-transform duration-300" />
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Stats Overview */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-5 mb-8">
+        <StatsCard 
+          title="Facilities Analyzed" 
+          value={dashboardData.facilitiesAnalyzed.total.toString()} 
+          change={`${dashboardData.facilitiesAnalyzed.percentage}% complete`}
+          icon={<MdOutlineRoofing className="text-2xl" />}
+          colorClass="bg-blue-50 text-blue-500 dark:bg-blue-900/30 dark:text-blue-400"
+          borderColor="border-blue-100 dark:border-blue-800/30"
+        />
+        <StatsCard 
+          title="Average Annual Savings" 
+          value={dashboardData.energyEstimations.averageCost}
+          icon={<MdAttachMoney className="text-2xl" />}
+          colorClass="bg-emerald-50 text-emerald-500 dark:bg-emerald-900/30 dark:text-emerald-400"
+          borderColor="border-emerald-100 dark:border-emerald-800/30"
+        />
+        <StatsCard 
+          title="Average ROI" 
+          value={dashboardData.solarPotential.averageROI}
+          icon={<MdInsights className="text-2xl" />}
+          colorClass="bg-amber-50 text-amber-500 dark:bg-amber-900/30 dark:text-amber-400"
+          borderColor="border-amber-100 dark:border-amber-800/30"
+        />
+        <StatsCard 
+          title="Email Open Rate" 
+          value={`${dashboardData.emailCampaigns.openRate}%`}
+          icon={<MdOutlineEmail className="text-2xl" />}
+          colorClass="bg-purple-50 text-purple-500 dark:bg-purple-900/30 dark:text-purple-400"
+          borderColor="border-purple-100 dark:border-purple-800/30"
+        />
+      </div>
+      
+      {/* Workflow Section */}
+      <div className="mb-8">
+        <h2 className="text-xl font-bold text-slate-800 dark:text-white mb-5 flex items-center">
+          <div className="w-1 h-5 bg-amber-500 rounded-full mr-3"></div>
+          Dashboard Overview
+        </h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-5">
+          <WorkflowCard 
             number={1}
             title="Facility Data Scraper"
-            description="Scrape and enrich commercial facility data"
+            description="View and manage facility data collection"
             icon={<MdFactory />}
             route="/facility-data-scraper"
+            chartData={dashboardData.facilitiesScraped.chartData}
+            chartType="sparkline"
             stats={
-              <div className="stats shadow">
-                <div className="stat">
-                  <div className="stat-title">Total Facilities</div>
-                  <div className="stat-value">{dashboardData.facilitiesScraped.total}</div>
+              <div className="flex justify-between">
+                <div>
+                  <p className="text-sm text-slate-500 dark:text-slate-400">Total Facilities</p>
+                  <p className="text-xl font-bold text-slate-800 dark:text-white">{dashboardData.facilitiesScraped.total}</p>
                 </div>
-                <div className="stat">
-                  <div className="stat-title">Enriched</div>
-                  <div className="stat-value text-primary">{dashboardData.facilitiesScraped.enriched}</div>
-                  <div className="stat-desc">{dashboardData.facilitiesScraped.percentage}% complete</div>
+                <div>
+                  <p className="text-sm text-slate-500 dark:text-slate-400">Enriched</p>
+                  <p className="text-xl font-bold text-slate-800 dark:text-white">{dashboardData.facilitiesScraped.enriched}</p>
                 </div>
               </div>
             }
           />
           
-          <WorkflowStep 
+          <WorkflowCard 
             number={2}
             title="Facility AI Analysis"
-            description="Analyze facilities with AI to determine size and type"
+            description="Review AI-powered facility analysis"
             icon={<MdOutlineRoofing />}
             route="/facility-ai-analysis"
+            chartData={[
+              { name: "Analyzed", value: dashboardData.facilitiesAnalyzed.total },
+              { name: "Pending", value: dashboardData.facilitiesScraped.total - dashboardData.facilitiesAnalyzed.total }
+            ]}
+            chartType="progress"
             stats={
-              <div className="stats shadow">
-                <div className="stat">
-                  <div className="stat-title">Analyzed</div>
-                  <div className="stat-value">{dashboardData.facilitiesAnalyzed.total}</div>
-                  <div className="stat-desc">{dashboardData.facilitiesAnalyzed.percentage}% of scraped facilities</div>
+              <div>
+                <p className="text-sm text-slate-500 dark:text-slate-400">Analyzed</p>
+                <p className="text-xl font-bold text-slate-800 dark:text-white">{dashboardData.facilitiesAnalyzed.total}</p>
+                <div className="w-full bg-slate-200 dark:bg-slate-600/50 rounded-full h-2 mt-2">
+                  <div 
+                    className="bg-gradient-to-r from-amber-500 to-amber-400 h-2 rounded-full" 
+                    style={{ width: `${dashboardData.facilitiesAnalyzed.percentage}%` }}
+                  ></div>
                 </div>
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">{dashboardData.facilitiesAnalyzed.percentage}% complete</p>
               </div>
             }
           />
           
-          <WorkflowStep 
+          <WorkflowCard 
             number={3}
             title="Energy Usage Estimation"
-            description="Estimate facility energy usage and costs"
+            description="Monitor energy consumption patterns"
             icon={<MdElectricBolt />}
             route="/energy-usage-estimation"
+            chartData={[
+              { name: "Current", value: dashboardData.energyEstimations.chartData[dashboardData.energyEstimations.chartData.length - 1].value },
+              { name: "Previous", value: dashboardData.energyEstimations.chartData[dashboardData.energyEstimations.chartData.length - 2].value }
+            ]}
+            chartType="metric"
             stats={
-              <div className="stats shadow">
-                <div className="stat">
-                  <div className="stat-title">Avg. Annual Usage</div>
-                  <div className="stat-value text-secondary">{dashboardData.energyEstimations.averageUsage}</div>
+              <div className="flex justify-between">
+                <div>
+                  <p className="text-sm text-slate-500 dark:text-slate-400">Avg. Annual Usage</p>
+                  <p className="text-xl font-bold text-slate-800 dark:text-white">{dashboardData.energyEstimations.averageUsage}</p>
                 </div>
-                <div className="stat">
-                  <div className="stat-title">Avg. Annual Cost</div>
-                  <div className="stat-value text-secondary">{dashboardData.energyEstimations.averageCost}</div>
+                <div>
+                  <p className="text-sm text-slate-500 dark:text-slate-400">Avg. Annual Cost</p>
+                  <p className="text-xl font-bold text-slate-800 dark:text-white">{dashboardData.energyEstimations.averageCost}</p>
                 </div>
               </div>
             }
           />
           
-          <WorkflowStep 
+          <WorkflowCard 
             number={4}
             title="Solar Panel Potential"
-            description="Calculate solar potential, ROI, and savings"
+            description="Track solar potential and ROI"
             icon={<MdSolarPower />}
             route="/solar-panel-potential"
+            chartData={[
+              { name: "ROI", value: parseFloat(dashboardData.solarPotential.averageROI) },
+              { name: "Payback", value: parseFloat(dashboardData.solarPotential.averagePayback) * 10 },
+              { name: "Savings", value: parseFloat(dashboardData.solarPotential.totalSavings.replace(/[^0-9.-]+/g, "")) / 1000000 }
+            ]}
+            chartType="progress"
             stats={
-              <div className="stats shadow">
-                <div className="stat">
-                  <div className="stat-title">Avg. ROI</div>
-                  <div className="stat-value text-accent">{dashboardData.solarPotential.averageROI}</div>
+              <div className="flex justify-between">
+                <div>
+                  <p className="text-sm text-slate-500 dark:text-slate-400">Avg. ROI</p>
+                  <p className="text-xl font-bold text-slate-800 dark:text-white">{dashboardData.solarPotential.averageROI}</p>
                 </div>
-                <div className="stat">
-                  <div className="stat-title">Avg. Payback</div>
-                  <div className="stat-value text-accent">{dashboardData.solarPotential.averagePayback}</div>
+                <div>
+                  <p className="text-sm text-slate-500 dark:text-slate-400">Avg. Payback</p>
+                  <p className="text-xl font-bold text-slate-800 dark:text-white">{dashboardData.solarPotential.averagePayback}</p>
                 </div>
               </div>
             }
           />
           
-          <WorkflowStep 
+          <WorkflowCard 
             number={5}
             title="Email Automation"
-            description="Create and send personalized outreach emails"
+            description="Manage email campaigns"
             icon={<MdOutlineEmail />}
             route="/email-automation"
+            chartData={[
+              { name: "Sent", value: dashboardData.emailCampaigns.emailsSent },
+              { name: "Opened", value: dashboardData.emailCampaigns.emailsOpened },
+              { name: "Replied", value: dashboardData.emailCampaigns.repliedRate * dashboardData.emailCampaigns.emailsSent / 100 }
+            ]}
+            chartType="progress"
             stats={
-              <div className="stats shadow">
-                <div className="stat">
-                  <div className="stat-title">Emails Sent</div>
-                  <div className="stat-value">{dashboardData.emailCampaigns.emailsSent}</div>
+              <div className="flex justify-between">
+                <div>
+                  <p className="text-sm text-slate-500 dark:text-slate-400">Emails Sent</p>
+                  <p className="text-xl font-bold text-slate-800 dark:text-white">{dashboardData.emailCampaigns.emailsSent}</p>
                 </div>
-                <div className="stat">
-                  <div className="stat-title">Open Rate</div>
-                  <div className="stat-value text-info">{dashboardData.emailCampaigns.openRate}%</div>
+                <div>
+                  <p className="text-sm text-slate-500 dark:text-slate-400">Open Rate</p>
+                  <p className="text-xl font-bold text-slate-800 dark:text-white">{dashboardData.emailCampaigns.openRate}%</p>
                 </div>
               </div>
             }
           />
           
-          <WorkflowStep 
+          <WorkflowCard 
             number={6}
             title="Outreach Tracking"
-            description="Track email opens, replies, and follow-ups"
+            description="Monitor engagement metrics"
             icon={<MdOutlineTrackChanges />}
             route="/outreach-tracking"
+            chartData={[
+              { name: "Sent", value: dashboardData.emailCampaigns.emailsSent },
+              { name: "Opened", value: dashboardData.emailCampaigns.emailsOpened },
+              { name: "Replied", value: dashboardData.emailCampaigns.repliedRate * dashboardData.emailCampaigns.emailsSent / 100 },
+              { name: "Interested", value: dashboardData.emailCampaigns.interestedRate * dashboardData.emailCampaigns.emailsSent / 100 }
+            ]}
+            chartType="progress"
             stats={
-              <div className="stats shadow">
-                <div className="stat">
-                  <div className="stat-title">Reply Rate</div>
-                  <div className="stat-value text-success">{dashboardData.emailCampaigns.repliedRate}%</div>
+              <div className="flex justify-between">
+                <div>
+                  <p className="text-sm text-slate-500 dark:text-slate-400">Reply Rate</p>
+                  <p className="text-xl font-bold text-slate-800 dark:text-white">{dashboardData.emailCampaigns.repliedRate}%</p>
                 </div>
-                <div className="stat">
-                  <div className="stat-title">Interest Rate</div>
-                  <div className="stat-value text-success">{dashboardData.emailCampaigns.interestedRate}%</div>
+                <div>
+                  <p className="text-sm text-slate-500 dark:text-slate-400">Interest Rate</p>
+                  <p className="text-xl font-bold text-slate-800 dark:text-white">{dashboardData.emailCampaigns.interestedRate}%</p>
                 </div>
               </div>
             }
           />
         </div>
-        
-        <TopFacilitiesBox />
       </div>
+      
+      {/* Top Facilities Table */}
+      <TopFacilitiesBox />
     </div>
   );
 };

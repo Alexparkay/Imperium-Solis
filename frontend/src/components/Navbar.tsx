@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { HiBars3CenterLeft } from 'react-icons/hi2';
-import { FaSun } from 'react-icons/fa';
+import { MdSolarPower } from 'react-icons/md';
 import { HiSearch, HiOutlineBell } from 'react-icons/hi';
 import { RxEnterFullScreen, RxExitFullScreen } from 'react-icons/rx';
 import ChangeThemes from './ChangesThemes';
@@ -32,7 +32,7 @@ const Navbar = () => {
 
   return (
     // navbar screen
-    <div className="fixed z-[3] top-0 left-0 right-0 bg-base-100 w-full flex justify-between px-3 xl:px-4 py-3 xl:py-5 gap-4 xl:gap-0">
+    <div className="fixed z-[9999] top-0 left-0 right-0 bg-base-100 w-full flex justify-between px-3 xl:px-4 py-3 xl:py-5 gap-4 xl:gap-0 shadow-lg">
       {/* container */}
       <div className="flex gap-3 items-center">
         {/* for mobile */}
@@ -63,7 +63,12 @@ const Navbar = () => {
                 to={'/'}
                 className="flex items-center gap-1 xl:gap-2 mt-1 mb-5"
               >
-                <FaSun className="text-3xl sm:text-4xl xl:text-4xl 2xl:text-6xl text-yellow-500" />
+                <div className="relative group">
+                  <div className="absolute inset-0 bg-gradient-to-r from-amber-500/20 to-amber-600/20 rounded-full blur-md transform group-hover:scale-110 transition-all duration-300"></div>
+                  <div className="relative bg-gradient-to-br from-amber-500 to-amber-600 p-2 rounded-full shadow-lg transform group-hover:scale-105 transition-all duration-300">
+                    <MdSolarPower className="text-2xl sm:text-3xl xl:text-3xl 2xl:text-5xl text-white" />
+                  </div>
+                </div>
                 <span className="text-[16px] leading-[1.2] sm:text-lg xl:text-xl 2xl:text-2xl font-semibold text-base-content dark:text-neutral-200">
                   Imperium Solis
                 </span>
@@ -82,7 +87,12 @@ const Navbar = () => {
 
         {/* navbar logo */}
         <Link to={'/'} className="flex items-center gap-1 xl:gap-2">
-          <FaSun className="text-3xl sm:text-4xl xl:text-4xl 2xl:text-6xl text-yellow-500" />
+          <div className="relative group">
+            <div className="absolute inset-0 bg-gradient-to-r from-amber-500/20 to-amber-600/20 rounded-full blur-md transform group-hover:scale-110 transition-all duration-300"></div>
+            <div className="relative bg-gradient-to-br from-amber-500 to-amber-600 p-2 rounded-full shadow-lg transform group-hover:scale-105 transition-all duration-300">
+              <MdSolarPower className="text-2xl sm:text-3xl xl:text-3xl 2xl:text-5xl text-white" />
+            </div>
+          </div>
           <span className="text-[16px] leading-[1.2] sm:text-lg xl:text-xl 2xl:text-2xl font-semibold text-base-content dark:text-neutral-200">
             Imperium Solis
           </span>
@@ -139,11 +149,8 @@ const Navbar = () => {
             role="button"
             className="btn btn-ghost btn-circle avatar"
           >
-            <div className="w-9  rounded-full">
-              <img
-                src="https://avatars.githubusercontent.com/u/74099030?v=4"
-                alt="foto-cowok-ganteng"
-              />
+            <div className="w-9 rounded-full bg-amber-500 flex items-center justify-center text-white font-semibold">
+              <span className="text-lg transform translate-y-[1px]">Q</span>
             </div>
           </div>
           <ul
@@ -153,6 +160,11 @@ const Navbar = () => {
             <Link to={'/profile'}>
               <li>
                 <a className="justify-between">My Profile</a>
+              </li>
+            </Link>
+            <Link to={'/pricing'}>
+              <li>
+                <a className="justify-between">Pricing</a>
               </li>
             </Link>
             <li onClick={() => navigate('/login')}>

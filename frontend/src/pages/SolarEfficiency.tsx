@@ -20,6 +20,46 @@ interface FacilityData {
   currentUtilityRate: string;
 }
 
+interface SolarEfficiencyData {
+  facilityName: string;
+  address: string;
+  city: string;
+  state: string;
+  zipCode: string;
+  squareFootage: string;
+  industryType: string;
+  operatingHours: string;
+  managerName: string;
+  managerEmail: string;
+  managerPhone: string;
+  companyName: string;
+  annualEnergyUsage: string;
+  currentUtilityRate: string;
+  energyEscalationRate: number;
+  inverterType: string;
+  inverterEfficiency: number;
+  inverterCost: number;
+  maxSystemSize: number;
+  panelLayout: {
+    panels: Array<{
+      id: string;
+      x: number;
+      y: number;
+      width: number;
+      height: number;
+      orientation: 'portrait' | 'landscape';
+    }>;
+    obstructions: Array<{
+      id: string;
+      type: 'hvac' | 'skylight' | 'pipe' | 'other';
+      x: number;
+      y: number;
+      width: number;
+      height: number;
+    }>;
+  };
+}
+
 const SolarEfficiency = () => {
   const navigate = useNavigate();
   const [facilityData, setFacilityData] = useState<FacilityData | null>(null);
@@ -35,6 +75,31 @@ const SolarEfficiency = () => {
     inverterType: 'string',
     batteryStorage: 'no',
     batteryCapacity: '',
+  });
+  const [solarEfficiencyData, setSolarEfficiencyData] = useState<SolarEfficiencyData>({
+    facilityName: '',
+    address: '',
+    city: '',
+    state: '',
+    zipCode: '',
+    squareFootage: '',
+    industryType: '',
+    operatingHours: '',
+    managerName: '',
+    managerEmail: '',
+    managerPhone: '',
+    companyName: '',
+    annualEnergyUsage: '',
+    currentUtilityRate: '',
+    energyEscalationRate: 4.5,
+    inverterType: 'string',
+    inverterEfficiency: 0.96,
+    inverterCost: 0,
+    maxSystemSize: 0,
+    panelLayout: {
+      panels: [],
+      obstructions: []
+    }
   });
   const [recommendations, setRecommendations] = useState({
     optimalSystemSize: 0,
@@ -75,26 +140,35 @@ const SolarEfficiency = () => {
 
     // Convert strings to numbers for calculations
     const squareFootage = parseFloat(facilityData.squareFootage) || 0;
-    const utilityRate = parseFloat(facilityData.currentUtilityRate) || 0.12; // Default to $0.12/kWh if not provided
-    const annualEnergyUsage = parseFloat(facilityData.annualEnergyUsage) || squareFootage * 15; // Estimate if not provided
+    const utilityRate = parseFloat(facilityData.currentUtilityRate) || 0.12;
+    const annualEnergyUsage = parseFloat(facilityData.annualEnergyUsage) || squareFootage * 15;
     
-    // Solar panel efficiency factors
-    const panelEfficiency = parseFloat(solarData.panelEfficiency) / 100 || 0.2; // Convert percentage to decimal
+    // Calculate efficiency factors
+    const panelEfficiency = parseFloat(solarData.panelEfficiency) / 100 || 0.2;
     const roofOrientationFactor = getRoofOrientationFactor(solarData.roofOrientation);
     const roofAngleFactor = getRoofAngleFactor(solarData.roofAngle);
     const shadingFactor = getShadingFactor(solarData.shadingFactor);
-    const panelTypeFactor = getPanelTypeFactor(solarData.panelType);
-    const inverterEfficiency = getInverterEfficiency(solarData.inverterType);
+    
+    // Calculate energy cost with escalation
+    const years = 25; // Project lifetime
+    const escalationRate = solarEfficiencyData.energyEscalationRate / 100;
+    const energyCosts = Array.from({ length: years }, (_, i) => {
+      const year = i + 1;
+      return annualEnergyUsage * utilityRate * Math.pow(1 + escalationRate, year - 1);
+    });
+    
+    // Calculate total lifetime energy cost
+    const totalLifetimeEnergyCost = energyCosts.reduce((sum, cost) => sum + cost, 0);
     
     // Calculate optimal system size based on energy usage and available roof space
-    const wattsPerSquareFoot = 15; // Average watts per square foot for commercial solar
-    const usableRoofPercentage = 0.6; // Assume 60% of roof space is usable for solar
-    const maxSystemSizeFromRoof = squareFootage * usableRoofPercentage * wattsPerSquareFoot / 1000; // in kW
+    const wattsPerSquareFoot = 15;
+    const usableRoofPercentage = 0.6;
+    const maxSystemSizeFromRoof = squareFootage * usableRoofPercentage * wattsPerSquareFoot / 1000;
     
     // Calculate system size needed to offset energy usage
-    const annualSunHours = 1600; // Average annual sun hours (would vary by location)
+    const annualSunHours = 1600;
     const systemSizeNeeded = annualEnergyUsage / (annualSunHours * panelEfficiency * roofOrientationFactor * 
-                             roofAngleFactor * shadingFactor * inverterEfficiency);
+                         roofAngleFactor * shadingFactor * solarEfficiencyData.inverterEfficiency);
     
     // Choose the smaller of the two system sizes
     const optimalSystemSize = Math.min(maxSystemSizeFromRoof, systemSizeNeeded);
@@ -103,66 +177,70 @@ const SolarEfficiency = () => {
     const averagePanelWattage = getPanelWattage(solarData.panelType);
     const recommendedPanels = Math.ceil(optimalSystemSize * 1000 / averagePanelWattage);
     
-    // Calculate estimated production
+    // Calculate estimated production with inverter efficiency
     const estimatedProduction = optimalSystemSize * annualSunHours * panelEfficiency * 
-                               roofOrientationFactor * roofAngleFactor * shadingFactor * 
-                               inverterEfficiency;
+                           roofOrientationFactor * roofAngleFactor * shadingFactor * 
+                           solarEfficiencyData.inverterEfficiency;
     
-    // Calculate financial benefits
-    const estimatedSavings = estimatedProduction * utilityRate;
+    // Calculate financial benefits with energy escalation
+    const estimatedSavings = energyCosts.map((cost, i) => {
+      const yearProduction = estimatedProduction * (1 - (i * 0.005)); // 0.5% annual degradation
+      return cost * (yearProduction / annualEnergyUsage);
+    });
     
-    // Calculate environmental impact
-    const co2PerKwh = 0.85; // lbs of CO2 per kWh (US average)
-    const co2Reduction = estimatedProduction * co2PerKwh;
+    const totalLifetimeSavings = estimatedSavings.reduce((sum, saving) => sum + saving, 0);
     
-    // Calculate payback period
-    const installationCostPerWatt = 2.5; // $2.50 per watt installed (commercial scale)
-    const installationCost = optimalSystemSize * 1000 * installationCostPerWatt;
-    const paybackPeriod = installationCost / estimatedSavings;
+    // Calculate installation cost including inverter
+    const installationCostPerWatt = 2.5;
+    const inverterCost = getInverterCost(optimalSystemSize, solarEfficiencyData.inverterType);
+    const installationCost = (optimalSystemSize * 1000 * installationCostPerWatt) + inverterCost;
     
-    // Determine recommended panel type based on efficiency needs and space constraints
-    const recommendedPanelType = getRecommendedPanelType(squareFootage, annualEnergyUsage);
+    // Calculate payback period with energy escalation
+    let paybackPeriod = 0;
+    let cumulativeSavings = 0;
+    for (let i = 0; i < years; i++) {
+      cumulativeSavings += estimatedSavings[i];
+      if (cumulativeSavings >= installationCost) {
+        paybackPeriod = i + 1;
+        break;
+      }
+    }
     
-    // Determine recommended inverter type based on system size and complexity
-    const recommendedInverterType = getRecommendedInverterType(optimalSystemSize, solarData.shadingFactor);
+    // Calculate ROI with energy escalation
+    const roi = ((totalLifetimeSavings - installationCost) / installationCost) * 100;
     
-    // Determine if battery storage is recommended
+    // Calculate battery storage recommendations
     const operatingHours = parseFloat(facilityData.operatingHours) || 8;
     const recommendedBatteryStorage = operatingHours > 12 || solarData.batteryStorage === 'yes';
-    
-    // Calculate recommended battery size if storage is recommended
     const dailyUsage = annualEnergyUsage / 365;
-    const recommendedBatterySize = recommendedBatteryStorage ? dailyUsage * 0.3 : 0; // 30% of daily usage
+    const recommendedBatterySize = recommendedBatteryStorage ? dailyUsage * 0.3 : 0;
     
-    // Generate roof requirements and additional notes
-    const roofRequirements = `Requires approximately ${Math.ceil(recommendedPanels * averagePanelWattage / wattsPerSquareFoot)} sq ft of usable roof space.`;
-    
-    let additionalNotes = '';
-    if (shadingFactor < 0.8) {
-      additionalNotes += 'Consider tree trimming or alternative panel placement to reduce shading. ';
-    }
-    if (roofOrientationFactor < 0.9) {
-      additionalNotes += 'Panel orientation is not optimal; consider adjustable mounting systems. ';
-    }
-    if (parseFloat(solarData.roofAge) > 15) {
-      additionalNotes += 'Roof replacement may be needed before solar installation. ';
-    }
-    
-    setRecommendations({
+    // Generate recommendations with disclaimers
+    const recommendations = {
       optimalSystemSize,
       recommendedPanels,
       estimatedProduction,
-      estimatedSavings,
-      co2Reduction,
+      estimatedSavings: estimatedSavings[0], // First year savings
+      co2Reduction: estimatedProduction * 0.85, // lbs of CO2 per kWh
       paybackPeriod,
-      recommendedPanelType,
-      recommendedInverterType,
+      roi,
+      recommendedPanelType: getRecommendedPanelType(squareFootage, annualEnergyUsage),
+      recommendedInverterType: getRecommendedInverterType(optimalSystemSize, solarData.shadingFactor),
       recommendedBatteryStorage,
       recommendedBatterySize,
-      roofRequirements,
-      additionalNotes: additionalNotes || 'No additional recommendations.',
-    });
+      roofRequirements: `Requires approximately ${Math.ceil(recommendedPanels * averagePanelWattage / wattsPerSquareFoot)} sq ft of usable roof space.`,
+      additionalNotes: generateAdditionalNotes(shadingFactor, roofOrientationFactor, solarData.roofAge),
+      disclaimer: "All calculations and estimates are approximate and should be verified by a professional solar installer. Energy production and savings estimates are based on historical data and may vary based on actual conditions.",
+      energyEscalation: {
+        rate: solarEfficiencyData.energyEscalationRate,
+        totalLifetimeCost: totalLifetimeEnergyCost,
+        totalLifetimeSavings,
+        paybackPeriod,
+        roi
+      }
+    };
     
+    setRecommendations(recommendations);
     toast.success('Solar efficiency calculations completed!');
   };
 
@@ -245,12 +323,44 @@ const SolarEfficiency = () => {
   };
 
   const getRecommendedInverterType = (systemSize: number, shadingFactor: string): string => {
-    const shading = parseFloat(shadingFactor) || 0;
+    const shadingPercentage = parseFloat(shadingFactor) || 0;
     
     if (systemSize > 50) return 'Central Inverter';
-    if (systemSize > 20) return 'String Inverter with Power Optimizers';
-    if (shading > 20) return 'Microinverters';
+    if (shadingPercentage > 20) return 'Microinverter';
+    if (shadingPercentage > 10) return 'Power Optimizer';
     return 'String Inverter';
+  };
+
+  // Helper function to get inverter cost
+  const getInverterCost = (systemSize: number, inverterType: string): number => {
+    const costs: {[key: string]: number} = {
+      'string': 0.15, // $0.15 per watt
+      'microinverter': 0.25,
+      'power-optimizer': 0.20,
+      'central': 0.10,
+    };
+    return systemSize * 1000 * (costs[inverterType] || 0.15);
+  };
+
+  // Helper function to generate additional notes
+  const generateAdditionalNotes = (
+    shadingFactor: number,
+    roofOrientationFactor: number,
+    roofAge: string
+  ): string => {
+    const notes: string[] = [];
+    
+    if (shadingFactor < 0.8) {
+      notes.push('Consider tree trimming or alternative panel placement to reduce shading.');
+    }
+    if (roofOrientationFactor < 0.9) {
+      notes.push('Panel orientation is not optimal; consider adjustable mounting systems.');
+    }
+    if (parseFloat(roofAge) > 15) {
+      notes.push('Roof replacement may be needed before solar installation.');
+    }
+    
+    return notes.length > 0 ? notes.join(' ') : 'No additional recommendations.';
   };
 
   // Add a solar map visualization component

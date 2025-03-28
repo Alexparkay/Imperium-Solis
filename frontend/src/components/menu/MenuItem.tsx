@@ -38,8 +38,13 @@ const MenuItem: React.FC<MenuItemProps> = ({
               }
             >
               <listItem.icon className="xl:text-2xl 2xl:text-3xl 3xl:text-4xl" />
-              <span className="xl:text-sm 2xl:text-base 3xl:text-lg capitalize">
-                {listItem.label}
+              <span className="xl:text-sm 2xl:text-base 3xl:text-lg capitalize text-left leading-tight">
+                {listItem.label.split('\n').map((line, i) => (
+                  <React.Fragment key={i}>
+                    {i > 0 && <br />}
+                    {line}
+                  </React.Fragment>
+                ))}
               </span>
             </NavLink>
           );
@@ -51,8 +56,13 @@ const MenuItem: React.FC<MenuItemProps> = ({
               className="btn 2xl:min-h-[52px] 3xl:min-h-[64px] btn-ghost btn-block justify-start"
             >
               <listItem.icon className="xl:text-2xl 2xl:text-3xl 3xl:text-4xl" />
-              <span className="xl:text-sm 2xl:text-base 3xl:text-lg capitalize">
-                {listItem.label}
+              <span className="xl:text-sm 2xl:text-base 3xl:text-lg capitalize text-left leading-tight">
+                {listItem.label.split('\n').map((line, i) => (
+                  <React.Fragment key={i}>
+                    {i > 0 && <br />}
+                    {line}
+                  </React.Fragment>
+                ))}
               </span>
             </button>
           );

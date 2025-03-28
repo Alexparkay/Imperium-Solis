@@ -12,6 +12,78 @@
     overflow-y: auto !important;
 }
 
+/* Enhanced dark mode */
+.dark {
+  color-scheme: dark;
+}
+
+/* Premium UI Elements */
+.premium-gradient {
+  @apply bg-gradient-to-r from-amber-500 to-amber-600;
+}
+
+.premium-card {
+  @apply bg-white dark:bg-gray-800 rounded-xl shadow-md hover:shadow-lg transition-all duration-300;
+}
+
+.premium-button {
+  @apply bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 
+         text-white font-medium shadow-sm hover:shadow-md transition-all rounded-lg;
+}
+
+.premium-badge {
+  @apply inline-flex items-center gap-1 py-1 px-3 rounded-full text-sm font-medium;
+}
+
+.premium-stats-card {
+  @apply bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 border-l-4 border-amber-500 
+         hover:shadow-lg transition-all duration-300 hover:-translate-y-1 relative overflow-hidden;
+}
+
+.premium-input {
+  @apply rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 
+         text-gray-900 dark:text-white focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all;
+}
+
+.premium-table th {
+  @apply py-3 px-4 text-left text-sm font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider;
+}
+
+.premium-table td {
+  @apply py-4 px-4 text-sm;
+}
+
+.premium-table tr {
+  @apply hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors;
+}
+
+.premium-section-title {
+  @apply text-2xl font-bold text-gray-900 dark:text-white mb-6 flex items-center;
+}
+
+.premium-section-title:before {
+  content: "";
+  @apply w-1.5 h-6 bg-amber-500 rounded-full mr-3;
+}
+
+/* Decorative patterns */
+.corner-pattern-top-right {
+  @apply absolute top-0 right-0 w-40 h-40 bg-gradient-to-bl from-amber-500/5 to-transparent;
+}
+
+.corner-pattern-top-left {
+  @apply absolute top-0 left-0 w-40 h-40 bg-gradient-to-br from-amber-500/5 to-transparent;
+}
+
+.corner-pattern-bottom-right {
+  @apply absolute bottom-0 right-0 w-40 h-40 bg-gradient-to-tl from-amber-500/5 to-transparent;
+}
+
+.corner-pattern-bottom-left {
+  @apply absolute bottom-0 left-0 w-40 h-40 bg-gradient-to-tr from-amber-500/5 to-transparent;
+}
+
+/* Original CSS */
 :fullscreen::backdrop {
     background: none !important;
     overflow: visible;

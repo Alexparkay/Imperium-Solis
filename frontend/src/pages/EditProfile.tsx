@@ -1,364 +1,688 @@
-import React, { ChangeEvent } from 'react';
+import React, { useState } from 'react';
 import toast from 'react-hot-toast';
-import { HiOutlinePencil, HiOutlineTrash } from 'react-icons/hi2';
+import { HiOutlinePencil, HiOutlineTrash, HiPlus, HiXMark } from 'react-icons/hi2';
 import { useNavigate } from 'react-router-dom';
+import { MdSolarPower, MdElectricBolt, MdOutlineSettings, MdBolt, MdPower, MdBusiness, MdLocationOn, MdOutlineEmail, MdOutlinePhone, MdSave } from 'react-icons/md';
 
 const EditProfile = () => {
-  const modalDelete = React.useRef<HTMLDialogElement>(null);
   const navigate = useNavigate();
 
-  const fileInputRef = React.useRef<HTMLInputElement>(null);
-  const [selectedFile, setSelectedFile] = React.useState<File | null>(
-    null
-  );
-  const [preview, setPreview] = React.useState<string | null>(null);
+  // Company Info State
+  const [companyInfo, setCompanyInfo] = useState({
+    name: "SolarTech Solutions",
+    address: "123 Energy Way, Solar City, CA 94105",
+    phone: "(555) 123-4567",
+    email: "contact@solartech.com",
+    website: "www.solartech.com"
+  });
 
-  const handleFileSelect = (e: ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      const imageUpload = e.target.files[0];
-      setSelectedFile(imageUpload);
-      setPreview(URL.createObjectURL(imageUpload));
-      console.log('Selected File: ', selectedFile);
+  // Solar Panels State
+  const [panels, setPanels] = useState([
+    {
+      model: "SolarMax Pro",
+      wattage: 400,
+      efficiency: 21.4,
+      warranty: 25,
+      dimensions: "1755 x 1038 x 35 mm",
+      weight: "20.5 kg"
+    },
+    {
+      model: "SolarMax Elite",
+      wattage: 450,
+      efficiency: 22.8,
+      warranty: 30,
+      dimensions: "1855 x 1038 x 35 mm",
+      weight: "21.5 kg"
     }
-  };
-  const handleIconClick = () => {
-    fileInputRef.current?.click();
+  ]);
+
+  // Inverters State
+  const [inverters, setInverters] = useState([
+    {
+      model: "PowerConvert X1",
+      capacity: "7.6 kW",
+      efficiency: 97.5,
+      warranty: 12,
+      features: ["Smart monitoring", "Battery ready", "Rapid shutdown"]
+    },
+    {
+      model: "PowerConvert X2",
+      capacity: "11.4 kW",
+      efficiency: 98.2,
+      warranty: 15,
+      features: ["Smart monitoring", "Battery ready", "Rapid shutdown", "Dual MPPT"]
+    }
+  ]);
+
+  // Installation Capabilities State
+  const [installationCapabilities, setInstallationCapabilities] = useState({
+    maxProjectSize: "2 MW",
+    typicalProjectSize: "10-250 kW",
+    installationTypes: ["Rooftop", "Ground Mount", "Carport"],
+    certifications: ["NABCEP", "UL", "IEEE"],
+    serviceArea: ["California", "Nevada", "Arizona"]
+  });
+
+  // Performance Metrics State
+  const [performance, setPerformance] = useState({
+    completedProjects: 1250,
+    totalCapacity: "15.5 MW",
+    averageEfficiency: 21.6,
+    customerSatisfaction: 4.8
+  });
+
+  // Handlers for adding/removing items
+  const addPanel = () => {
+    setPanels([...panels, {
+      model: "",
+      wattage: 0,
+      efficiency: 0,
+      warranty: 0,
+      dimensions: "",
+      weight: ""
+    }]);
   };
 
-  const [firstName, setFirstName] = React.useState('Frans');
-  const [lastName, setLastName] = React.useState('AHW');
-  const [nickName, setNickName] = React.useState('Frans');
-  const [email, setEmail] = React.useState('franswinata6@gmail.com');
-  const [phone, setPhone] = React.useState('081-234-5678');
-  const [address, setAddress] = React.useState(
-    'Suite 948 Jl. Gajahmada No. 91, Malang, SM 74810'
-  );
+  const removePanel = (index: number) => {
+    setPanels(panels.filter((_, i) => i !== index));
+  };
+
+  const addInverter = () => {
+    setInverters([...inverters, {
+      model: "",
+      capacity: "",
+      efficiency: 0,
+      warranty: 0,
+      features: []
+    }]);
+  };
+
+  const removeInverter = (index: number) => {
+    setInverters(inverters.filter((_, i) => i !== index));
+  };
+
+  const addFeature = (inverterIndex: number) => {
+    const newInverters = [...inverters];
+    newInverters[inverterIndex].features.push("");
+    setInverters(newInverters);
+  };
+
+  const removeFeature = (inverterIndex: number, featureIndex: number) => {
+    const newInverters = [...inverters];
+    newInverters[inverterIndex].features.splice(featureIndex, 1);
+    setInverters(newInverters);
+  };
+
+  const addInstallationType = () => {
+    setInstallationCapabilities({
+      ...installationCapabilities,
+      installationTypes: [...installationCapabilities.installationTypes, ""]
+    });
+  };
+
+  const removeInstallationType = (index: number) => {
+    setInstallationCapabilities({
+      ...installationCapabilities,
+      installationTypes: installationCapabilities.installationTypes.filter((_, i) => i !== index)
+    });
+  };
+
+  const addCertification = () => {
+    setInstallationCapabilities({
+      ...installationCapabilities,
+      certifications: [...installationCapabilities.certifications, ""]
+    });
+  };
+
+  const removeCertification = (index: number) => {
+    setInstallationCapabilities({
+      ...installationCapabilities,
+      certifications: installationCapabilities.certifications.filter((_, i) => i !== index)
+    });
+  };
+
+  const addServiceArea = () => {
+    setInstallationCapabilities({
+      ...installationCapabilities,
+      serviceArea: [...installationCapabilities.serviceArea, ""]
+    });
+  };
+
+  const removeServiceArea = (index: number) => {
+    setInstallationCapabilities({
+      ...installationCapabilities,
+      serviceArea: installationCapabilities.serviceArea.filter((_, i) => i !== index)
+    });
+  };
+
+  // Handler for saving changes
+  const handleSave = () => {
+    // Here you would typically make an API call to save the data
+    toast.success('Profile updated successfully!');
+    navigate('/profile');
+  };
 
   return (
-    // screen
-    <div className="w-full p-0 m-0">
-      {/* container */}
-      <div className="w-full flex flex-col items-stretch gap-7 xl:gap-8">
-        {/* block 1 */}
-        <div className="flex flex-col xl:flex-row items-start justify-between gap-3 xl:gap-0">
-          <h2 className="font-bold text-2xl xl:text-4xl mt-0 pt-0 text-base-content dark:text-neutral-200">
-            My Profile
-          </h2>
-          <div className="w-full xl:w-auto grid grid-cols-2 xl:flex gap-3">
+    <div className="w-full">
+      <div className="flex flex-col gap-8">
+        {/* Header Section */}
+        <div className="flex justify-between items-center">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Edit Company Profile</h2>
+          <div className="flex gap-4">
             <button
               onClick={() => navigate('/profile')}
-              className="btn btn-block xl:w-auto dark:btn-neutral"
+              className="btn btn-ghost"
             >
-              Discard Changes
+              Cancel
             </button>
             <button
-              onClick={() => {
-                navigate('/profile');
-                toast('Gabisa diedit dong!', { icon: '😛' });
-              }}
-              className="btn btn-block xl:w-auto btn-primary"
+              onClick={handleSave}
+              className="btn btn-primary gap-2"
             >
+              <MdSave className="text-lg" />
               Save Changes
             </button>
           </div>
         </div>
-        {/* block 2 */}
-        <div className="flex items-center gap-3 xl:gap-8 xl:mb-4">
-          {/* Photo */}
-          <div className="relative inline-flex">
-            <button
-              onClick={handleIconClick}
-              className="btn btn-circle btn-sm xl:btn-md top-0 right-0 absolute z-[1]"
-            >
-              <HiOutlinePencil className="text-xs xl:text-lg" />
-            </button>
-            <div className="avatar">
-              <div className="w-24 xl:w-36 2xl:w-48 rounded-full">
-                <img
-                  src={
-                    preview ||
-                    'https://avatars.githubusercontent.com/u/74099030?v=4'
-                  }
-                  alt="foto-cowok-ganteng"
-                />
-              </div>
-            </div>
-          </div>
-          <input
-            type="file"
-            ref={fileInputRef}
-            className="hidden"
-            onChange={handleFileSelect}
-          />
 
-          {/* Heading */}
-          <div className="flex flex-col items-start gap-1">
-            <h3 className="font-semibold text-xl xl:text-3xl">
-              {firstName} {lastName}
-            </h3>
-            <span className="font-normal text-base">Supervisor</span>
-          </div>
-        </div>
-        {/* block 3 */}
-        <div className="w-full flex flex-col items-stretch gap-3 xl:gap-7">
-          {/* heading */}
-          <div className="flex items-center w-full gap-3 xl:gap-5">
-            <h4 className="font-semibold text-lg xl:text-2xl whitespace-nowrap">
-              Basic Information
-            </h4>
-            <div className="w-full h-[2px] bg-base-300 dark:bg-slate-700 mt-1"></div>
-          </div>
-          {/* grid */}
-          <div className="w-full grid xl:grid-cols-3 gap-3 xl:gap-5 2xl:gap-20 xl:text-base">
-            {/* column 1 */}
-            <div className="w-full flex flex-col sm:grid sm:grid-cols-3 xl:flex xl:flex-col gap-3 xl:gap-5">
-              {/* row 1 */}
-              <div className="w-full grid xl:grid-cols-3 2xl:grid-cols-4 items-center gap-1 xl:gap-0">
-                <div className="w-full whitespace-nowrap">
-                  <span className="whitespace-nowrap">
-                    First Name*
-                  </span>
-                </div>
-                <input
-                  type="text"
-                  placeholder="Type here"
-                  value={firstName}
-                  onChange={(element) =>
-                    setFirstName(element.target.value)
-                  }
-                  className="input input-bordered w-full col-span-2 2xl:col-span-3"
-                />
-              </div>
-              {/* row 2 */}
-              <div className="w-full grid xl:grid-cols-3 2xl:grid-cols-4 items-center gap-1 xl:gap-0">
-                <div className="w-full whitespace-nowrap">
-                  <span className="whitespace-nowrap">
-                    Last Name*
-                  </span>
-                </div>
-                <input
-                  type="text"
-                  placeholder="Type here"
-                  value={lastName}
-                  onChange={(element) =>
-                    setLastName(element.target.value)
-                  }
-                  className="input input-bordered w-full col-span-2 2xl:col-span-3"
-                />
-              </div>
-              {/* row 3 */}
-              <div className="w-full grid xl:grid-cols-3 2xl:grid-cols-4 items-center gap-1 xl:gap-0">
-                <div className="w-full whitespace-nowrap">
-                  <span className="whitespace-nowrap">Nickname</span>
-                </div>
-                <input
-                  type="text"
-                  placeholder="Type here"
-                  value={nickName}
-                  onChange={(element) =>
-                    setNickName(element.target.value)
-                  }
-                  className="input input-bordered w-full col-span-2 2xl:col-span-3"
-                />
-              </div>
+        {/* Company Info Card */}
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-xl p-6 border border-gray-200 dark:border-gray-700 hover:shadow-2xl transition-all duration-300">
+          <div className="flex items-center gap-4 mb-6">
+            <div className="bg-gradient-to-br from-amber-500 to-amber-600 p-4 rounded-xl text-white">
+              <MdBusiness className="text-2xl" />
             </div>
-            {/* column 2 */}
-            <div className="w-full flex flex-col sm:grid sm:grid-cols-2 xl:flex xl:flex-col gap-3 xl:gap-5">
-              {/* row 1 */}
-              <div className="w-full grid xl:grid-cols-3 2xl:grid-cols-4 items-center gap-1 xl:gap-0">
-                <div className="w-full whitespace-nowrap">
-                  <span className="whitespace-nowrap">Email*</span>
-                </div>
-                <input
-                  type="text"
-                  placeholder="Type here"
-                  value={email}
-                  onChange={(element) =>
-                    setEmail(element.target.value)
-                  }
-                  className="input input-bordered w-full col-span-2 2xl:col-span-3"
-                />
-              </div>
-              {/* row 2 */}
-              <div className="w-full grid xl:grid-cols-3 2xl:grid-cols-4 items-center gap-1 xl:gap-0">
-                <div className="w-full whitespace-nowrap">
-                  <span className="whitespace-nowrap">Phone</span>
-                </div>
-                <input
-                  type="text"
-                  placeholder="Type here"
-                  value={phone}
-                  onChange={(element) =>
-                    setPhone(element.target.value)
-                  }
-                  className="input input-bordered w-full col-span-2 2xl:col-span-3"
-                />
-              </div>
-              {/* row 3 */}
-              <div className="w-full grid sm:col-span-full xl:grid-cols-3 2xl:grid-cols-4 xl:items-start gap-1 xl:gap-0">
-                <div className="w-full whitespace-nowrap xl:mt-3">
-                  <span className="whitespace-nowrap">Address</span>
-                </div>
-                <textarea
-                  className="textarea textarea-bordered w-full col-span-2 2xl:col-span-3"
-                  placeholder="Address"
-                  value={address}
-                  onChange={(element) =>
-                    setAddress(element.target.value)
-                  }
-                ></textarea>
-                {/* <input
-                  type="text"
-                  placeholder="Type here"
-                  value={address}
-                  onChange={(element) =>
-                    setAddress(element.target.value)
-                  }
-                  className="input input-bordered w-full col-span-2 2xl:col-span-3"
-                /> */}
-              </div>
+            <h3 className="text-xl font-bold text-gray-900 dark:text-white">Company Information</h3>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text">Company Name</span>
+              </label>
+              <input
+                type="text"
+                value={companyInfo.name}
+                onChange={(e) => setCompanyInfo({...companyInfo, name: e.target.value})}
+                className="input input-bordered"
+                placeholder="Enter company name"
+              />
             </div>
-            {/* column 3 */}
-            <div className="w-full flex flex-col sm:grid sm:grid-cols-3 xl:flex xl:flex-col gap-3 xl:gap-5">
-              {/* row 1 */}
-              <div className="w-full grid xl:grid-cols-3 2xl:grid-cols-4 items-center gap-1 xl:gap-0">
-                <div className="w-full whitespace-nowrap">
-                  <span className="whitespace-nowrap">Password</span>
-                </div>
-                <div className="btn btn-disabled col-span-2">
-                  Change Password
-                </div>
-              </div>
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text">Address</span>
+              </label>
+              <input
+                type="text"
+                value={companyInfo.address}
+                onChange={(e) => setCompanyInfo({...companyInfo, address: e.target.value})}
+                className="input input-bordered"
+                placeholder="Enter address"
+              />
+            </div>
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text">Phone</span>
+              </label>
+              <input
+                type="text"
+                value={companyInfo.phone}
+                onChange={(e) => setCompanyInfo({...companyInfo, phone: e.target.value})}
+                className="input input-bordered"
+                placeholder="Enter phone number"
+              />
+            </div>
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text">Email</span>
+              </label>
+              <input
+                type="email"
+                value={companyInfo.email}
+                onChange={(e) => setCompanyInfo({...companyInfo, email: e.target.value})}
+                className="input input-bordered"
+                placeholder="Enter email"
+              />
             </div>
           </div>
         </div>
-        {/* block 4 */}
-        <div className="w-full flex flex-col items-stretch gap-6 xl:gap-7">
-          {/* heading */}
-          <div className="flex flex-col gap-2">
-            <div className="flex items-center w-full gap-3 xl:gap-5">
-              <h4 className="font-semibold text-lg xl:text-2xl whitespace-nowrap">
-                Account Integrations
-              </h4>
-              <div className="w-full h-[2px] bg-base-300 dark:bg-slate-700 mt-1"></div>
-            </div>
-            <span className="text-sm xl:text-sm text-neutral-400 dark:text-neutral-content">
-              Authorize faster and easier with your external service
-              account.
-            </span>
-          </div>
-          {/* services block */}
-          <div className="grid grid-cols-3 sm:grid-cols-6 xl:grid-cols-3 xl:flex gap-5">
-            {/* column 1 */}
-            <div className="col-span-2 flex flex-col items-start gap-5 xl:w-[240px]">
-              <button
-                onClick={() =>
-                  toast('Gaboleh', {
-                    icon: '😠',
-                  })
-                }
-                className="btn btn-block btn-disabled flex-nowrap justify-start"
-              >
-                <img
-                  className="w-6 opacity-20"
-                  src="/icons8-microsoft.svg"
-                  alt="microsoft"
-                />
-                <span className="text-start whitespace-nowrap text-xs xl:text-sm">
-                  Connect with Microsoft
-                </span>
-              </button>
-              <div className="px-4 gap-2 min-h-12 text-sm font-semibold flex items-center justify-start">
-                <img
-                  className="w-6"
-                  src="/icons8-google.svg"
-                  alt="google"
-                />
-                <span className="text-start whitespace-nowrap text-xs xl:text-sm">
-                  Connected with Google
-                </span>
+
+        {/* Solar Products Section */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Solar Panels */}
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-xl p-6 border border-gray-200 dark:border-gray-700 hover:shadow-2xl transition-all duration-300">
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center gap-4">
+                <div className="bg-gradient-to-br from-amber-500 to-amber-600 p-4 rounded-xl text-white">
+                  <MdSolarPower className="text-2xl" />
+                </div>
+                <h3 className="text-xl font-bold text-gray-900 dark:text-white">Solar Panels</h3>
               </div>
               <button
-                onClick={() =>
-                  toast('Gaboleh', {
-                    icon: '😠',
-                  })
-                }
-                className="btn btn-block btn-disabled justify-start"
+                onClick={addPanel}
+                className="btn btn-circle btn-ghost text-amber-500 hover:text-amber-600"
               >
-                <img
-                  className="dark:hidden w-6 opacity-20"
-                  src="/icons8-apple-black.svg"
-                  alt="apple"
-                />
-                <img
-                  className="hidden dark:block w-6 opacity-20"
-                  src="/icons8-apple-white.svg"
-                  alt="apple"
-                />
-                <span className="text-start whitespace-nowrap text-xs xl:text-sm">
-                  Connect with Apple
-                </span>
+                <HiPlus className="text-xl" />
               </button>
             </div>
-            {/* column 2 */}
-            <div className="col-span-1 flex flex-col items-start gap-5">
-              <button className="btn btn-ghost text-error"></button>
-              <button
-                onClick={() =>
-                  toast('Gaboleh', {
-                    icon: '😠',
-                  })
-                }
-                className="btn btn-ghost btn-disabled text-error text-xs xl:text-sm"
-              >
-                Disconnect
-              </button>
-              <button className="btn btn-ghost text-error"></button>
-            </div>
-          </div>
-        </div>
-        {/* block 5 */}
-        <div className="w-full flex justify-start items-center mt-10">
-          <button
-            className="btn btn-disabled text-error text-xs xl:text-sm"
-            onClick={() => modalDelete.current?.showModal()}
-          >
-            <HiOutlineTrash className="text-lg" />
-            Delete My Account
-          </button>
-          <dialog
-            id="modal_delete"
-            className="modal"
-            ref={modalDelete}
-          >
-            <div className="modal-box">
-              <h3 className="font-bold text-lg dark:text-white">
-                Action Confirmation!
-              </h3>
-              <p className="py-4">
-                Do you want to delete your account?
-              </p>
-              <div className="modal-action mx-0 flex-col items-stretch justify-stretch gap-3">
-                <button
-                  onClick={() =>
-                    toast('Lancang kamu ya!', {
-                      icon: '😠',
-                    })
-                  }
-                  className="btn btn-error btn-block text-base-100 dark:text-white"
-                >
-                  Yes, I want to delete my account
-                </button>
-                <form method="dialog" className="m-0 w-full">
-                  {/* if there is a button in form, it will close the modal */}
-                  <button className="m-0 btn btn-block dark:btn-neutral">
-                    No, I don't think so
+            <div className="space-y-6">
+              {panels.map((panel, index) => (
+                <div key={index} className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 relative">
+                  <button
+                    onClick={() => removePanel(index)}
+                    className="absolute top-2 right-2 btn btn-circle btn-ghost btn-xs text-gray-500"
+                  >
+                    <HiXMark />
                   </button>
-                </form>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="form-control">
+                      <label className="label">
+                        <span className="label-text">Model</span>
+                      </label>
+                      <input
+                        type="text"
+                        value={panel.model}
+                        onChange={(e) => {
+                          const newPanels = [...panels];
+                          newPanels[index].model = e.target.value;
+                          setPanels(newPanels);
+                        }}
+                        className="input input-bordered input-sm"
+                        placeholder="Model name"
+                      />
+                    </div>
+                    <div className="form-control">
+                      <label className="label">
+                        <span className="label-text">Wattage (W)</span>
+                      </label>
+                      <input
+                        type="number"
+                        value={panel.wattage}
+                        onChange={(e) => {
+                          const newPanels = [...panels];
+                          newPanels[index].wattage = Number(e.target.value);
+                          setPanels(newPanels);
+                        }}
+                        className="input input-bordered input-sm"
+                        placeholder="Wattage"
+                      />
+                    </div>
+                    <div className="form-control">
+                      <label className="label">
+                        <span className="label-text">Efficiency (%)</span>
+                      </label>
+                      <input
+                        type="number"
+                        value={panel.efficiency}
+                        onChange={(e) => {
+                          const newPanels = [...panels];
+                          newPanels[index].efficiency = Number(e.target.value);
+                          setPanels(newPanels);
+                        }}
+                        className="input input-bordered input-sm"
+                        placeholder="Efficiency"
+                        step="0.1"
+                      />
+                    </div>
+                    <div className="form-control">
+                      <label className="label">
+                        <span className="label-text">Warranty (years)</span>
+                      </label>
+                      <input
+                        type="number"
+                        value={panel.warranty}
+                        onChange={(e) => {
+                          const newPanels = [...panels];
+                          newPanels[index].warranty = Number(e.target.value);
+                          setPanels(newPanels);
+                        }}
+                        className="input input-bordered input-sm"
+                        placeholder="Warranty"
+                      />
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Inverters */}
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-xl p-6 border border-gray-200 dark:border-gray-700 hover:shadow-2xl transition-all duration-300">
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center gap-4">
+                <div className="bg-gradient-to-br from-amber-500 to-amber-600 p-4 rounded-xl text-white">
+                  <MdPower className="text-2xl" />
+                </div>
+                <h3 className="text-xl font-bold text-gray-900 dark:text-white">Inverters</h3>
+              </div>
+              <button
+                onClick={addInverter}
+                className="btn btn-circle btn-ghost text-amber-500 hover:text-amber-600"
+              >
+                <HiPlus className="text-xl" />
+              </button>
+            </div>
+            <div className="space-y-6">
+              {inverters.map((inverter, index) => (
+                <div key={index} className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 relative">
+                  <button
+                    onClick={() => removeInverter(index)}
+                    className="absolute top-2 right-2 btn btn-circle btn-ghost btn-xs text-gray-500"
+                  >
+                    <HiXMark />
+                  </button>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="form-control">
+                      <label className="label">
+                        <span className="label-text">Model</span>
+                      </label>
+                      <input
+                        type="text"
+                        value={inverter.model}
+                        onChange={(e) => {
+                          const newInverters = [...inverters];
+                          newInverters[index].model = e.target.value;
+                          setInverters(newInverters);
+                        }}
+                        className="input input-bordered input-sm"
+                        placeholder="Model name"
+                      />
+                    </div>
+                    <div className="form-control">
+                      <label className="label">
+                        <span className="label-text">Capacity</span>
+                      </label>
+                      <input
+                        type="text"
+                        value={inverter.capacity}
+                        onChange={(e) => {
+                          const newInverters = [...inverters];
+                          newInverters[index].capacity = e.target.value;
+                          setInverters(newInverters);
+                        }}
+                        className="input input-bordered input-sm"
+                        placeholder="Capacity"
+                      />
+                    </div>
+                    <div className="form-control">
+                      <label className="label">
+                        <span className="label-text">Efficiency (%)</span>
+                      </label>
+                      <input
+                        type="number"
+                        value={inverter.efficiency}
+                        onChange={(e) => {
+                          const newInverters = [...inverters];
+                          newInverters[index].efficiency = Number(e.target.value);
+                          setInverters(newInverters);
+                        }}
+                        className="input input-bordered input-sm"
+                        placeholder="Efficiency"
+                        step="0.1"
+                      />
+                    </div>
+                    <div className="form-control">
+                      <label className="label">
+                        <span className="label-text">Warranty (years)</span>
+                      </label>
+                      <input
+                        type="number"
+                        value={inverter.warranty}
+                        onChange={(e) => {
+                          const newInverters = [...inverters];
+                          newInverters[index].warranty = Number(e.target.value);
+                          setInverters(newInverters);
+                        }}
+                        className="input input-bordered input-sm"
+                        placeholder="Warranty"
+                      />
+                    </div>
+                  </div>
+                  <div className="mt-4">
+                    <label className="label">
+                      <span className="label-text">Features</span>
+                      <button
+                        onClick={() => addFeature(index)}
+                        className="btn btn-ghost btn-xs text-amber-500"
+                      >
+                        <HiPlus className="text-lg" />
+                      </button>
+                    </label>
+                    <div className="flex flex-wrap gap-2">
+                      {inverter.features.map((feature, featureIndex) => (
+                        <div key={featureIndex} className="flex items-center gap-1">
+                          <input
+                            type="text"
+                            value={feature}
+                            onChange={(e) => {
+                              const newInverters = [...inverters];
+                              newInverters[index].features[featureIndex] = e.target.value;
+                              setInverters(newInverters);
+                            }}
+                            className="input input-bordered input-sm"
+                            placeholder="Feature"
+                          />
+                          <button
+                            onClick={() => removeFeature(index, featureIndex)}
+                            className="btn btn-ghost btn-xs text-gray-500"
+                          >
+                            <HiXMark />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Installation Capabilities */}
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-xl p-6 border border-gray-200 dark:border-gray-700 hover:shadow-2xl transition-all duration-300">
+          <div className="flex items-center gap-4 mb-6">
+            <div className="bg-gradient-to-br from-amber-500 to-amber-600 p-4 rounded-xl text-white">
+              <MdOutlineSettings className="text-2xl" />
+            </div>
+            <h3 className="text-xl font-bold text-gray-900 dark:text-white">Installation Capabilities</h3>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text">Max Project Size</span>
+              </label>
+              <input
+                type="text"
+                value={installationCapabilities.maxProjectSize}
+                onChange={(e) => setInstallationCapabilities({
+                  ...installationCapabilities,
+                  maxProjectSize: e.target.value
+                })}
+                className="input input-bordered"
+                placeholder="Max project size"
+              />
+            </div>
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text">Typical Project Range</span>
+              </label>
+              <input
+                type="text"
+                value={installationCapabilities.typicalProjectSize}
+                onChange={(e) => setInstallationCapabilities({
+                  ...installationCapabilities,
+                  typicalProjectSize: e.target.value
+                })}
+                className="input input-bordered"
+                placeholder="Typical project range"
+              />
+            </div>
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text">Installation Types</span>
+                <button
+                  onClick={addInstallationType}
+                  className="btn btn-ghost btn-xs text-amber-500"
+                >
+                  <HiPlus className="text-lg" />
+                </button>
+              </label>
+              <div className="flex flex-wrap gap-2">
+                {installationCapabilities.installationTypes.map((type, index) => (
+                  <div key={index} className="flex items-center gap-1">
+                    <input
+                      type="text"
+                      value={type}
+                      onChange={(e) => {
+                        const newTypes = [...installationCapabilities.installationTypes];
+                        newTypes[index] = e.target.value;
+                        setInstallationCapabilities({
+                          ...installationCapabilities,
+                          installationTypes: newTypes
+                        });
+                      }}
+                      className="input input-bordered input-sm"
+                      placeholder="Installation type"
+                    />
+                    <button
+                      onClick={() => removeInstallationType(index)}
+                      className="btn btn-ghost btn-xs text-gray-500"
+                    >
+                      <HiXMark />
+                    </button>
+                  </div>
+                ))}
               </div>
             </div>
-          </dialog>
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text">Service Areas</span>
+                <button
+                  onClick={addServiceArea}
+                  className="btn btn-ghost btn-xs text-amber-500"
+                >
+                  <HiPlus className="text-lg" />
+                </button>
+              </label>
+              <div className="flex flex-wrap gap-2">
+                {installationCapabilities.serviceArea.map((area, index) => (
+                  <div key={index} className="flex items-center gap-1">
+                    <input
+                      type="text"
+                      value={area}
+                      onChange={(e) => {
+                        const newAreas = [...installationCapabilities.serviceArea];
+                        newAreas[index] = e.target.value;
+                        setInstallationCapabilities({
+                          ...installationCapabilities,
+                          serviceArea: newAreas
+                        });
+                      }}
+                      className="input input-bordered input-sm"
+                      placeholder="Service area"
+                    />
+                    <button
+                      onClick={() => removeServiceArea(index)}
+                      className="btn btn-ghost btn-xs text-gray-500"
+                    >
+                      <HiXMark />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Performance Metrics */}
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-xl p-6 border border-gray-200 dark:border-gray-700 hover:shadow-2xl transition-all duration-300">
+          <div className="flex items-center gap-4 mb-6">
+            <div className="bg-gradient-to-br from-amber-500 to-amber-600 p-4 rounded-xl text-white">
+              <MdBolt className="text-2xl" />
+            </div>
+            <h3 className="text-xl font-bold text-gray-900 dark:text-white">Performance Metrics</h3>
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text">Completed Projects</span>
+              </label>
+              <input
+                type="number"
+                value={performance.completedProjects}
+                onChange={(e) => setPerformance({
+                  ...performance,
+                  completedProjects: Number(e.target.value)
+                })}
+                className="input input-bordered"
+                placeholder="Number of projects"
+              />
+            </div>
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text">Total Capacity</span>
+              </label>
+              <input
+                type="text"
+                value={performance.totalCapacity}
+                onChange={(e) => setPerformance({
+                  ...performance,
+                  totalCapacity: e.target.value
+                })}
+                className="input input-bordered"
+                placeholder="Total capacity"
+              />
+            </div>
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text">Average Efficiency (%)</span>
+              </label>
+              <input
+                type="number"
+                value={performance.averageEfficiency}
+                onChange={(e) => setPerformance({
+                  ...performance,
+                  averageEfficiency: Number(e.target.value)
+                })}
+                className="input input-bordered"
+                placeholder="Average efficiency"
+                step="0.1"
+              />
+            </div>
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text">Customer Satisfaction</span>
+              </label>
+              <input
+                type="number"
+                value={performance.customerSatisfaction}
+                onChange={(e) => setPerformance({
+                  ...performance,
+                  customerSatisfaction: Number(e.target.value)
+                })}
+                className="input input-bordered"
+                placeholder="Customer satisfaction"
+                step="0.1"
+                min="0"
+                max="5"
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Action Buttons */}
+        <div className="flex justify-end gap-4 mt-4">
+          <button
+            onClick={() => navigate('/profile')}
+            className="btn btn-ghost"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={handleSave}
+            className="btn btn-primary gap-2"
+          >
+            <MdSave className="text-lg" />
+            Save Changes
+          </button>
         </div>
       </div>
     </div>

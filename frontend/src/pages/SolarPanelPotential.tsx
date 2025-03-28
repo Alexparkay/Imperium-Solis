@@ -324,10 +324,6 @@ const SolarPanelPotential = () => {
   };
 
   const handleContinue = () => {
-    if (facilities.filter(f => f.solarPotential.calculated).length === 0) {
-      toast.error('Please calculate solar potential for at least one facility before continuing');
-      return;
-    }
     navigate('/email-automation');
   };
 
@@ -357,528 +353,697 @@ const SolarPanelPotential = () => {
 
   if (isLoading) {
     return (
-      <div className="flex justify-center items-center h-64">
-        <div className="loading loading-spinner loading-lg"></div>
+      <div className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-800 flex items-center justify-center relative overflow-hidden">
+        {/* Animated background patterns */}
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute inset-0" 
+            style={{
+              backgroundImage: 'repeating-linear-gradient(45deg, transparent, transparent 20px, #ffffff 20px, #ffffff 22px)',
+              backgroundSize: '30px 30px'
+            }}
+          ></div>
+        </div>
+        
+        {/* Animated gradient orbs */}
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-gradient-to-br from-amber-500/20 to-transparent rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-gradient-to-br from-blue-500/20 to-transparent rounded-full blur-3xl animate-pulse delay-1000"></div>
+        
+        <div className="relative z-10 flex flex-col items-center gap-8">
+          <div className="relative">
+            <div className="absolute inset-0 bg-gradient-to-r from-amber-500 to-amber-600 rounded-full blur-xl opacity-50 animate-pulse"></div>
+            <div className="loading loading-spinner loading-lg text-amber-500 relative"></div>
+          </div>
+          <div className="text-center">
+            <h2 className="text-2xl font-bold text-white mb-2">Loading Analysis</h2>
+            <p className="text-gray-400">Preparing your solar potential report...</p>
+          </div>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="w-full">
-      <div className="flex flex-col gap-6">
-        <div className="flex justify-between items-center">
-          <div className="flex items-center gap-3">
-            <button 
-              onClick={() => navigate('/energy-usage-estimation')}
-              className="btn btn-circle btn-ghost"
-            >
-              <MdArrowBack size={24} />
-            </button>
-            <h1 className="text-2xl font-bold">Solar Panel Potential</h1>
-          </div>
-        </div>
-
-        {isCalculating ? (
-          <div className="card bg-base-100 shadow-lg">
-            <div className="card-body flex flex-col items-center justify-center py-16">
-              <div className="loading loading-spinner loading-lg mb-4"></div>
-              <h3 className="text-xl font-semibold">Calculating Solar Potential</h3>
-              <p className="text-gray-500 mt-2">
-                Our AI is analyzing roof area, sun exposure, and energy requirements to determine optimal solar installation...
-              </p>
-              <div className="w-full max-w-md mt-6">
-                <div className="flex justify-between mb-2">
-                  <span>Analyzing roof geometry</span>
-                  <span>100%</span>
-                </div>
-                <progress className="progress progress-primary w-full" value="100" max="100"></progress>
-                
-                <div className="flex justify-between mb-2 mt-4">
-                  <span>Calculating sun exposure</span>
-                  <span>95%</span>
-                </div>
-                <progress className="progress progress-primary w-full" value="95" max="100"></progress>
-                
-                <div className="flex justify-between mb-2 mt-4">
-                  <span>Determining optimal panel placement</span>
-                  <span>80%</span>
-                </div>
-                <progress className="progress progress-primary w-full" value="80" max="100"></progress>
-                
-                <div className="flex justify-between mb-2 mt-4">
-                  <span>Estimating energy production</span>
-                  <span>60%</span>
-                </div>
-                <progress className="progress progress-primary w-full" value="60" max="100"></progress>
-              </div>
-            </div>
-          </div>
-        ) : (
-          <>
-            {/* Solar Image */}
-            <div className="card bg-base-100 shadow-lg overflow-hidden">
-              <div className="card-body p-0">
-                <div className="relative">
-                  <img 
-                    src="/images/solar/Screenshot.png" 
-                    alt="Solar Potential Map" 
-                    className="w-full h-auto"
-                  />
-                  <div className="absolute top-4 left-4 bg-white dark:bg-gray-800 p-3 rounded-lg shadow-lg">
-                    <h3 className="font-bold text-lg flex items-center gap-2">
-                      <span className="text-primary">IMPERIUM SOLIS</span>
-                      <span className="text-orange-500">☀️</span>
-                    </h3>
-                    <p className="text-sm">Solar Potential Analysis</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Solar Overview */}
-            <div className="card bg-base-100 shadow-lg">
-              <div className="card-body">
-                <h2 className="card-title text-xl flex items-center gap-2">
-                  <div className="text-primary">
-                    <FaSolarPanel size={24} />
-                  </div>
-                  Solar Installation Overview
-                </h2>
-                <p className="text-gray-600">
-                  Based on our analysis of the facility's roof area, sun exposure, and energy requirements, 
-                  we've determined the optimal solar panel installation configuration:
-                </p>
-              </div>
-            </div>
-
-            {/* Solar Stats */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-              <div className="card bg-base-100 shadow-lg">
-                <div className="card-body">
-                  <h3 className="card-title text-lg flex items-center gap-2">
-                    <FaSolarPanel className="text-primary" />
-                    Installation Details
-                  </h3>
-                  <div className="mt-4 space-y-3">
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">Installation Size:</span>
-                      <span className="font-semibold">{solarData.installationSize}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">Panel Count:</span>
-                      <span className="font-semibold">{solarData.panelsCount}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">Panel Capacity:</span>
-                      <span className="font-semibold">{solarData.panelCapacity}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">Installation Cost:</span>
-                      <span className="font-semibold">{solarData.installationCost}</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="card bg-base-100 shadow-lg">
-                <div className="card-body">
-                  <h3 className="card-title text-lg flex items-center gap-2">
-                    <FaMoneyBillWave className="text-green-600" />
-                    Financial Benefits
-                  </h3>
-                  <div className="mt-4 space-y-3">
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">Yearly Savings:</span>
-                      <span className="font-semibold">{solarData.yearlyCost}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">Monthly Average:</span>
-                      <span className="font-semibold">{solarData.monthlyAverage}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">First Year:</span>
-                      <span className="font-semibold">{solarData.firstYear}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">Solar Incentives:</span>
-                      <span className="font-semibold">{solarData.solarIncentives}</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="card bg-base-100 shadow-lg">
-                <div className="card-body">
-                  <h3 className="card-title text-lg flex items-center gap-2">
-                    <MdOutlineWbSunny className="text-yellow-500" />
-                    Solar Potential
-                  </h3>
-                  <div className="mt-4 space-y-3">
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">Roof Area:</span>
-                      <span className="font-semibold">{solarData.roofArea}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">Usable Area:</span>
-                      <span className="font-semibold">{solarData.usableRoofArea}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">Annual Sun Hours:</span>
-                      <span className="font-semibold">{solarData.annualSunHours}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">Energy Covered:</span>
-                      <span className="font-semibold">{solarData.energyCovered}</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="card bg-base-100 shadow-lg">
-                <div className="card-body">
-                  <h3 className="card-title text-lg flex items-center gap-2">
-                    <FaLeaf className="text-green-600" />
-                    Environmental Impact
-                  </h3>
-                  <div className="mt-4 space-y-3">
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">CO2 Reduction:</span>
-                      <span className="font-semibold">{solarData.co2Reduction}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">Tree Equivalent:</span>
-                      <span className="font-semibold">{solarData.treeEquivalent}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">Yearly Energy:</span>
-                      <span className="font-semibold">{solarData.yearlyEnergy}</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Energy Production Chart */}
-            <div className="card bg-base-100 shadow-lg">
-              <div className="card-body">
-                <h3 className="card-title text-lg flex items-center gap-2">
-                  <FaChartLine className="text-primary" />
-                  Monthly Energy Production
-                </h3>
-                <div className="mt-6">
-                  <div className="h-64 w-full">
-                    {/* This would be a bar chart in a real implementation */}
-                    <div className="flex h-48 items-end justify-between">
-                      {['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'].map((month, index) => {
-                        // Generate a realistic solar production curve (higher in summer, lower in winter)
-                        const monthIndex = index + 1;
-                        const normalizedValue = Math.sin((monthIndex / 12) * Math.PI) * 0.5 + 0.5;
-                        const height = 30 + normalizedValue * 70; // Between 30% and 100%
-                        
-                        return (
-                          <div key={month} className="flex flex-col items-center">
-                            <div 
-                              className="w-8 bg-yellow-500 rounded-t-sm" 
-                              style={{ height: `${height}%` }}
-                            ></div>
-                            <div className="mt-2 text-xs">{month}</div>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </div>
-                  <div className="flex justify-between mt-4">
-                    <div className="text-sm text-gray-500">Lowest: 15,500 kWh (Dec)</div>
-                    <div className="text-sm text-gray-500">Highest: 28,000 kWh (Jun)</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* ROI Analysis */}
-            <div className="card bg-base-100 shadow-lg">
-              <div className="card-body">
-                <h3 className="card-title text-lg flex items-center gap-2">
-                  <MdOutlineCalculate className="text-primary" />
-                  Return on Investment Analysis
-                </h3>
-                <div className="mt-6">
-                  <div className="overflow-x-auto">
-                    <table className="table w-full">
-                      <thead>
-                        <tr>
-                          <th>Year</th>
-                          <th>Energy Production</th>
-                          <th>Savings</th>
-                          <th>Cumulative Savings</th>
-                          <th>ROI</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {[1, 2, 3, 4, 5, 10, 15, 20, 25].map(year => {
-                          // Calculate values based on year
-                          const degradation = 1 - (year * 0.005); // 0.5% degradation per year
-                          const production = Math.round(249087 * degradation);
-                          const savings = Math.round(77217 * degradation);
-                          const cumulative = savings * year;
-                          const installationCost = 622500; // 622 panels * 250W * $4/W
-                          const roi = ((cumulative / installationCost) * 100).toFixed(1);
-                          
-                          return (
-                            <tr key={year} className={year === 1 ? "bg-base-200" : ""}>
-                              <td>{year}</td>
-                              <td>{production.toLocaleString()} kWh</td>
-                              <td>${savings.toLocaleString()}</td>
-                              <td>${cumulative.toLocaleString()}</td>
-                              <td>{roi}%</td>
-                            </tr>
-                          );
-                        })}
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Detailed Calculations Section */}
-            <div className="card bg-base-100 shadow-lg">
-              <div className="card-body">
-                <h3 className="card-title text-lg flex items-center gap-2">
-                  <MdOutlineCalculate className="text-primary" />
-                  Detailed Cost Calculations
-                </h3>
-                <div className="mt-6">
-                  <div className="tabs tabs-boxed mb-6">
-                    <a className="tab tab-active">Yearly Energy Costs</a>
-                    <a className="tab">Cost Without Solar</a>
-                    <a className="tab">Cost With Solar</a>
-                    <a className="tab">Total Lifetime Savings</a>
-                    <a className="tab">Break-Even Analysis</a>
-                  </div>
-
-                  {/* Yearly Energy Costs */}
-                  <div className="mb-8">
-                    <h4 className="text-lg font-semibold mb-4">Yearly Energy Costs</h4>
-                    
-                    <div className="bg-base-200 p-4 rounded-lg mb-6">
-                      <h5 className="font-semibold mb-2">INPUTS:</h5>
-                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                        <div className="flex justify-between">
-                          <span className="text-gray-600">Annual Energy Consumption:</span>
-                          <span className="font-semibold">527,869.4 kWh/year</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-gray-600">Local Energy Rate:</span>
-                          <span className="font-semibold">$0.310/kWh</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-gray-600">System Size:</span>
-                          <span className="font-semibold">377.2 kW</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-gray-600">Installation Cost:</span>
-                          <span className="font-semibold">$1,075,020.00</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-gray-600">Cost per Watt:</span>
-                          <span className="font-semibold">$4.00/watt</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-gray-600">Solar Incentives:</span>
-                          <span className="font-semibold">$7,000.00</span>
-                        </div>
-                      </div>
-                    </div>
-                    
-                    <h5 className="font-semibold mb-2">CALCULATION:</h5>
-                    
-                    <div className="mb-6">
-                      <h6 className="font-semibold mb-2">1. Current Annual Energy Cost:</h6>
-                      <div className="pl-4 border-l-2 border-primary">
-                        <div className="flex justify-between mb-1">
-                          <span className="text-gray-600">a. Annual Consumption:</span>
-                          <span>527,869.4 kWh</span>
-                        </div>
-                        <div className="flex justify-between mb-1">
-                          <span className="text-gray-600">b. Energy Rate:</span>
-                          <span>$0.310/kWh</span>
-                        </div>
-                        <div className="flex justify-between font-semibold">
-                          <span className="text-gray-600">c. Annual Cost:</span>
-                          <span>$69,678.76</span>
-                        </div>
-                      </div>
-                    </div>
-                    
-                    <div className="mb-6">
-                      <h6 className="font-semibold mb-2">2. Annual Solar Production:</h6>
-                      <div className="pl-4 border-l-2 border-primary">
-                        <div className="flex justify-between mb-1">
-                          <span className="text-gray-600">a. Monthly Production:</span>
-                          <span>36,281.9 kWh</span>
-                        </div>
-                        <div className="flex justify-between mb-1">
-                          <span className="text-gray-600">b. Annual Production:</span>
-                          <span>435,383.1 kWh</span>
-                        </div>
-                        <div className="flex justify-between font-semibold">
-                          <span className="text-gray-600">c. Production Value:</span>
-                          <span>$134,968.76</span>
-                        </div>
-                      </div>
-                    </div>
-                    
-                    <div className="mb-6">
-                      <h6 className="font-semibold mb-2">3. Remaining Grid Energy:</h6>
-                      <div className="pl-4 border-l-2 border-primary">
-                        <div className="flex justify-between mb-1">
-                          <span className="text-gray-600">a. Annual Consumption:</span>
-                          <span>527,869.4 kWh</span>
-                        </div>
-                        <div className="flex justify-between mb-1">
-                          <span className="text-gray-600">b. Annual Production:</span>
-                          <span>435,383.1 kWh</span>
-                        </div>
-                        <div className="flex justify-between mb-1">
-                          <span className="text-gray-600">c. Remaining Energy:</span>
-                          <span>92,486.3 kWh</span>
-                        </div>
-                        <div className="flex justify-between font-semibold">
-                          <span className="text-gray-600">d. Remaining Cost:</span>
-                          <span>$28,670.75</span>
-                        </div>
-                      </div>
-                    </div>
-                    
-                    <div className="mb-6">
-                      <h6 className="font-semibold mb-2">4. First Year Savings:</h6>
-                      <div className="pl-4 border-l-2 border-primary">
-                        <div className="flex justify-between mb-1">
-                          <span className="text-gray-600">a. Original Annual Cost:</span>
-                          <span>$69,678.76</span>
-                        </div>
-                        <div className="flex justify-between mb-1">
-                          <span className="text-gray-600">b. New Annual Cost:</span>
-                          <span>$28,670.75</span>
-                        </div>
-                        <div className="flex justify-between font-semibold">
-                          <span className="text-gray-600">c. Annual Savings:</span>
-                          <span>$47,892.14</span>
-                        </div>
-                      </div>
-                    </div>
-                    
-                    <div className="mb-6">
-                      <h6 className="font-semibold mb-2">5. Return on Investment (First Year):</h6>
-                      <div className="pl-4 border-l-2 border-primary">
-                        <div className="flex justify-between mb-1">
-                          <span className="text-gray-600">a. Net Installation Cost:</span>
-                          <span>$1,068,020.00</span>
-                        </div>
-                        <div className="flex justify-between font-semibold">
-                          <span className="text-gray-600">b. First Year ROI:</span>
-                          <span>4.48%</span>
-                        </div>
-                      </div>
-                    </div>
-                    
-                    <div className="bg-base-200 p-4 rounded-lg">
-                      <h5 className="font-semibold mb-2">INDUSTRY BENCHMARKS:</h5>
-                      <ul className="list-disc pl-5 space-y-1">
-                        <li>Commercial solar typically yields 5-10% first-year ROI</li>
-                        <li>System production is calculated using conservative estimates</li>
-                        <li>First year has highest production before panel degradation begins</li>
-                      </ul>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Installation Timeline */}
-            <div className="card bg-base-100 shadow-lg">
-              <div className="card-body">
-                <h3 className="card-title text-lg flex items-center gap-2">
-                  <FaRegCalendarAlt className="text-primary" />
-                  Installation Timeline
-                </h3>
-                <div className="mt-6">
-                  <div className="flex flex-col gap-6">
-                    <div className="flex">
-                      <div className="w-24 flex-shrink-0 text-right pr-4 font-semibold">Week 1-2</div>
-                      <div className="flex-1">
-                        <div className="bg-primary text-primary-content p-3 rounded-lg">
-                          <h4 className="font-semibold">Site Assessment & Engineering</h4>
-                          <p className="text-sm">Detailed roof inspection, structural analysis, and system design</p>
-                        </div>
-                      </div>
-                    </div>
-                    
-                    <div className="flex">
-                      <div className="w-24 flex-shrink-0 text-right pr-4 font-semibold">Week 3-4</div>
-                      <div className="flex-1">
-                        <div className="bg-secondary text-secondary-content p-3 rounded-lg">
-                          <h4 className="font-semibold">Permitting & Approvals</h4>
-                          <p className="text-sm">Obtaining necessary permits and utility approvals</p>
-                        </div>
-                      </div>
-                    </div>
-                    
-                    <div className="flex">
-                      <div className="w-24 flex-shrink-0 text-right pr-4 font-semibold">Week 5-7</div>
-                      <div className="flex-1">
-                        <div className="bg-accent text-accent-content p-3 rounded-lg">
-                          <h4 className="font-semibold">Installation</h4>
-                          <p className="text-sm">Mounting system installation, panel placement, and electrical wiring</p>
-                        </div>
-                      </div>
-                    </div>
-                    
-                    <div className="flex">
-                      <div className="w-24 flex-shrink-0 text-right pr-4 font-semibold">Week 8</div>
-                      <div className="flex-1">
-                        <div className="bg-info text-info-content p-3 rounded-lg">
-                          <h4 className="font-semibold">Inspection & Commissioning</h4>
-                          <p className="text-sm">Final inspection, utility connection, and system activation</p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Next Steps */}
-            <div className="card bg-primary text-primary-content">
-              <div className="card-body">
-                <h3 className="card-title text-lg">Next Steps</h3>
-                <p>
-                  Based on our comprehensive analysis, this facility is an excellent candidate for solar installation. 
-                  The next step is to reach out to the facility manager to discuss this opportunity and schedule a site visit.
-                </p>
-                <div className="card-actions justify-end mt-4">
-                  <button 
-                    onClick={handleContinue}
-                    className="btn btn-outline btn-sm"
-                  >
-                    Prepare Outreach Email
-                  </button>
-                </div>
-              </div>
-            </div>
-            
-            <div className="flex justify-center mt-6">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
+      <div className="container mx-auto px-4 py-8">
+        <div className="flex flex-col gap-6">
+          <div className="flex justify-between items-center sticky top-0 z-50 bg-white/80 dark:bg-gray-900/80 py-4 px-6 rounded-xl shadow-lg backdrop-blur-md border border-gray-200/50 dark:border-gray-700/50">
+            <div className="flex items-center gap-3">
               <button 
-                onClick={handleContinue}
-                className="btn btn-primary btn-lg flex items-center gap-2"
+                onClick={() => navigate('/energy-usage-estimation')}
+                className="btn btn-circle btn-ghost hover:bg-amber-500/10 transition-colors"
               >
-                Continue to Email Automation
-                <MdArrowForward size={20} />
+                <MdArrowBack size={24} className="text-amber-500" />
               </button>
+              <h1 className="text-2xl font-bold bg-gradient-to-r from-amber-500 to-amber-600 bg-clip-text text-transparent">
+                Solar Panel Potential
+              </h1>
             </div>
-          </>
-        )}
+          </div>
+
+          {isCalculating ? (
+            <div className="card bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900 shadow-xl border border-gray-100 dark:border-gray-700 relative overflow-hidden">
+              {/* Decorative patterns */}
+              <div className="absolute inset-0 opacity-5">
+                <div className="absolute inset-0" 
+                  style={{
+                    backgroundImage: 'repeating-linear-gradient(45deg, transparent, transparent 20px, #000000 20px, #000000 22px)',
+                    backgroundSize: '30px 30px'
+                  }}
+                ></div>
+              </div>
+              
+              {/* Gradient orbs */}
+              <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-bl from-amber-500/10 to-transparent rounded-bl-full"></div>
+              <div className="absolute bottom-0 left-0 w-64 h-64 bg-gradient-to-tr from-blue-500/10 to-transparent rounded-tr-full"></div>
+              
+              <div className="card-body flex flex-col items-center justify-center py-16 relative z-10">
+                <div className="relative mb-8">
+                  <div className="absolute inset-0 bg-gradient-to-r from-amber-500 to-amber-600 rounded-full blur-xl opacity-50 animate-pulse"></div>
+                  <div className="loading loading-spinner loading-lg text-amber-500 relative"></div>
+                </div>
+                <h3 className="text-2xl font-bold bg-gradient-to-r from-amber-500 to-amber-600 bg-clip-text text-transparent mb-4">
+                  Calculating Solar Potential
+                </h3>
+                <p className="text-gray-600 dark:text-gray-400 text-center max-w-md mb-8">
+                  Our AI is analyzing roof area, sun exposure, and energy requirements to determine optimal solar installation...
+                </p>
+                <div className="w-full max-w-md space-y-6">
+                  <div>
+                    <div className="flex justify-between mb-2">
+                      <span className="text-gray-700 dark:text-gray-300">Analyzing roof geometry</span>
+                      <span className="text-amber-500 font-medium">100%</span>
+                    </div>
+                    <div className="h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+                      <div className="h-full w-full bg-gradient-to-r from-amber-500 to-amber-600 rounded-full"></div>
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <div className="flex justify-between mb-2">
+                      <span className="text-gray-700 dark:text-gray-300">Calculating sun exposure</span>
+                      <span className="text-amber-500 font-medium">95%</span>
+                    </div>
+                    <div className="h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+                      <div className="h-full w-[95%] bg-gradient-to-r from-amber-500 to-amber-600 rounded-full"></div>
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <div className="flex justify-between mb-2">
+                      <span className="text-gray-700 dark:text-gray-300">Determining optimal panel placement</span>
+                      <span className="text-amber-500 font-medium">80%</span>
+                    </div>
+                    <div className="h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+                      <div className="h-full w-[80%] bg-gradient-to-r from-amber-500 to-amber-600 rounded-full"></div>
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <div className="flex justify-between mb-2">
+                      <span className="text-gray-700 dark:text-gray-300">Estimating energy production</span>
+                      <span className="text-amber-500 font-medium">60%</span>
+                    </div>
+                    <div className="h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+                      <div className="h-full w-[60%] bg-gradient-to-r from-amber-500 to-amber-600 rounded-full"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <>
+              {/* Solar Image */}
+              <div className="card bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900 shadow-xl border border-gray-100 dark:border-gray-700 relative overflow-hidden group hover:shadow-2xl transition-all duration-300">
+                {/* Decorative patterns */}
+                <div className="absolute inset-0 opacity-5">
+                  <div className="absolute inset-0" 
+                    style={{
+                      backgroundImage: 'repeating-linear-gradient(45deg, transparent, transparent 20px, #000000 20px, #000000 22px)',
+                      backgroundSize: '30px 30px'
+                    }}
+                  ></div>
+                </div>
+                
+                {/* Gradient orbs */}
+                <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-bl from-amber-500/10 to-transparent rounded-bl-full"></div>
+                <div className="absolute bottom-0 left-0 w-64 h-64 bg-gradient-to-tr from-blue-500/10 to-transparent rounded-tr-full"></div>
+                
+                <div className="card-body p-0 relative z-10">
+                  <div className="relative">
+                    <img 
+                      src="/images/solar/Screenshot.png" 
+                      alt="Solar Potential Map" 
+                      className="w-full h-auto"
+                    />
+                    <div className="absolute top-6 right-6 bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900 px-8 py-3 rounded-xl shadow-xl border border-gray-100 dark:border-gray-700 z-20 w-[295px]">
+                      <div className="flex items-center gap-4">
+                        <div className="bg-gradient-to-br from-amber-500 to-amber-600 p-2 rounded-lg">
+                          <MdSolarPower className="text-lg text-white" />
+                        </div>
+                        <div>
+                          <h3 className="font-bold text-base bg-gradient-to-r from-amber-500 to-amber-600 bg-clip-text text-transparent">IMPERIUM SOLIS</h3>
+                          <p className="text-sm text-gray-600 dark:text-gray-400">Solar Potential Analysis</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Solar Overview */}
+              <div className="card bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900 shadow-xl border border-gray-100 dark:border-gray-700 relative overflow-hidden group hover:shadow-2xl transition-all duration-300">
+                {/* Decorative patterns */}
+                <div className="absolute inset-0 opacity-5">
+                  <div className="absolute inset-0" 
+                    style={{
+                      backgroundImage: 'repeating-linear-gradient(45deg, transparent, transparent 20px, #000000 20px, #000000 22px)',
+                      backgroundSize: '30px 30px'
+                    }}
+                  ></div>
+                </div>
+                
+                {/* Gradient orbs */}
+                <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-bl from-amber-500/10 to-transparent rounded-bl-full"></div>
+                <div className="absolute bottom-0 left-0 w-64 h-64 bg-gradient-to-tr from-blue-500/10 to-transparent rounded-tr-full"></div>
+                
+                <div className="card-body relative z-10">
+                  <div className="flex items-start gap-6">
+                    <div className="bg-gradient-to-br from-amber-500 to-amber-600 p-6 rounded-xl text-white shadow-lg transform group-hover:scale-105 transition-transform duration-300">
+                      <FaSolarPanel size={24} />
+                    </div>
+                    <div>
+                      <h2 className="text-xl font-bold bg-gradient-to-r from-amber-500 to-amber-600 bg-clip-text text-transparent">
+                        Solar Installation Overview
+                      </h2>
+                      <p className="text-gray-600 dark:text-gray-400 mt-3">
+                        Based on our analysis of the facility's roof area, sun exposure, and energy requirements, 
+                        we've determined the optimal solar panel installation configuration:
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Solar Stats Grid */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                {/* Installation Details Card */}
+                <div className="card bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900 shadow-xl border border-gray-100 dark:border-gray-700 relative overflow-hidden group hover:shadow-2xl transition-all duration-300 hover:-translate-y-1">
+                  {/* Decorative patterns */}
+                  <div className="absolute inset-0 opacity-5">
+                    <div className="absolute inset-0" 
+                      style={{
+                        backgroundImage: 'repeating-linear-gradient(45deg, transparent, transparent 20px, #000000 20px, #000000 22px)',
+                        backgroundSize: '30px 30px'
+                      }}
+                    ></div>
+                  </div>
+                  
+                  {/* Gradient orbs */}
+                  <div className="absolute top-0 right-0 w-40 h-40 bg-gradient-to-bl from-amber-500/10 to-transparent rounded-bl-full"></div>
+                  <div className="absolute -bottom-4 -left-4 w-24 h-24 rounded-full bg-blue-500/10 blur-2xl group-hover:bg-blue-500/20 transition-all duration-300"></div>
+                  
+                  <div className="card-body relative z-10">
+                    <div className="bg-gradient-to-br from-amber-500 to-amber-600 w-14 h-14 rounded-xl flex items-center justify-center text-white shadow-lg mb-6 transform group-hover:scale-110 transition-transform duration-300">
+                      <FaSolarPanel className="text-2xl" />
+                    </div>
+                    
+                    <h3 className="text-xl font-bold bg-gradient-to-r from-amber-500 to-amber-600 bg-clip-text text-transparent mb-6">Installation Details</h3>
+                    
+                    <div className="space-y-4">
+                      <div className="flex justify-between items-center py-3 border-b border-gray-100 dark:border-gray-700">
+                        <span className="text-gray-600 dark:text-gray-400">Installation Size</span>
+                        <span className="font-semibold text-gray-900 dark:text-white">{solarData.installationSize}</span>
+                      </div>
+                      <div className="flex justify-between items-center py-3 border-b border-gray-100 dark:border-gray-700">
+                        <span className="text-gray-600 dark:text-gray-400">Panel Count</span>
+                        <span className="font-semibold text-gray-900 dark:text-white">{solarData.panelsCount}</span>
+                      </div>
+                      <div className="flex justify-between items-center py-3 border-b border-gray-100 dark:border-gray-700">
+                        <span className="text-gray-600 dark:text-gray-400">Panel Capacity</span>
+                        <span className="font-semibold text-gray-900 dark:text-white">{solarData.panelCapacity}</span>
+                      </div>
+                      <div className="flex justify-between items-center py-3">
+                        <span className="text-gray-600 dark:text-gray-400">Installation Cost</span>
+                        <span className="font-semibold text-gray-900 dark:text-white">{solarData.installationCost}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Financial Benefits Card */}
+                <div className="card bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900 shadow-xl border border-gray-100 dark:border-gray-700 relative overflow-hidden group hover:shadow-2xl transition-all duration-300 hover:-translate-y-1">
+                  {/* Decorative patterns */}
+                  <div className="absolute inset-0 opacity-5">
+                    <div className="absolute inset-0" 
+                      style={{
+                        backgroundImage: 'repeating-linear-gradient(45deg, transparent, transparent 20px, #000000 20px, #000000 22px)',
+                        backgroundSize: '30px 30px'
+                      }}
+                    ></div>
+                  </div>
+                  
+                  {/* Gradient orbs */}
+                  <div className="absolute top-0 right-0 w-40 h-40 bg-gradient-to-bl from-green-500/10 to-transparent rounded-bl-full"></div>
+                  <div className="absolute -bottom-4 -left-4 w-24 h-24 rounded-full bg-green-500/10 blur-2xl group-hover:bg-green-500/20 transition-all duration-300"></div>
+                  
+                  <div className="card-body relative z-10">
+                    <div className="bg-gradient-to-br from-green-500 to-green-600 w-14 h-14 rounded-xl flex items-center justify-center text-white shadow-lg mb-6 transform group-hover:scale-110 transition-transform duration-300">
+                      <FaMoneyBillWave className="text-2xl" />
+                    </div>
+                    
+                    <h3 className="text-xl font-bold bg-gradient-to-r from-green-500 to-green-600 bg-clip-text text-transparent mb-6">Financial Benefits</h3>
+                    
+                    <div className="space-y-4">
+                      <div className="flex justify-between items-center py-3 border-b border-gray-100 dark:border-gray-700">
+                        <span className="text-gray-600 dark:text-gray-400">Yearly Savings</span>
+                        <span className="font-semibold text-gray-900 dark:text-white">{solarData.yearlyCost}</span>
+                      </div>
+                      <div className="flex justify-between items-center py-3 border-b border-gray-100 dark:border-gray-700">
+                        <span className="text-gray-600 dark:text-gray-400">Monthly Average</span>
+                        <span className="font-semibold text-gray-900 dark:text-white">{solarData.monthlyAverage}</span>
+                      </div>
+                      <div className="flex justify-between items-center py-3 border-b border-gray-100 dark:border-gray-700">
+                        <span className="text-gray-600 dark:text-gray-400">First Year</span>
+                        <span className="font-semibold text-gray-900 dark:text-white">{solarData.firstYear}</span>
+                      </div>
+                      <div className="flex justify-between items-center py-3">
+                        <span className="text-gray-600 dark:text-gray-400">Solar Incentives</span>
+                        <span className="font-semibold text-gray-900 dark:text-white">{solarData.solarIncentives}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Solar Potential Card */}
+                <div className="card bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900 shadow-xl border border-gray-100 dark:border-gray-700 relative overflow-hidden group hover:shadow-2xl transition-all duration-300 hover:-translate-y-1">
+                  {/* Decorative patterns */}
+                  <div className="absolute inset-0 opacity-5">
+                    <div className="absolute inset-0" 
+                      style={{
+                        backgroundImage: 'repeating-linear-gradient(45deg, transparent, transparent 20px, #000000 20px, #000000 22px)',
+                        backgroundSize: '30px 30px'
+                      }}
+                    ></div>
+                  </div>
+                  
+                  {/* Gradient orbs */}
+                  <div className="absolute top-0 right-0 w-40 h-40 bg-gradient-to-bl from-yellow-500/10 to-transparent rounded-bl-full"></div>
+                  <div className="absolute -bottom-4 -left-4 w-24 h-24 rounded-full bg-yellow-500/10 blur-2xl group-hover:bg-yellow-500/20 transition-all duration-300"></div>
+                  
+                  <div className="card-body relative z-10">
+                    <div className="bg-gradient-to-br from-yellow-500 to-yellow-600 w-14 h-14 rounded-xl flex items-center justify-center text-white shadow-lg mb-6 transform group-hover:scale-110 transition-transform duration-300">
+                      <MdOutlineWbSunny className="text-2xl" />
+                    </div>
+                    
+                    <h3 className="text-xl font-bold bg-gradient-to-r from-yellow-500 to-yellow-600 bg-clip-text text-transparent mb-6">Solar Potential</h3>
+                    
+                    <div className="space-y-4">
+                      <div className="flex justify-between items-center py-3 border-b border-gray-100 dark:border-gray-700">
+                        <span className="text-gray-600 dark:text-gray-400">Roof Area</span>
+                        <span className="font-semibold text-gray-900 dark:text-white">{solarData.roofArea}</span>
+                      </div>
+                      <div className="flex justify-between items-center py-3 border-b border-gray-100 dark:border-gray-700">
+                        <span className="text-gray-600 dark:text-gray-400">Usable Area</span>
+                        <span className="font-semibold text-gray-900 dark:text-white">{solarData.usableRoofArea}</span>
+                      </div>
+                      <div className="flex justify-between items-center py-3 border-b border-gray-100 dark:border-gray-700">
+                        <span className="text-gray-600 dark:text-gray-400">Annual Sun Hours</span>
+                        <span className="font-semibold text-gray-900 dark:text-white">{solarData.annualSunHours}</span>
+                      </div>
+                      <div className="flex justify-between items-center py-3">
+                        <span className="text-gray-600 dark:text-gray-400">Energy Covered</span>
+                        <span className="font-semibold text-gray-900 dark:text-white">{solarData.energyCovered}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Environmental Impact Card */}
+                <div className="card bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900 shadow-xl border border-gray-100 dark:border-gray-700 relative overflow-hidden group hover:shadow-2xl transition-all duration-300 hover:-translate-y-1">
+                  {/* Decorative patterns */}
+                  <div className="absolute inset-0 opacity-5">
+                    <div className="absolute inset-0" 
+                      style={{
+                        backgroundImage: 'repeating-linear-gradient(45deg, transparent, transparent 20px, #000000 20px, #000000 22px)',
+                        backgroundSize: '30px 30px'
+                      }}
+                    ></div>
+                  </div>
+                  
+                  {/* Gradient orbs */}
+                  <div className="absolute top-0 right-0 w-40 h-40 bg-gradient-to-bl from-emerald-500/10 to-transparent rounded-bl-full"></div>
+                  <div className="absolute -bottom-4 -left-4 w-24 h-24 rounded-full bg-emerald-500/10 blur-2xl group-hover:bg-emerald-500/20 transition-all duration-300"></div>
+                  
+                  <div className="card-body relative z-10">
+                    <div className="bg-gradient-to-br from-emerald-500 to-emerald-600 w-14 h-14 rounded-xl flex items-center justify-center text-white shadow-lg mb-6 transform group-hover:scale-110 transition-transform duration-300">
+                      <FaLeaf className="text-2xl" />
+                    </div>
+                    
+                    <h3 className="text-xl font-bold bg-gradient-to-r from-emerald-500 to-emerald-600 bg-clip-text text-transparent mb-6">Environmental Impact</h3>
+                    
+                    <div className="space-y-4">
+                      <div className="flex justify-between items-center py-3 border-b border-gray-100 dark:border-gray-700">
+                        <span className="text-gray-600 dark:text-gray-400">CO2 Reduction</span>
+                        <span className="font-semibold text-gray-900 dark:text-white">{solarData.co2Reduction}</span>
+                      </div>
+                      <div className="flex justify-between items-center py-3 border-b border-gray-100 dark:border-gray-700">
+                        <span className="text-gray-600 dark:text-gray-400">Tree Equivalent</span>
+                        <span className="font-semibold text-gray-900 dark:text-white">{solarData.treeEquivalent}</span>
+                      </div>
+                      <div className="flex justify-between items-center py-3 border-b border-gray-100 dark:border-gray-700">
+                        <span className="text-gray-600 dark:text-gray-400">Yearly Energy</span>
+                        <span className="font-semibold text-gray-900 dark:text-white">{solarData.yearlyEnergy}</span>
+                      </div>
+                      <div className="flex justify-between items-center py-3">
+                        <span className="text-gray-600 dark:text-gray-400">Energy Rate</span>
+                        <span className="font-semibold text-gray-900 dark:text-white">{solarData.energyRate}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Energy Production Chart */}
+              <div className="card bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900 shadow-xl border border-gray-100 dark:border-gray-700 relative overflow-hidden group hover:shadow-2xl transition-all duration-300">
+                {/* Decorative patterns */}
+                <div className="absolute inset-0 opacity-5">
+                  <div className="absolute inset-0" 
+                    style={{
+                      backgroundImage: 'repeating-linear-gradient(45deg, transparent, transparent 20px, #000000 20px, #000000 22px)',
+                      backgroundSize: '30px 30px'
+                    }}
+                  ></div>
+                </div>
+                
+                {/* Gradient orbs */}
+                <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-bl from-amber-500/10 to-transparent rounded-bl-full"></div>
+                <div className="absolute bottom-0 left-0 w-64 h-64 bg-gradient-to-tr from-blue-500/10 to-transparent rounded-tr-full"></div>
+                
+                <div className="card-body relative z-10">
+                  <div className="flex items-start gap-6 mb-8">
+                    <div className="bg-gradient-to-br from-amber-500 to-amber-600 p-6 rounded-xl text-white shadow-lg transform group-hover:scale-105 transition-transform duration-300">
+                      <FaChartLine size={24} />
+                    </div>
+                    <div>
+                      <h3 className="text-xl font-bold bg-gradient-to-r from-amber-500 to-amber-600 bg-clip-text text-transparent">
+                        Monthly Energy Production
+                      </h3>
+                      <p className="text-gray-600 dark:text-gray-400 mt-2">
+                        Estimated solar energy production throughout the year
+                      </p>
+                    </div>
+                  </div>
+                  
+                  <div className="mt-6">
+                    <div className="bg-gray-50 dark:bg-gray-800/50 rounded-xl p-6 backdrop-blur-sm">
+                      <div className="relative h-80">
+                        {/* Y-axis labels */}
+                        <div className="absolute left-0 top-0 bottom-10 w-16 flex flex-col justify-between">
+                          {[30000, 25000, 20000, 15000, 10000, 5000, 0].map((value) => (
+                            <div key={value} className="text-xs text-gray-500 dark:text-gray-400 -translate-x-2">
+                              {value.toLocaleString()}
+                            </div>
+                          ))}
+                        </div>
+
+                        {/* Graph area */}
+                        <div className="absolute left-16 right-16 top-0 bottom-0">
+                          {/* Grid lines */}
+                          <div className="absolute inset-0 grid grid-rows-6 gap-0">
+                            {[...Array(7)].map((_, i) => (
+                              <div
+                                key={i}
+                                className="border-t border-gray-200 dark:border-gray-700"
+                              />
+                            ))}
+                          </div>
+
+                          {/* Bars container */}
+                          <div className="absolute inset-0 flex items-end justify-between pb-10">
+                            {['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'].map((month, index) => {
+                              // Generate a realistic solar production curve (higher in summer, lower in winter)
+                              const monthIndex = index + 1;
+                              const normalizedValue = Math.sin((monthIndex / 12) * Math.PI) * 0.5 + 0.5;
+                              const height = 30 + normalizedValue * 70; // Between 30% and 100%
+                              const value = Math.round(30000 * (height / 100));
+                              
+                              return (
+                                <div
+                                  key={month}
+                                  className="relative group"
+                                  style={{ height: '100%', width: `${100 / 12}%` }}
+                                >
+                                  {/* Production bar */}
+                                  <div
+                                    className="absolute bottom-0 left-1/2 w-4 -translate-x-1/2 bg-gradient-to-t from-yellow-500 to-yellow-400 rounded-t-lg transition-all duration-300 group-hover:to-yellow-300"
+                                    style={{ height: `${height}%` }}
+                                  >
+                                    {/* Tooltip */}
+                                    <div className="absolute -top-12 left-1/2 -translate-x-1/2 bg-gray-900 text-white text-xs py-2 px-3 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">
+                                      <div className="font-medium">{value.toLocaleString()} kWh</div>
+                                      <div className="text-gray-300">${(value * 0.31).toLocaleString()}</div>
+                                    </div>
+                                  </div>
+
+                                  {/* Month label */}
+                                  <div className="absolute bottom-0 left-1/2 -translate-x-1/2 -translate-y-6 text-xs font-medium text-gray-600 dark:text-gray-400">
+                                    {month}
+                                  </div>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Stats */}
+                      <div className="grid grid-cols-2 gap-4 mt-6">
+                        <div className="bg-white dark:bg-gray-700/50 rounded-lg p-4 shadow-sm">
+                          <div className="text-sm text-gray-500 dark:text-gray-400">Peak Production</div>
+                          <div className="text-lg font-semibold text-gray-900 dark:text-white">28,000 kWh</div>
+                          <div className="text-xs text-gray-500 dark:text-gray-400">June</div>
+                        </div>
+                        <div className="bg-white dark:bg-gray-700/50 rounded-lg p-4 shadow-sm">
+                          <div className="text-sm text-gray-500 dark:text-gray-400">Lowest Production</div>
+                          <div className="text-lg font-semibold text-gray-900 dark:text-white">15,500 kWh</div>
+                          <div className="text-xs text-gray-500 dark:text-gray-400">December</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* ROI Analysis */}
+              <div className="card bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900 shadow-xl border border-gray-100 dark:border-gray-700 relative overflow-hidden group hover:shadow-2xl transition-all duration-300">
+                {/* Decorative patterns */}
+                <div className="absolute inset-0 opacity-5">
+                  <div className="absolute inset-0" 
+                    style={{
+                      backgroundImage: 'repeating-linear-gradient(45deg, transparent, transparent 20px, #000000 20px, #000000 22px)',
+                      backgroundSize: '30px 30px'
+                    }}
+                  ></div>
+                </div>
+                
+                {/* Gradient orbs */}
+                <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-bl from-amber-500/10 to-transparent rounded-bl-full"></div>
+                <div className="absolute bottom-0 left-0 w-64 h-64 bg-gradient-to-tr from-blue-500/10 to-transparent rounded-tr-full"></div>
+                
+                <div className="card-body relative z-10">
+                  <div className="flex items-start gap-6 mb-8">
+                    <div className="bg-gradient-to-br from-amber-500 to-amber-600 p-6 rounded-xl text-white shadow-lg transform group-hover:scale-105 transition-transform duration-300">
+                      <MdOutlineCalculate size={24} />
+                    </div>
+                    <div>
+                      <h3 className="text-xl font-bold bg-gradient-to-r from-amber-500 to-amber-600 bg-clip-text text-transparent">
+                        Return on Investment Analysis
+                      </h3>
+                      <p className="text-gray-600 dark:text-gray-400 mt-2">
+                        Detailed financial analysis over a 25-year period
+                      </p>
+                    </div>
+                  </div>
+                  
+                  <div className="mt-6">
+                    <div className="bg-gray-50 dark:bg-gray-800/50 rounded-xl p-6 backdrop-blur-sm">
+                      <div className="overflow-x-auto">
+                        <table className="table w-full">
+                          <thead>
+                            <tr>
+                              <th className="bg-transparent">Year</th>
+                              <th className="bg-transparent">Energy Production</th>
+                              <th className="bg-transparent">Savings</th>
+                              <th className="bg-transparent">Cumulative Savings</th>
+                              <th className="bg-transparent">ROI</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {[1, 2, 3, 4, 5, 10, 15, 20, 25].map(year => {
+                              // Calculate values based on year
+                              const degradation = 1 - (year * 0.005); // 0.5% degradation per year
+                              const production = Math.round(249087 * degradation);
+                              const savings = Math.round(77217 * degradation);
+                              const cumulative = savings * year;
+                              const installationCost = 622500; // 622 panels * 250W * $4/W
+                              const roi = ((cumulative / installationCost) * 100).toFixed(1);
+                              
+                              return (
+                                <tr key={year} className={year === 1 ? "bg-white dark:bg-gray-700/50" : ""}>
+                                  <td className="font-medium">{year}</td>
+                                  <td>{production.toLocaleString()} kWh</td>
+                                  <td>${savings.toLocaleString()}</td>
+                                  <td>${cumulative.toLocaleString()}</td>
+                                  <td>{roi}%</td>
+                                </tr>
+                              );
+                            })}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Installation Timeline */}
+              <div className="card bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900 shadow-xl border border-gray-100 dark:border-gray-700 relative overflow-hidden group hover:shadow-2xl transition-all duration-300">
+                {/* Decorative patterns */}
+                <div className="absolute inset-0 opacity-5">
+                  <div className="absolute inset-0" 
+                    style={{
+                      backgroundImage: 'repeating-linear-gradient(45deg, transparent, transparent 20px, #000000 20px, #000000 22px)',
+                      backgroundSize: '30px 30px'
+                    }}
+                  ></div>
+                </div>
+                
+                {/* Gradient orbs */}
+                <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-bl from-amber-500/10 to-transparent rounded-bl-full"></div>
+                <div className="absolute bottom-0 left-0 w-64 h-64 bg-gradient-to-tr from-blue-500/10 to-transparent rounded-tr-full"></div>
+                
+                <div className="card-body relative z-10">
+                  <div className="flex items-start gap-6 mb-8">
+                    <div className="bg-gradient-to-br from-amber-500 to-amber-600 p-6 rounded-xl text-white shadow-lg transform group-hover:scale-105 transition-transform duration-300">
+                      <FaRegCalendarAlt size={24} />
+                    </div>
+                    <div>
+                      <h3 className="text-xl font-bold bg-gradient-to-r from-amber-500 to-amber-600 bg-clip-text text-transparent">
+                        Installation Timeline
+                      </h3>
+                      <p className="text-gray-600 dark:text-gray-400 mt-2">
+                        Estimated timeline for the solar installation process
+                      </p>
+                    </div>
+                  </div>
+                  
+                  <div className="mt-6">
+                    <div className="bg-gray-50 dark:bg-gray-800/50 rounded-xl p-6 backdrop-blur-sm">
+                      <div className="flex flex-col gap-6">
+                        <div className="flex">
+                          <div className="w-24 flex-shrink-0 text-right pr-4 font-semibold">Week 1-2</div>
+                          <div className="flex-1">
+                            <div className="bg-gradient-to-r from-amber-500 to-amber-600 text-white p-4 rounded-xl shadow-lg transform hover:scale-105 transition-transform duration-300">
+                              <h4 className="font-semibold">Site Assessment & Engineering</h4>
+                              <p className="text-sm opacity-90">Detailed roof inspection, structural analysis, and system design</p>
+                            </div>
+                          </div>
+                        </div>
+                        
+                        <div className="flex">
+                          <div className="w-24 flex-shrink-0 text-right pr-4 font-semibold">Week 3-4</div>
+                          <div className="flex-1">
+                            <div className="bg-gradient-to-r from-blue-500 to-blue-600 text-white p-4 rounded-xl shadow-lg transform hover:scale-105 transition-transform duration-300">
+                              <h4 className="font-semibold">Permitting & Approvals</h4>
+                              <p className="text-sm opacity-90">Obtaining necessary permits and utility approvals</p>
+                            </div>
+                          </div>
+                        </div>
+                        
+                        <div className="flex">
+                          <div className="w-24 flex-shrink-0 text-right pr-4 font-semibold">Week 5-7</div>
+                          <div className="flex-1">
+                            <div className="bg-gradient-to-r from-green-500 to-green-600 text-white p-4 rounded-xl shadow-lg transform hover:scale-105 transition-transform duration-300">
+                              <h4 className="font-semibold">Installation</h4>
+                              <p className="text-sm opacity-90">Mounting system installation, panel placement, and electrical wiring</p>
+                            </div>
+                          </div>
+                        </div>
+                        
+                        <div className="flex">
+                          <div className="w-24 flex-shrink-0 text-right pr-4 font-semibold">Week 8</div>
+                          <div className="flex-1">
+                            <div className="bg-gradient-to-r from-purple-500 to-purple-600 text-white p-4 rounded-xl shadow-lg transform hover:scale-105 transition-transform duration-300">
+                              <h4 className="font-semibold">Inspection & Commissioning</h4>
+                              <p className="text-sm opacity-90">Final inspection, utility connection, and system activation</p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Next Steps */}
+              <div className="card bg-gradient-to-br from-amber-500 to-amber-600 shadow-xl relative overflow-hidden group hover:shadow-2xl transition-all duration-300">
+                {/* Decorative patterns */}
+                <div className="absolute inset-0 opacity-10">
+                  <div className="absolute inset-0" 
+                    style={{
+                      backgroundImage: 'repeating-linear-gradient(45deg, transparent, transparent 20px, #ffffff 20px, #ffffff 22px)',
+                      backgroundSize: '30px 30px'
+                    }}
+                  ></div>
+                </div>
+                
+                {/* Gradient orbs */}
+                <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-bl from-white/10 to-transparent rounded-bl-full"></div>
+                <div className="absolute bottom-0 left-0 w-64 h-64 bg-gradient-to-tr from-black/10 to-transparent rounded-tr-full"></div>
+                
+                <div className="card-body relative z-10">
+                  <div className="flex items-start gap-6 mb-8">
+                    <div className="bg-white/10 p-6 rounded-xl text-white shadow-lg backdrop-blur-sm transform group-hover:scale-105 transition-transform duration-300">
+                      <FaSolarPanel size={24} />
+                    </div>
+                    <div>
+                      <h3 className="text-2xl font-bold text-white mb-4">Next Steps</h3>
+                      <p className="text-white/90 text-lg leading-relaxed">
+                        Based on our comprehensive analysis, this facility is an excellent candidate for solar installation. 
+                        The next step is to reach out to the facility manager to discuss this opportunity and schedule a site visit.
+                      </p>
+                    </div>
+                  </div>
+                  
+                  <div className="flex justify-end gap-4">
+                    <button className="px-6 py-3 rounded-xl bg-white/10 hover:bg-white/20 text-white font-medium transition-all backdrop-blur-sm transform hover:scale-105">
+                      Contact Facility Manager
+                    </button>
+                    <button className="px-6 py-3 rounded-xl bg-white hover:bg-gray-50 text-amber-600 font-medium transition-all shadow-lg hover:shadow-xl transform hover:scale-105">
+                      Generate Proposal
+                    </button>
+                  </div>
+                </div>
+              </div>
+              
+              {/* Continue Button */}
+              <div className="flex justify-center mt-8">
+                <button 
+                  onClick={handleContinue}
+                  className="relative group overflow-hidden"
+                >
+                  <div className="relative z-10 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white py-4 px-8 rounded-xl font-medium transition-all shadow-xl hover:shadow-2xl hover:-translate-y-1 inline-flex items-center gap-3">
+                    <span className="text-lg">Continue to Email Automation</span>
+                    <MdArrowForward className="text-2xl group-hover:translate-x-1 transition-transform duration-300" />
+                  </div>
+                  
+                  {/* Button decoration */}
+                  <div className="absolute inset-0 bg-gradient-to-r from-amber-400 to-amber-500 blur-xl opacity-50 group-hover:opacity-75 transition-opacity duration-300"></div>
+                </button>
+              </div>
+            </>
+          )}
+        </div>
       </div>
     </div>
   );
