@@ -499,6 +499,117 @@ const Home = () => {
         </div>
       </div>
 
+      {/* Process Flow Section */}
+      <div className="mb-12">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {/* Step 1: Lead Identification */}
+          <div className="rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-500 hover:-translate-y-1 relative overflow-hidden group border border-sky-400/20"
+            style={{
+              background: 'linear-gradient(135deg, #0ea5e9, #0284c7, #0c4a6e)'
+            }}
+          >
+            {/* Decorative elements */}
+            <div className="absolute -top-16 -right-16 w-32 h-32 bg-gradient-to-br from-cyan-400/30 to-sky-600/0 rounded-full blur-2xl transform rotate-12 group-hover:rotate-45 transition-transform duration-700"></div>
+            <div className="absolute -bottom-16 -left-16 w-32 h-32 bg-gradient-to-tl from-sky-400/20 to-cyan-500/0 rounded-full blur-2xl transform -rotate-12 group-hover:-rotate-45 transition-transform duration-700"></div>
+            
+            <div className="relative z-10">
+              <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-cyan-400 to-sky-500 p-[2px] mb-6 shadow-lg group-hover:shadow-sky-500/25 transition-shadow duration-500">
+                <div className="w-full h-full rounded-2xl bg-gradient-to-br from-cyan-400 to-sky-500 flex items-center justify-center text-white text-2xl font-bold">
+                  1
+                </div>
+              </div>
+              
+              <h3 className="text-2xl font-bold text-white mb-4 group-hover:text-sky-100 transition-colors duration-300">Lead Identification</h3>
+              <p className="text-sky-100 text-base leading-relaxed mb-6">
+                Identify and qualify potential leads through our extensive database of commercial facilities, filtering for optimal solar potential.
+              </p>
+              
+              <div className="flex items-center gap-3 text-cyan-300 font-medium group-hover:translate-x-2 transition-transform duration-300">
+                <MdOutlineAnalytics className="text-xl" />
+                <span className="text-base">Data-Driven Selection</span>
+                <MdArrowForward className="text-lg opacity-0 group-hover:opacity-100 group-hover:translate-x-2 transition-all duration-300" />
+              </div>
+            </div>
+          </div>
+
+          {/* Step 2: Lead Enrichment */}
+          <div className="rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-500 hover:-translate-y-1 relative overflow-hidden group border border-blue-400/20"
+            style={{
+              background: 'linear-gradient(135deg, #0369a1, #1e40af, #1e3a8a)'
+            }}
+          >
+            {/* Grid pattern overlay */}
+            <div className="absolute inset-0 opacity-[0.07]" 
+              style={{
+                backgroundImage: 'repeating-linear-gradient(45deg, transparent, transparent 20px, #38bdf8 20px, #38bdf8 21px), repeating-linear-gradient(135deg, transparent, transparent 20px, #38bdf8 20px, #38bdf8 21px)',
+                backgroundSize: '30px 30px'
+              }}
+            ></div>
+            
+            {/* Decorative elements */}
+            <div className="absolute -top-16 -right-16 w-32 h-32 bg-gradient-to-br from-sky-400/30 to-blue-600/0 rounded-full blur-2xl transform rotate-12 group-hover:rotate-45 transition-transform duration-700"></div>
+            <div className="absolute -bottom-16 -left-16 w-32 h-32 bg-gradient-to-tl from-blue-400/20 to-sky-500/0 rounded-full blur-2xl transform -rotate-12 group-hover:-rotate-45 transition-transform duration-700"></div>
+            
+            <div className="relative z-10">
+              <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-sky-400 to-blue-600 p-[2px] mb-6 shadow-lg group-hover:shadow-blue-500/25 transition-shadow duration-500">
+                <div className="w-full h-full rounded-2xl bg-gradient-to-br from-sky-400 to-blue-600 flex items-center justify-center text-white text-2xl font-bold">
+                  2
+                </div>
+              </div>
+              
+              <h3 className="text-2xl font-bold text-white mb-4 group-hover:text-sky-100 transition-colors duration-300">Lead Enrichment</h3>
+              <p className="text-sky-100 text-base leading-relaxed mb-6">
+                Enrich leads with detailed facility specifications, energy consumption patterns, and solar potential analysis tailored to solar company requirements.
+              </p>
+              
+              <div className="flex items-center gap-3 text-sky-300 font-medium group-hover:translate-x-2 transition-transform duration-300">
+                <MdOutlineLightbulb className="text-xl" />
+                <span className="text-base">Smart Analysis</span>
+                <MdArrowForward className="text-lg opacity-0 group-hover:opacity-100 group-hover:translate-x-2 transition-all duration-300" />
+              </div>
+            </div>
+          </div>
+
+          {/* Step 3: Personalized Outreach */}
+          <div className="rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-500 hover:-translate-y-1 relative overflow-hidden group border border-indigo-400/20"
+            style={{
+              background: 'linear-gradient(135deg, #1e40af, #1e3a8a, #172554)'
+            }}
+          >
+            {/* Grid pattern overlay */}
+            <div className="absolute inset-0 opacity-[0.07]" 
+              style={{
+                backgroundImage: 'repeating-linear-gradient(-45deg, transparent, transparent 20px, #38bdf8 20px, #38bdf8 21px), repeating-linear-gradient(-135deg, transparent, transparent 20px, #38bdf8 20px, #38bdf8 21px)',
+                backgroundSize: '30px 30px'
+              }}
+            ></div>
+            
+            {/* Decorative elements */}
+            <div className="absolute -top-16 -right-16 w-32 h-32 bg-gradient-to-br from-blue-400/30 to-indigo-600/0 rounded-full blur-2xl transform rotate-12 group-hover:rotate-45 transition-transform duration-700"></div>
+            <div className="absolute -bottom-16 -left-16 w-32 h-32 bg-gradient-to-tl from-indigo-400/20 to-blue-500/0 rounded-full blur-2xl transform -rotate-12 group-hover:-rotate-45 transition-transform duration-700"></div>
+            
+            <div className="relative z-10">
+              <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 p-[2px] mb-6 shadow-lg group-hover:shadow-indigo-500/25 transition-shadow duration-500">
+                <div className="w-full h-full rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white text-2xl font-bold">
+                  3
+                </div>
+              </div>
+              
+              <h3 className="text-2xl font-bold text-white mb-4 group-hover:text-sky-100 transition-colors duration-300">Personalized Outreach</h3>
+              <p className="text-sky-100 text-base leading-relaxed mb-6">
+                Engage leads with hyper-personalized communication strategies based on facility-specific data and solar potential insights.
+              </p>
+              
+              <div className="flex items-center gap-3 text-sky-300 font-medium group-hover:translate-x-2 transition-transform duration-300">
+                <MdOutlineEmail className="text-xl" />
+                <span className="text-base">Smart Engagement</span>
+                <MdArrowForward className="text-lg opacity-0 group-hover:opacity-100 group-hover:translate-x-2 transition-all duration-300" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* Stats Overview */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-5 mb-8">
         <StatsCard 

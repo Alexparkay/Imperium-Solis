@@ -222,10 +222,10 @@ const Pricing = () => {
           features={[
             "Access to the Energy Cost Calculator for up to 100 facilities",
             "Enhanced data entry options",
-            "Basic customer database access",
-            "Standard reporting and exports"
+            "Basic reporting and exports",
+            "Data enrichment capabilities"
           ]}
-          credits="300 credits per month for data enrichment"
+          credits="1,000 credits per month for data enrichment"
           gradientFrom="from-green-500"
           gradientTo="to-green-600"
           isAnnual={isAnnual}
@@ -234,16 +234,17 @@ const Pricing = () => {
 
         <PricingCard 
           title="Basic"
-          monthlyPrice={679}
+          monthlyPrice={579}
           description="Great for small businesses"
           icon={MdStar}
           features={[
             "Full access to the customer database",
             "Enhanced Energy Cost Calculator functionalities",
             "Limited outreach (1 sequence/month)",
-            "Ability to export data reports"
+            "Ability to export data reports",
+            "Advanced data enrichment"
           ]}
-          credits="1,000 credits per month for data enrichment and analysis"
+          credits="3,000 credits per month for data enrichment and analysis"
           gradientFrom="from-blue-500"
           gradientTo="to-blue-600"
           isAnnual={isAnnual}
@@ -260,9 +261,11 @@ const Pricing = () => {
             "All features of the Basic plan",
             "Automated, hyper-personalized outreach capabilities",
             "Advanced analytics and reporting tools",
-            "Priority support and training"
+            "Priority support and training",
+            "Full database access",
+            "Unlimited outreach sequences"
           ]}
-          credits="2,500 credits per month for comprehensive usage, including outreach"
+          credits="7,500 credits per month for comprehensive usage"
           gradientFrom="from-amber-500"
           gradientTo="to-amber-600"
           isAnnual={isAnnual}
@@ -357,11 +360,11 @@ const Pricing = () => {
               </tr>
               <tr>
                 <td className="py-4 px-4 text-gray-900 dark:text-white">Customer Database Access</td>
-                <td className="text-center py-4 px-4">Limited (20)</td>
-                <td className="text-center py-4 px-4">Limited (300)</td>
-                <td className="text-center py-4 px-4">Full (1,000)</td>
-                <td className="text-center py-4 px-4">Full (2,500)</td>
-                <td className="text-center py-4 px-4">Unlimited</td>
+                <td className="text-center py-4 px-4">-</td>
+                <td className="text-center py-4 px-4">-</td>
+                <td className="text-center py-4 px-4">Full Access</td>
+                <td className="text-center py-4 px-4">Full Access</td>
+                <td className="text-center py-4 px-4">Full Access</td>
               </tr>
               <tr>
                 <td className="py-4 px-4 text-gray-900 dark:text-white">Data Export</td>
@@ -376,7 +379,7 @@ const Pricing = () => {
                 <td className="text-center py-4 px-4">-</td>
                 <td className="text-center py-4 px-4">-</td>
                 <td className="text-center py-4 px-4">Limited (1/mo)</td>
-                <td className="text-center py-4 px-4">Full (2,500/mo)</td>
+                <td className="text-center py-4 px-4">Unlimited</td>
                 <td className="text-center py-4 px-4">Custom</td>
               </tr>
               <tr>
@@ -406,9 +409,9 @@ const Pricing = () => {
               <tr>
                 <td className="py-4 px-4 text-gray-900 dark:text-white">Monthly Credits</td>
                 <td className="text-center py-4 px-4">20</td>
-                <td className="text-center py-4 px-4">300</td>
                 <td className="text-center py-4 px-4">1,000</td>
-                <td className="text-center py-4 px-4">2,500</td>
+                <td className="text-center py-4 px-4">3,000</td>
+                <td className="text-center py-4 px-4">7,500</td>
                 <td className="text-center py-4 px-4">10,000+</td>
               </tr>
             </tbody>

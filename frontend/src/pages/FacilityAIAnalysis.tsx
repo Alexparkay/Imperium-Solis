@@ -626,54 +626,82 @@ const FacilityAIAnalysis = () => {
                     <h3 className="text-3xl font-bold bg-gradient-to-r from-blue-500 to-blue-600 bg-clip-text text-transparent">Financial Projection</h3>
                     <p className="text-gray-600 dark:text-gray-400 mt-2">25-year cost analysis and break-even point</p>
                   </div>
-                  <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-6">
                     <div className="flex items-center gap-2">
-                      <div className="w-4 h-4 bg-red-500 rounded-full"></div>
+                      <div className="w-4 h-4 bg-gradient-to-r from-red-500 to-red-600 rounded-full"></div>
                       <span className="text-sm text-gray-600 dark:text-gray-400">Without Solar</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <div className="w-4 h-4 bg-green-500 rounded-full"></div>
+                      <div className="w-4 h-4 bg-gradient-to-r from-green-500 to-green-600 rounded-full"></div>
                       <span className="text-sm text-gray-600 dark:text-gray-400">With Solar</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <div className="w-4 h-4 bg-blue-500 rounded-full"></div>
+                      <div className="w-4 h-4 bg-gradient-to-r from-blue-500 to-blue-600 rounded-full"></div>
                       <span className="text-sm text-gray-600 dark:text-gray-400">Break-Even Point</span>
                     </div>
                   </div>
                 </div>
 
                 {/* Interactive Graph */}
-                <div className="relative h-[500px] w-full bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg">
+                <div className="relative h-[600px] w-full bg-gradient-to-br from-gray-50/50 to-white/30 dark:from-gray-700/50 dark:to-gray-800/30 rounded-xl p-8 shadow-lg backdrop-blur-sm border border-gray-200/10 dark:border-gray-700/10">
                   {/* Graph Background Grid */}
-                  <div className="absolute inset-0 flex flex-col justify-between p-6">
-                    {[...Array(5)].map((_, i) => (
-                      <div key={i} className="h-px bg-gray-200 dark:bg-gray-700"></div>
+                  <div className="absolute inset-0 flex flex-col justify-between p-8">
+                    {[...Array(10)].map((_, i) => (
+                      <div key={i} className="h-px bg-gray-200/50 dark:bg-gray-700/50 backdrop-blur-sm"></div>
                     ))}
                   </div>
-                  <div className="absolute inset-0 flex justify-between p-6">
-                    {[...Array(6)].map((_, i) => (
-                      <div key={i} className="w-px bg-gray-200 dark:bg-gray-700"></div>
+                  <div className="absolute inset-0 flex justify-between p-8">
+                    {[...Array(25)].map((_, i) => (
+                      <div key={i} className="w-px bg-gray-200/50 dark:bg-gray-700/50 backdrop-blur-sm"></div>
                     ))}
                   </div>
 
                   {/* Graph Lines */}
-                  <svg className="absolute inset-0 w-full h-full p-6">
+                  <svg className="absolute inset-0 w-full h-full p-8">
+                    {/* Without Solar Line - More detailed curve */}
+                    <defs>
+                      <linearGradient id="redGradient" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stopColor="#EF4444" stopOpacity="0.2" />
+                        <stop offset="100%" stopColor="#EF4444" stopOpacity="0" />
+                      </linearGradient>
+                      <linearGradient id="greenGradient" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stopColor="#22C55E" stopOpacity="0.2" />
+                        <stop offset="100%" stopColor="#22C55E" stopOpacity="0" />
+                      </linearGradient>
+                    </defs>
+                    
+                    {/* Area under Without Solar curve */}
+                    <path
+                      d="M 0 400 C 100 380, 200 360, 300 340 C 400 320, 500 300, 600 280 L 600 500 L 0 500 Z"
+                      fill="url(#redGradient)"
+                      className="animate-draw"
+                    />
+                    
                     {/* Without Solar Line */}
                     <path
-                      d="M 0 350 L 100 320 L 200 290 L 300 260 L 400 230 L 500 200 L 600 170"
-                      stroke="#EF4444"
-                      strokeWidth="2"
+                      d="M 0 400 C 100 380, 200 360, 300 340 C 400 320, 500 300, 600 280"
+                      stroke="url(#redGradient)"
+                      strokeWidth="3"
                       fill="none"
+                      className="animate-draw"
+                      filter="drop-shadow(0 0 6px rgba(239, 68, 68, 0.3))"
+                    />
+                    
+                    {/* Area under With Solar curve */}
+                    <path
+                      d="M 0 450 C 100 440, 200 420, 300 380 C 400 340, 500 320, 600 300 L 600 500 L 0 500 Z"
+                      fill="url(#greenGradient)"
                       className="animate-draw"
                     />
                     
                     {/* With Solar Line */}
                     <path
-                      d="M 0 400 L 100 380 L 200 360 L 300 340 L 400 320 L 500 300 L 600 280"
-                      stroke="#22C55E"
-                      strokeWidth="2"
+                      d="M 0 450 C 100 440, 200 420, 300 380 C 400 340, 500 320, 600 300"
+                      stroke="url(#greenGradient)"
+                      strokeWidth="3"
                       fill="none"
                       className="animate-draw"
+                      filter="drop-shadow(0 0 6px rgba(34, 197, 94, 0.3))"
                     />
                     
                     {/* Break-Even Point Line */}
@@ -681,69 +709,145 @@ const FacilityAIAnalysis = () => {
                       x1="350"
                       y1="0"
                       x2="350"
-                      y2="400"
+                      y2="500"
                       stroke="#3B82F6"
                       strokeWidth="2"
-                      strokeDasharray="5,5"
-                    />
-                    
-                    {/* Break-Even Point Circle */}
-                    <circle
-                      cx="350"
-                      cy="330"
-                      r="6"
-                      fill="#3B82F6"
+                      strokeDasharray="6,6"
                       className="animate-pulse"
                     />
+                    
+                    {/* Break-Even Point Marker */}
+                    <g transform="translate(350, 360)" className="animate-pulse">
+                      <circle
+                        r="8"
+                        fill="#3B82F6"
+                        className="animate-ping"
+                        opacity="0.2"
+                      />
+                      <circle
+                        r="6"
+                        fill="#3B82F6"
+                        filter="drop-shadow(0 0 6px rgba(59, 130, 246, 0.5))"
+                      />
+                    </g>
+
+                    {/* Data Points - Without Solar */}
+                    {[0, 5, 10, 15, 20, 25].map((year, i) => (
+                      <g key={`without-${i}`} transform={`translate(${i * 120}, ${400 - i * 24})`} className="group">
+                        <circle
+                          r="4"
+                          fill="#EF4444"
+                          className="transition-all duration-300 hover:r-6"
+                          filter="drop-shadow(0 0 4px rgba(239, 68, 68, 0.3))"
+                        />
+                        <text
+                          x="0"
+                          y="-10"
+                          textAnchor="middle"
+                          className="text-xs fill-gray-600 dark:fill-gray-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                        >
+                          ${(61305.29 + i * 12000).toLocaleString()}
+                        </text>
+                      </g>
+                    ))}
+
+                    {/* Data Points - With Solar */}
+                    {[0, 5, 10, 15, 20, 25].map((year, i) => (
+                      <g key={`with-${i}`} transform={`translate(${i * 120}, ${450 - i * 30})`} className="group">
+                        <circle
+                          r="4"
+                          fill="#22C55E"
+                          className="transition-all duration-300 hover:r-6"
+                          filter="drop-shadow(0 0 4px rgba(34, 197, 94, 0.3))"
+                        />
+                        <text
+                          x="0"
+                          y="20"
+                          textAnchor="middle"
+                          className="text-xs fill-gray-600 dark:fill-gray-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                        >
+                          ${(615718.36 - i * 24000).toLocaleString()}
+                        </text>
+                      </g>
+                    ))}
                   </svg>
 
                   {/* Year Labels */}
-                  <div className="absolute bottom-0 left-0 right-0 flex justify-between px-6 pb-2">
+                  <div className="absolute bottom-0 left-0 right-0 flex justify-between px-8">
                     {[0, 5, 10, 15, 20, 25].map((year) => (
-                      <span key={year} className="text-sm text-gray-600 dark:text-gray-400">
-                        Year {year}
-                      </span>
+                      <div key={year} className="flex flex-col items-center">
+                        <span className="text-sm font-medium text-gray-600 dark:text-gray-400 bg-gray-50/50 dark:bg-gray-800/50 px-2 py-1 rounded backdrop-blur-sm">
+                          Year {year}
+                        </span>
+                      </div>
                     ))}
                   </div>
 
                   {/* Cost Labels */}
-                  <div className="absolute left-0 top-0 flex flex-col justify-between h-full pl-2 pt-6 pb-6">
-                    {['$800K', '$600K', '$400K', '$200K', '$0'].map((cost) => (
-                      <span key={cost} className="text-sm text-gray-600 dark:text-gray-400">
+                  <div className="absolute left-0 top-0 bottom-0 flex flex-col justify-between py-8 pl-2">
+                    {['$800K', '$700K', '$600K', '$500K', '$400K', '$300K', '$200K', '$100K', '$0'].map((cost) => (
+                      <span key={cost} className="text-sm font-medium text-gray-600 dark:text-gray-400 bg-gray-50/50 dark:bg-gray-800/50 px-2 py-1 rounded backdrop-blur-sm">
                         {cost}
                       </span>
                     ))}
                   </div>
 
-                  {/* Interactive Tooltip */}
-                  <div className="absolute bg-white dark:bg-gray-800 rounded-lg shadow-xl p-4 border border-gray-200 dark:border-gray-700 hidden group-hover:block">
-                    <div className="text-sm">
-                      <div className="font-bold text-gray-900 dark:text-white">Year 7.5</div>
-                      <div className="text-gray-600 dark:text-gray-400">Break-Even Point</div>
+                  {/* Break-Even Point Tooltip */}
+                  <div className="absolute left-[350px] top-[360px] transform -translate-x-1/2 -translate-y-full">
+                    <div className="bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900 rounded-lg shadow-xl p-4 border border-gray-200/10 dark:border-gray-700/10 backdrop-blur-sm">
+                      <div className="text-sm space-y-1">
+                        <div className="font-bold bg-gradient-to-r from-blue-500 to-blue-600 bg-clip-text text-transparent">Break-Even Point</div>
+                        <div className="text-gray-600 dark:text-gray-400">Year 7.5</div>
+                        <div className="text-gray-500 dark:text-gray-500 text-xs">Total Investment Recovered</div>
+                      </div>
                     </div>
                   </div>
                 </div>
 
                 {/* Cost Breakdown Cards */}
                 <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
-                  <div className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl p-6 shadow-xl">
-                    <div className="text-white">
+                  <div className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl p-6 shadow-xl text-white relative overflow-hidden group hover:shadow-2xl transition-all duration-300">
+                    <div className="absolute inset-0 opacity-10">
+                      <div className="absolute inset-0" 
+                        style={{
+                          backgroundImage: 'repeating-linear-gradient(45deg, transparent, transparent 20px, #ffffff 20px, #ffffff 22px)',
+                          backgroundSize: '30px 30px'
+                        }}
+                      ></div>
+                    </div>
+                    <div className="relative z-10">
                       <h4 className="text-xl font-bold mb-2">Break-Even Point</h4>
                       <div className="text-4xl font-bold mb-2">7.5 Years</div>
                       <p className="text-blue-100 text-sm">Time until solar investment pays off</p>
                     </div>
                   </div>
 
-                  <div className="bg-gradient-to-br from-green-500 to-green-600 rounded-xl p-6 shadow-xl">
-                    <div className="text-white">
+                  <div className="bg-gradient-to-br from-green-500 to-green-600 rounded-xl p-6 shadow-xl text-white relative overflow-hidden group hover:shadow-2xl transition-all duration-300">
+                    <div className="absolute inset-0 opacity-10">
+                      <div className="absolute inset-0" 
+                        style={{
+                          backgroundImage: 'repeating-linear-gradient(45deg, transparent, transparent 20px, #ffffff 20px, #ffffff 22px)',
+                          backgroundSize: '30px 30px'
+                        }}
+                      ></div>
+                    </div>
+                    <div className="relative z-10">
                       <h4 className="text-xl font-bold mb-2">Total Savings</h4>
                       <div className="text-4xl font-bold mb-2">$554,413</div>
                       <p className="text-green-100 text-sm">25-year projected savings</p>
                     </div>
                   </div>
 
-                  <div className="bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl p-6 shadow-xl">
-                    <div className="text-white">
+                  <div className="bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl p-6 shadow-xl text-white relative overflow-hidden group hover:shadow-2xl transition-all duration-300">
+                    <div className="absolute inset-0 opacity-10">
+                      <div className="absolute inset-0" 
+                        style={{
+                          backgroundImage: 'repeating-linear-gradient(45deg, transparent, transparent 20px, #ffffff 20px, #ffffff 22px)',
+                          backgroundSize: '30px 30px'
+                        }}
+                      ></div>
+                    </div>
+                    <div className="relative z-10">
                       <h4 className="text-xl font-bold mb-2">ROI</h4>
                       <div className="text-4xl font-bold mb-2">233%</div>
                       <p className="text-purple-100 text-sm">Return on investment</p>

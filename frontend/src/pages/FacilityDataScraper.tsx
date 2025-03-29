@@ -40,6 +40,9 @@ const FacilityDataScraper = () => {
   const [sectorFilter, setSectorFilter] = useState('');
   const [energyUsageFilter, setEnergyUsageFilter] = useState('');
   const [showVerifiedOnly, setShowVerifiedOnly] = useState(false);
+  const [monthlyCostFilter, setMonthlyCostFilter] = useState('');
+  const [installationSizeFilter, setInstallationSizeFilter] = useState('');
+  const [dealSizeFilter, setDealSizeFilter] = useState('');
   const [totalCount, setTotalCount] = useState(335);
   const [netNewCount, setNetNewCount] = useState(335);
   const [savedCount, setSavedCount] = useState(0);
@@ -80,6 +83,31 @@ const FacilityDataScraper = () => {
     "Medium (500,000 - 2,000,000 kWh/year)",
     "High (2,000,000 - 5,000,000 kWh/year)",
     "Very High (> 5,000,000 kWh/year)"
+  ];
+
+  // Cost ranges for filters
+  const monthlyCostRanges = [
+    "Under $5,000",
+    "$5,000 - $10,000",
+    "$10,000 - $25,000",
+    "$25,000 - $50,000",
+    "$50,000 - $100,000",
+    "Over $100,000"
+  ];
+
+  const installationSizeRanges = [
+    "Small (< 100kW)",
+    "Medium (100kW - 500kW)",
+    "Large (500kW - 1MW)",
+    "Enterprise (> 1MW)"
+  ];
+
+  const dealSizeRanges = [
+    "Under $250,000",
+    "$250,000 - $500,000",
+    "$500,000 - $1,000,000",
+    "$1,000,000 - $2,500,000",
+    "Over $2,500,000"
   ];
 
   // Sample facility data from the image
@@ -368,61 +396,57 @@ const FacilityDataScraper = () => {
     const matchesLocation = locationFilter === '' || facility.location.includes(locationFilter);
     const matchesIndustry = industryFilter === '' || facility.company.includes(industryFilter);
     
-    // Advanced filters - we'll assume these properties exist or can be derived from existing properties
-    // In a real app, you'd have these properties in your facility data
-    
-    // State filter - extract state from location
-    const facilityState = facility.location.split(', ')[1]; // Assumes format "City, State"
-    const matchesState = stateFilter === '' || 
-                          (facilityState && facilityState.includes(stateFilter));
-    
-    // These are mocked checks since we don't have this data in the sample
-    // In a real application, these would check actual facility properties
-    const matchesSector = sectorFilter === '' || 
-                          (facility.company === 'Apple' && sectorFilter === 'Technology') ||
-                          (facility.company === 'Honeywell' && sectorFilter === 'Manufacturing') ||
-                          (facility.company === 'ChargePoint' && sectorFilter === 'Energy');
-    
-    // Mocked square footage matching
-    const mockSquareFootageMatcher = () => {
-      if (squareFootageFilter === '') return true;
-      
-      // Just for demonstration - in a real app, you'd check actual square footage
-      if (facility.id % 3 === 0 && squareFootageFilter === 'Under 10,000 sq ft') return true;
-      if (facility.id % 3 === 1 && squareFootageFilter === '10,000 - 50,000 sq ft') return true;
-      if (facility.id % 3 === 2 && squareFootageFilter === '50,000 - 100,000 sq ft') return true;
-      if (facility.id % 5 === 0 && squareFootageFilter === '100,000 - 250,000 sq ft') return true;
-      if (facility.id % 7 === 0 && squareFootageFilter === '250,000 - 500,000 sq ft') return true;
-      if (facility.id % 11 === 0 && squareFootageFilter === 'Over 500,000 sq ft') return true;
-      
-      return false;
+    // Cost-based filters (mocked for demonstration)
+    const mockMonthlyCostMatcher = () => {
+      if (monthlyCostFilter === '') return true;
+      // Mock logic based on facility ID for demonstration
+      const mockMonthlyCost = (facility.id * 5000) % 120000;
+      switch(monthlyCostFilter) {
+        case "Under $5,000": return mockMonthlyCost < 5000;
+        case "$5,000 - $10,000": return mockMonthlyCost >= 5000 && mockMonthlyCost < 10000;
+        case "$10,000 - $25,000": return mockMonthlyCost >= 10000 && mockMonthlyCost < 25000;
+        case "$25,000 - $50,000": return mockMonthlyCost >= 25000 && mockMonthlyCost < 50000;
+        case "$50,000 - $100,000": return mockMonthlyCost >= 50000 && mockMonthlyCost < 100000;
+        case "Over $100,000": return mockMonthlyCost >= 100000;
+        default: return true;
+      }
     };
-    
-    // Mocked energy usage matching
-    const mockEnergyUsageMatcher = () => {
-      if (energyUsageFilter === '') return true;
-      
-      // Just for demonstration - in a real app, you'd check actual energy usage
-      if (facility.id % 4 === 0 && energyUsageFilter === 'Low (< 500,000 kWh/year)') return true;
-      if (facility.id % 4 === 1 && energyUsageFilter === 'Medium (500,000 - 2,000,000 kWh/year)') return true;
-      if (facility.id % 4 === 2 && energyUsageFilter === 'High (2,000,000 - 5,000,000 kWh/year)') return true;
-      if (facility.id % 4 === 3 && energyUsageFilter === 'Very High (> 5,000,000 kWh/year)') return true;
-      
-      return false;
+
+    const mockInstallationSizeMatcher = () => {
+      if (installationSizeFilter === '') return true;
+      // Mock logic based on facility ID for demonstration
+      const mockSize = (facility.id * 200) % 2000;
+      switch(installationSizeFilter) {
+        case "Small (< 100kW)": return mockSize < 100;
+        case "Medium (100kW - 500kW)": return mockSize >= 100 && mockSize < 500;
+        case "Large (500kW - 1MW)": return mockSize >= 500 && mockSize < 1000;
+        case "Enterprise (> 1MW)": return mockSize >= 1000;
+        default: return true;
+      }
     };
-    
-    const matchesSquareFootage = mockSquareFootageMatcher();
-    const matchesEnergyUsage = mockEnergyUsageMatcher();
-    
+
+    const mockDealSizeMatcher = () => {
+      if (dealSizeFilter === '') return true;
+      // Mock logic based on facility ID for demonstration
+      const mockDealSize = (facility.id * 250000) % 3000000;
+      switch(dealSizeFilter) {
+        case "Under $250,000": return mockDealSize < 250000;
+        case "$250,000 - $500,000": return mockDealSize >= 250000 && mockDealSize < 500000;
+        case "$500,000 - $1,000,000": return mockDealSize >= 500000 && mockDealSize < 1000000;
+        case "$1,000,000 - $2,500,000": return mockDealSize >= 1000000 && mockDealSize < 2500000;
+        case "Over $2,500,000": return mockDealSize >= 2500000;
+        default: return true;
+      }
+    };
+
     // Combine all filter criteria
     return matchesSearch && 
            matchesVerified && 
            matchesLocation && 
            matchesIndustry &&
-           matchesState &&
-           matchesSector &&
-           matchesSquareFootage &&
-           matchesEnergyUsage;
+           mockMonthlyCostMatcher() &&
+           mockInstallationSizeMatcher() &&
+           mockDealSizeMatcher();
   });
 
   return (
@@ -747,27 +771,73 @@ const FacilityDataScraper = () => {
             {filterOpen && (
               <div className="fixed inset-0 bg-black bg-opacity-20 z-50 flex justify-end items-start pt-40" onClick={() => setFilterOpen(false)}>
                 <div 
-                  className="mr-10 w-80 bg-white dark:bg-gray-800 rounded-xl shadow-xl p-5 border border-gray-100 dark:border-gray-700"
+                  className="mr-10 w-96 bg-gray-800 rounded-xl shadow-xl p-6 border border-gray-700"
                   onClick={(e) => e.stopPropagation()}
                 >
-                  <div className="flex justify-between items-center mb-3">
-                    <h3 className="font-semibold text-base text-gray-900 dark:text-white">Quick Filters</h3>
+                  <div className="flex justify-between items-center mb-4">
+                    <div className="flex items-center gap-2">
+                      <FaFilter className="text-amber-500" />
+                      <h3 className="font-semibold text-lg text-white">Filters</h3>
+                    </div>
                     <button 
                       onClick={() => setFilterOpen(false)}
-                      className="text-gray-400 hover:text-gray-500"
+                      className="text-gray-400 hover:text-gray-300"
                     >
                       <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                         <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
                       </svg>
                     </button>
                   </div>
-                  <div className="flex flex-col gap-4">
+
+                  <div className="space-y-4">
                     <div>
-                      <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Location</label>
+                      <label className="block text-sm font-medium mb-2 text-gray-300">Monthly Energy Cost</label>
+                      <select 
+                        value={monthlyCostFilter}
+                        onChange={(e) => setMonthlyCostFilter(e.target.value)}
+                        className="w-full py-2 px-3 rounded-lg border border-gray-600 bg-gray-700 text-white focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all"
+                      >
+                        <option value="">All Cost Ranges</option>
+                        {monthlyCostRanges.map((range) => (
+                          <option key={range} value={range}>{range}</option>
+                        ))}
+                      </select>
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium mb-2 text-gray-300">Installation Size</label>
+                      <select 
+                        value={installationSizeFilter}
+                        onChange={(e) => setInstallationSizeFilter(e.target.value)}
+                        className="w-full py-2 px-3 rounded-lg border border-gray-600 bg-gray-700 text-white focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all"
+                      >
+                        <option value="">All Installation Sizes</option>
+                        {installationSizeRanges.map((range) => (
+                          <option key={range} value={range}>{range}</option>
+                        ))}
+                      </select>
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium mb-2 text-gray-300">Deal Size</label>
+                      <select 
+                        value={dealSizeFilter}
+                        onChange={(e) => setDealSizeFilter(e.target.value)}
+                        className="w-full py-2 px-3 rounded-lg border border-gray-600 bg-gray-700 text-white focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all"
+                      >
+                        <option value="">All Deal Sizes</option>
+                        {dealSizeRanges.map((range) => (
+                          <option key={range} value={range}>{range}</option>
+                        ))}
+                      </select>
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium mb-2 text-gray-300">Location</label>
                       <select 
                         value={locationFilter}
                         onChange={(e) => setLocationFilter(e.target.value)}
-                        className="w-full py-2 px-3 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all"
+                        className="w-full py-2 px-3 rounded-lg border border-gray-600 bg-gray-700 text-white focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all"
                       >
                         <option value="">All Locations</option>
                         <option value="Atlanta">Atlanta</option>
@@ -780,11 +850,11 @@ const FacilityDataScraper = () => {
                     </div>
                     
                     <div>
-                      <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Industry</label>
+                      <label className="block text-sm font-medium mb-2 text-gray-300">Industry</label>
                       <select 
                         value={industryFilter}
                         onChange={(e) => setIndustryFilter(e.target.value)}
-                        className="w-full py-2 px-3 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all"
+                        className="w-full py-2 px-3 rounded-lg border border-gray-600 bg-gray-700 text-white focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all"
                       >
                         <option value="">All Industries</option>
                         <option value="Apple">Apple</option>
@@ -801,22 +871,25 @@ const FacilityDataScraper = () => {
                           type="checkbox" 
                           checked={showVerifiedOnly}
                           onChange={() => setShowVerifiedOnly(!showVerifiedOnly)}
-                          className="rounded border-gray-300 text-amber-500 focus:ring-amber-500 h-5 w-5" 
+                          className="rounded border-gray-600 text-amber-500 focus:ring-amber-500 h-5 w-5 bg-gray-700" 
                         />
-                        <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                        <span className="text-sm font-medium text-gray-300">
                           Verified contacts only
                         </span>
                       </label>
                     </div>
 
-                    <div className="mt-4 flex justify-between">
+                    <div className="pt-4 border-t border-gray-600 flex justify-between">
                       <button 
                         onClick={() => {
                           setLocationFilter('');
                           setIndustryFilter('');
                           setShowVerifiedOnly(false);
+                          setMonthlyCostFilter('');
+                          setInstallationSizeFilter('');
+                          setDealSizeFilter('');
                         }}
-                        className="flex items-center gap-2 text-amber-500 hover:text-amber-600 transition-colors text-sm font-medium"
+                        className="flex items-center gap-2 text-amber-400 hover:text-amber-300 transition-colors text-sm font-medium"
                       >
                         <MdRefresh size={16} />
                         Reset Filters
@@ -824,9 +897,9 @@ const FacilityDataScraper = () => {
                       
                       <button 
                         onClick={() => setFilterOpen(false)}
-                        className="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white py-1.5 px-4 rounded-lg font-medium transition-all text-sm"
+                        className="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white py-2 px-4 rounded-lg font-medium transition-all text-sm"
                       >
-                        Apply
+                        Apply Filters
                       </button>
                     </div>
                   </div>
