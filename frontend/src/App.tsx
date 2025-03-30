@@ -6,7 +6,6 @@ import {
   ScrollRestoration,
 } from 'react-router-dom';
 import Home from './pages/Home';
-import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import Menu from './components/menu/Menu';
 import Error from './pages/Error';
@@ -14,7 +13,7 @@ import ToasterProvider from './components/ToasterProvider';
 import Login from './pages/Login';
 import Profile from './pages/Profile';
 import EditProfile from './pages/EditProfile';
-import FacilityDataScraper from './pages/FacilityDataScraper';
+import FacilityDatabase from './pages/FacilityDatabase';
 import FacilityAIAnalysis from './pages/FacilityAIAnalysis';
 import EnergyUsageEstimation from './pages/EnergyUsageEstimation';
 import SolarPanelPotential from './pages/SolarPanelPotential';
@@ -32,12 +31,12 @@ function App() {
         <ToasterProvider />
         <ScrollRestoration />
         <div>
-          <Navbar />
-          <div className="w-full flex gap-0 pt-20 xl:pt-[96px] 2xl:pt-[112px] mb-auto">
-            <div className="hidden xl:block xl:w-[250px] 2xl:w-[280px] 3xl:w-[350px] border-r-2 border-base-300 dark:border-slate-700 px-3 xl:px-4 xl:py-1 fixed h-[calc(100vh-96px)] overflow-y-auto">
-              <Menu />
-            </div>
-            <div className="w-full xl:ml-[250px] 2xl:ml-[280px] 3xl:ml-[350px] px-4 xl:px-4 2xl:px-5 xl:py-2 overflow-clip">
+          <div className="w-full flex gap-0 mb-auto">
+            <Menu />
+            
+            <div 
+              className="w-full transition-all duration-300 ease-in-out ml-[110px] px-4 xl:px-6 2xl:px-8 py-4 overflow-clip"
+            >
               <Outlet />
             </div>
           </div>
@@ -65,8 +64,12 @@ function App() {
           element: <EditProfile />,
         },
         {
+          path: '/facility-database',
+          element: <FacilityDatabase />,
+        },
+        {
           path: '/facility-data-scraper',
-          element: <FacilityDataScraper />,
+          element: <FacilityDatabase />,
         },
         {
           path: '/facility-ai-analysis',

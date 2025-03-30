@@ -1,7 +1,6 @@
 // import toast from 'react-hot-toast';
 import {
   HiOutlineHome,
-  HiOutlineArrowLeftOnRectangle,
   HiOutlineUser,
 } from 'react-icons/hi2';
 import { 
@@ -38,9 +37,9 @@ export const menu = [
     listItems: [
       {
         isLink: true,
-        url: '/facility-data-scraper',
+        url: '/facility-database',
         icon: MdLocationOn,
-        label: 'facility data scraper',
+        label: 'facility database',
       },
       {
         isLink: true,
@@ -71,17 +70,6 @@ export const menu = [
         url: '/outreach-tracking',
         icon: MdOutlineTrackChanges,
         label: 'outreach tracking',
-      },
-    ],
-  },
-  {
-    catalog: 'miscellaneous',
-    listItems: [
-      {
-        isLink: true,
-        url: '/login',
-        icon: HiOutlineArrowLeftOnRectangle,
-        label: 'log out',
       },
     ],
   },
