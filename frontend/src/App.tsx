@@ -14,7 +14,7 @@ import Login from './pages/Login';
 import Profile from './pages/Profile';
 import EditProfile from './pages/EditProfile';
 import FacilityDatabase from './pages/FacilityDatabase';
-import FacilityAIAnalysis from './pages/FacilityAIAnalysis';
+import FacilityEnrichment from './pages/FacilityEnrichment';
 import EnergyUsageEstimation from './pages/EnergyUsageEstimation';
 import SolarPanelPotential from './pages/SolarPanelPotential';
 import EmailAutomation from './pages/EmailAutomation';
@@ -72,12 +72,20 @@ function App() {
           element: <FacilityDatabase />,
         },
         {
+          path: '/facility-enrichment',
+          element: <FacilityEnrichment />,
+        },
+        {
+          path: '/facility-enrichment/:facilityId',
+          element: <FacilityEnrichment />,
+        },
+        {
           path: '/facility-ai-analysis',
-          element: <FacilityAIAnalysis />,
+          element: <FacilityEnrichment />,
         },
         {
           path: '/facility-ai-analysis/:facilityId',
-          element: <FacilityAIAnalysis />,
+          element: <FacilityEnrichment />,
         },
         {
           path: '/energy-usage-estimation',

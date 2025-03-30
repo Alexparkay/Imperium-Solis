@@ -40,6 +40,7 @@ import {
   MdDashboard
 } from 'react-icons/md';
 import { useNavigate } from 'react-router-dom';
+import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 
 // Mock data for Imperum Solis dashboard
 const dashboardData = {
@@ -159,6 +160,26 @@ const dashboardData = {
     }
   ]
 };
+
+// Add this mock data for the campaign performance
+const campaignData = [
+  { date: '13 Dec', sent: 150, totalOpens: 110, uniqueOpens: 80, replies: 35 },
+  { date: '15 Dec', sent: 130, totalOpens: 100, uniqueOpens: 70, replies: 40 },
+  { date: '17 Dec', sent: 180, totalOpens: 150, uniqueOpens: 90, replies: 45 },
+  { date: '19 Dec', sent: 200, totalOpens: 160, uniqueOpens: 95, replies: 50 },
+  { date: '21 Dec', sent: 120, totalOpens: 90, uniqueOpens: 60, replies: 30 },
+  { date: '23 Dec', sent: 100, totalOpens: 80, uniqueOpens: 50, replies: 25 },
+  { date: '25 Dec', sent: 80, totalOpens: 60, uniqueOpens: 40, replies: 20 },
+  { date: '27 Dec', sent: 60, totalOpens: 45, uniqueOpens: 30, replies: 15 },
+  { date: '29 Dec', sent: 40, totalOpens: 30, uniqueOpens: 20, replies: 10 },
+  { date: '31 Dec', sent: 20, totalOpens: 15, uniqueOpens: 10, replies: 5 },
+  { date: '02 Jan', sent: 10, totalOpens: 8, uniqueOpens: 5, replies: 2 },
+  { date: '04 Jan', sent: 220, totalOpens: 180, uniqueOpens: 120, replies: 60 },
+  { date: '06 Jan', sent: 180, totalOpens: 150, uniqueOpens: 100, replies: 50 },
+  { date: '08 Jan', sent: 160, totalOpens: 130, uniqueOpens: 90, replies: 45 },
+  { date: '10 Jan', sent: 140, totalOpens: 110, uniqueOpens: 80, replies: 40 },
+  { date: '12 Jan', sent: 120, totalOpens: 90, uniqueOpens: 70, replies: 35 },
+];
 
 const Home = () => {
   const navigate = useNavigate();
@@ -421,425 +442,400 @@ const Home = () => {
   };
 
   return (
-    <div className="w-full px-1 py-2 bg-[#020305] min-h-screen min-w-full relative">
+    <div className="w-full h-screen bg-[#020305] relative overflow-hidden">
       {/* Background gradient orbs */}
       <div className="fixed top-20 right-40 w-96 h-96 bg-gradient-to-br from-orange-500/5 to-transparent rounded-full blur-3xl transform rotate-12 opacity-70 pointer-events-none"></div>
       <div className="fixed bottom-40 left-20 w-80 h-80 bg-gradient-to-tr from-orange-500/5 to-transparent rounded-full blur-3xl transform -rotate-12 opacity-60 pointer-events-none"></div>
 
-      <div className="py-4"></div>
-
-      {/* Process Flow Section */}
-      <div className="mb-12">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {/* Step 1: Lead Identification */}
-          <div className="rounded-3xl bg-gradient-to-br from-[#28292b]/80 via-[#28292b]/50 to-[rgba(40,41,43,0.2)] backdrop-blur-xl border border-orange-500/15 shadow-[0_8px_32px_rgba(0,0,0,0.5)] transition-all duration-300 hover:scale-[1.03] hover:shadow-orange-500/20 relative overflow-hidden group">
-            {/* Unique gradient pattern 1 */}
-            <div className="absolute inset-0 bg-gradient-to-tr from-orange-500/30 via-amber-500/20 to-orange-600/15 opacity-25 group-hover:opacity-30"></div>
-            <div className="absolute -top-20 left-1/4 w-40 h-40 bg-gradient-to-br from-orange-500/40 to-transparent rounded-full blur-3xl transform rotate-45"></div>
-            <div className="absolute bottom-1/3 -right-10 w-32 h-32 bg-gradient-to-tl from-amber-500/30 to-transparent rounded-full blur-2xl"></div>
-            <div className="absolute top-1/2 left-1/3 w-24 h-24 bg-gradient-to-br from-orange-600/25 to-transparent rounded-full blur-xl transform -rotate-45"></div>
-            
-            <div className="p-5 pt-6 relative z-10 bg-gradient-to-br from-white/[0.08] to-transparent rounded-2xl">
-              {/* Main icon and temperature-like display */}
-              <div className="flex items-start justify-between mb-8">
-                <div className="flex items-center">
-                  <div className="h-14 w-14 rounded-full bg-gradient-to-br from-orange-600 to-amber-500 flex items-center justify-center shadow-lg shadow-orange-600/20">
-                    <MdOutlineAnalytics className="text-white text-3xl" />
-                  </div>
-                  <div className="ml-3">
-                    <div className="text-4xl font-bold text-white tracking-tight">79<span className="text-lg font-normal text-white/80">%</span></div>
-                    <div className="text-xs text-orange-400 font-medium mt-0.5">Completion Rate</div>
-                  </div>
-                </div>
-                <div className="bg-[rgba(30,41,59,0.7)] backdrop-blur-md p-1.5 rounded-full shadow-sm border border-orange-500/10">
-                  <MdOutlineSearch className="text-xl text-white/70" />
-                </div>
-              </div>
-              
-              <h3 className="text-xl font-bold text-white mb-5">Lead Identification</h3>
-              
-              {/* Weather-like status indicators */}
-              <div className="space-y-2.5 mb-5">
-                <div className="flex items-center">
-                  <div className="flex items-center justify-center w-6 h-6 mr-3 text-orange-400">
-                    <MdOutlineCalendarMonth />
-                  </div>
-                  <div className="text-sm text-slate-200">Quarterly Target: 150 Leads</div>
-                </div>
-                <div className="flex items-center">
-                  <div className="flex items-center justify-center w-6 h-6 mr-3 text-orange-400">
-                    <MdLocationOn />
-                  </div>
-                  <div className="text-sm text-slate-200">Top Region: West Coast</div>
-                </div>
-                <div className="flex items-center">
-                  <div className="flex items-center justify-center w-6 h-6 mr-3 text-orange-400">
-                    <MdAccessTime />
-                  </div>
-                  <div className="text-sm text-slate-200">Last Updated: 2h ago</div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Step 2: Lead Enrichment */}
-          <div className="rounded-3xl bg-gradient-to-br from-[#28292b]/80 via-[#28292b]/50 to-[rgba(40,41,43,0.2)] backdrop-blur-xl border border-orange-500/15 shadow-[0_8px_32px_rgba(0,0,0,0.5)] transition-all duration-300 hover:scale-[1.03] hover:shadow-orange-500/20 relative overflow-hidden group">
-            {/* Unique gradient pattern 2 */}
-            <div className="absolute inset-0 bg-gradient-to-bl from-orange-600/30 via-amber-600/20 to-orange-500/15 opacity-25 group-hover:opacity-30"></div>
-            <div className="absolute top-1/3 -left-16 w-48 h-48 bg-gradient-to-tr from-orange-500/40 to-transparent rounded-full blur-3xl transform -rotate-12"></div>
-            <div className="absolute -bottom-10 right-1/4 w-36 h-36 bg-gradient-to-bl from-amber-500/35 to-transparent rounded-full blur-2xl transform rotate-45"></div>
-            <div className="absolute top-1/4 right-1/3 w-28 h-28 bg-gradient-to-tr from-orange-600/30 to-transparent rounded-full blur-xl"></div>
-            
-            <div className="p-5 pt-6 relative z-10 bg-gradient-to-br from-white/[0.08] to-transparent rounded-2xl">
-              {/* Main icon and temperature-like display */}
-              <div className="flex items-start justify-between mb-8">
-                <div className="flex items-center">
-                  <div className="h-14 w-14 rounded-full bg-gradient-to-br from-amber-600 to-yellow-500 flex items-center justify-center shadow-lg shadow-amber-600/20">
-                    <MdOutlineLightbulb className="text-white text-3xl" />
-                  </div>
-                  <div className="ml-3">
-                    <div className="text-4xl font-bold text-white tracking-tight">5.5<span className="text-lg font-normal text-white/80">k</span></div>
-                    <div className="text-xs text-amber-400 font-medium mt-0.5">Data Points</div>
-                  </div>
-                </div>
-                <div className="bg-[rgba(30,41,59,0.7)] backdrop-blur-md p-1.5 rounded-full shadow-sm border border-amber-500/10">
-                  <MdOutlineSearch className="text-xl text-white/70" />
-                </div>
-              </div>
-              
-              <h3 className="text-xl font-bold text-white mb-5">Lead Enrichment</h3>
-              
-              {/* Weather-like status indicators */}
-              <div className="space-y-2.5 mb-5">
-                <div className="flex items-center">
-                  <div className="flex items-center justify-center w-6 h-6 mr-3 text-amber-400">
-                    <MdSun className="text-xl" />
-                  </div>
-                  <div className="text-sm text-slate-200">Solar Potential: High</div>
-                </div>
-                <div className="flex items-center">
-                  <div className="flex items-center justify-center w-6 h-6 mr-3 text-amber-400">
-                    <MdOutlineLocationOn />
-                  </div>
-                  <div className="text-sm text-slate-200">Coverage: 37 States</div>
-                </div>
-                <div className="flex items-center">
-                  <div className="flex items-center justify-center w-6 h-6 mr-3 text-amber-400">
-                    <MdAccessTime />
-                  </div>
-                  <div className="text-sm text-slate-200">Last Updated: 4h ago</div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Step 3: Personalized Outreach */}
-          <div className="rounded-3xl bg-gradient-to-br from-[#28292b]/80 via-[#28292b]/50 to-[rgba(40,41,43,0.2)] backdrop-blur-xl border border-orange-500/15 shadow-[0_8px_32px_rgba(0,0,0,0.5)] transition-all duration-300 hover:scale-[1.03] hover:shadow-orange-500/20 relative overflow-hidden group">
-            {/* Unique gradient pattern 3 */}
-            <div className="absolute inset-0 bg-gradient-to-r from-orange-500/30 via-amber-500/20 to-orange-600/25 opacity-25 group-hover:opacity-30"></div>
-            <div className="absolute -top-10 right-1/3 w-44 h-44 bg-gradient-to-bl from-orange-500/45 to-transparent rounded-full blur-3xl transform rotate-90"></div>
-            <div className="absolute bottom-1/4 -left-12 w-40 h-40 bg-gradient-to-tr from-amber-600/40 to-transparent rounded-full blur-2xl"></div>
-            <div className="absolute top-2/3 right-1/4 w-32 h-32 bg-gradient-to-bl from-orange-500/35 to-transparent rounded-full blur-xl transform -rotate-45"></div>
-            
-            <div className="p-5 pt-6 relative z-10 bg-gradient-to-br from-white/[0.08] to-transparent rounded-2xl">
-              {/* Main icon and temperature-like display */}
-              <div className="flex items-start justify-between mb-8">
-                <div className="flex items-center">
-                  <div className="h-14 w-14 rounded-full bg-gradient-to-br from-blue-600 to-cyan-500 flex items-center justify-center shadow-lg shadow-blue-600/20">
-                    <MdOutlineEmail className="text-white text-3xl" />
-                  </div>
-                  <div className="ml-3">
-                    <div className="text-4xl font-bold text-white tracking-tight">42<span className="text-lg font-normal text-white/80">%</span></div>
-                    <div className="text-xs text-blue-400 font-medium mt-0.5">Response Rate</div>
-                  </div>
-                </div>
-                <div className="bg-[rgba(30,41,59,0.7)] backdrop-blur-md p-1.5 rounded-full shadow-sm border border-blue-500/10">
-                  <MdOutlineSearch className="text-xl text-white/70" />
-                </div>
-              </div>
-              
-              <h3 className="text-xl font-bold text-white mb-5">Personalized Outreach</h3>
-              
-              {/* Weather-like status indicators */}
-              <div className="space-y-2.5 mb-5">
-                <div className="flex items-center">
-                  <div className="flex items-center justify-center w-6 h-6 mr-3 text-blue-400">
-                    <MdOutlineCloud className="text-xl" />
-                  </div>
-                  <div className="text-sm text-slate-200">Emails Sent: 85</div>
-                </div>
-                <div className="flex items-center">
-                  <div className="flex items-center justify-center w-6 h-6 mr-3 text-blue-400">
-                    <MdOutlineLocationOn />
-                  </div>
-                  <div className="text-sm text-slate-200">Top Market: California</div>
-                </div>
-                <div className="flex items-center">
-                  <div className="flex items-center justify-center w-6 h-6 mr-3 text-blue-400">
-                    <MdAccessTime />
-                  </div>
-                  <div className="text-sm text-slate-200">Last Campaign: 2d ago</div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* USA Map Section */}
-      <div className="backdrop-blur-2xl bg-gradient-to-br from-[#28292b]/80 via-[#28292b]/50 to-[rgba(40,41,43,0.2)] rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.4)] border border-orange-500/15 p-6 mb-8 relative overflow-hidden">
-        {/* Unique gradient pattern 4 */}
-        <div className="absolute inset-0 bg-gradient-to-tl from-orange-600/30 via-amber-500/20 to-orange-500/25 opacity-25"></div>
-        <div className="absolute -top-20 right-1/4 w-52 h-52 bg-gradient-to-br from-orange-500/45 to-transparent rounded-full blur-3xl transform rotate-45"></div>
-        <div className="absolute bottom-1/3 -left-16 w-44 h-44 bg-gradient-to-tr from-amber-500/40 to-transparent rounded-full blur-2xl"></div>
-        <div className="absolute top-1/3 right-1/3 w-36 h-36 bg-gradient-to-bl from-orange-600/35 to-transparent rounded-full blur-xl transform rotate-90"></div>
-        
-        <div className="relative z-10">
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-2xl font-bold text-white flex items-center gap-3">
-              <MdLocationOn className="text-orange-500" />
-              Facility Locations
-            </h2>
-            <div className="flex items-center gap-4 text-sm">
-              <span className="flex items-center gap-2">
-                <div className="w-3 h-3 rounded-full bg-orange-500/80"></div>
-                <span className="text-slate-200">High Activity</span>
-              </span>
-              <span className="flex items-center gap-2">
-                <div className="w-3 h-3 rounded-full bg-orange-500/60"></div>
-                <span className="text-slate-200">Active Markets</span>
-              </span>
-            </div>
-          </div>
+      <div className="grid grid-cols-3 gap-6 h-full p-6">
+        {/* Database Section */}
+        <div className="rounded-3xl bg-gradient-to-br from-[#28292b]/80 via-[#28292b]/50 to-[rgba(40,41,43,0.2)] backdrop-blur-xl border border-orange-500/15 shadow-[0_8px_32px_rgba(0,0,0,0.5)] relative overflow-hidden group">
+          {/* Unique gradient pattern 1 */}
+          <div className="absolute inset-0 bg-gradient-to-tr from-orange-500/30 via-amber-500/20 to-orange-600/15 opacity-25"></div>
+          <div className="absolute -top-20 left-1/4 w-40 h-40 bg-gradient-to-br from-orange-500/40 to-transparent rounded-full blur-3xl transform rotate-45"></div>
+          <div className="absolute bottom-1/3 -right-10 w-32 h-32 bg-gradient-to-tl from-amber-500/30 to-transparent rounded-full blur-2xl"></div>
+          <div className="absolute top-1/2 left-1/3 w-24 h-24 bg-gradient-to-br from-orange-600/25 to-transparent rounded-full blur-xl transform -rotate-45"></div>
           
-          <div className="flex gap-6">
-            {/* Map */}
-            <div className="h-[80px] flex-1">
-              <USMap className="w-full h-full" />
+          <div className="p-5 pt-6 relative z-10 bg-gradient-to-br from-white/[0.08] to-transparent rounded-2xl h-full flex flex-col">
+            {/* Main icon and temperature-like display */}
+            <div className="flex items-start justify-between mb-4">
+              <div className="flex items-center">
+                <div className="h-14 w-14 rounded-full bg-gradient-to-br from-orange-600 to-amber-500 flex items-center justify-center shadow-lg shadow-orange-600/20">
+                  <MdOutlineAnalytics className="text-white text-3xl" />
+                </div>
+                <div className="ml-3">
+                  <div className="text-4xl font-bold text-white tracking-tight">4.13<span className="text-lg font-normal text-white/80">M</span></div>
+                  <div className="text-xs text-orange-400 font-medium mt-0.5">Facilities</div>
+                </div>
+              </div>
+              <div className="bg-[rgba(30,41,59,0.7)] backdrop-blur-md p-1.5 rounded-full shadow-sm border border-orange-500/10">
+                <MdOutlineSearch className="text-xl text-white/70" />
+              </div>
             </div>
             
-            {/* Metrics */}
-            <div className="w-64 space-y-4">
-              <div className="bg-[rgba(27,34,42,0.75)] rounded-xl p-4 border border-orange-500/10">
-                <h3 className="text-white text-sm font-medium mb-2">Market Coverage</h3>
-                <div className="flex items-end justify-between">
-                  <div className="text-2xl font-bold text-orange-500">42</div>
-                  <div className="text-sm text-slate-400">States Active</div>
+            <h3 className="text-xl font-bold text-white mb-2">Database</h3>
+            <p className="text-sm text-slate-300 mb-4">Access to 4.13 million facilities for solar potential analysis</p>
+            
+            {/* Weather-like status indicators */}
+            <div className="space-y-2 mb-4">
+              <div className="flex items-center">
+                <div className="flex items-center justify-center w-6 h-6 mr-3 text-orange-400">
+                  <MdOutlineCalendarMonth />
                 </div>
-                <div className="mt-2 h-1.5 bg-[rgba(27,34,42,0.95)] rounded-full overflow-hidden">
+                <div className="text-sm text-slate-200">Updated Daily</div>
+              </div>
+              <div className="flex items-center">
+                <div className="flex items-center justify-center w-6 h-6 mr-3 text-orange-400">
+                  <MdLocationOn />
+                </div>
+                <div className="text-sm text-slate-200">Coverage: 50 States</div>
+              </div>
+              <div className="flex items-center">
+                <div className="flex items-center justify-center w-6 h-6 mr-3 text-orange-400">
+                  <MdAccessTime />
+                </div>
+                <div className="text-sm text-slate-200">Last Sync: 2h ago</div>
+              </div>
+            </div>
+
+            {/* Quick Stats */}
+            <div className="grid grid-cols-2 gap-3 mb-4">
+              <div className="bg-[rgba(27,34,42,0.75)] rounded-xl p-3 border border-orange-500/10">
+                <h3 className="text-white text-sm font-medium mb-1">Market Coverage</h3>
+                <div className="flex items-end justify-between">
+                  <div className="text-xl font-bold text-orange-500">42</div>
+                  <div className="text-xs text-slate-400">States Active</div>
+                </div>
+                <div className="mt-1 h-1.5 bg-[rgba(27,34,42,0.95)] rounded-full overflow-hidden">
                   <div className="h-full bg-orange-500 rounded-full" style={{ width: '84%' }}></div>
                 </div>
               </div>
-              
-              <div className="bg-[rgba(27,34,42,0.75)] rounded-xl p-4 border border-orange-500/10">
-                <h3 className="text-white text-sm font-medium mb-2">Top Regions</h3>
-                <div className="space-y-2">
+
+              <div className="bg-[rgba(27,34,42,0.75)] rounded-xl p-3 border border-orange-500/10">
+                <h3 className="text-white text-sm font-medium mb-1">Top Regions</h3>
+                <div className="space-y-1">
                   <div className="flex items-center justify-between">
-                    <span className="text-slate-200">California</span>
-                    <span className="text-orange-500">245 Sites</span>
+                    <span className="text-xs text-slate-200">California</span>
+                    <span className="text-xs text-orange-500">245 Sites</span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-slate-200">Texas</span>
-                    <span className="text-orange-500">189 Sites</span>
+                    <span className="text-xs text-slate-200">Texas</span>
+                    <span className="text-xs text-orange-500">189 Sites</span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-slate-200">Florida</span>
-                    <span className="text-orange-500">156 Sites</span>
+                    <span className="text-xs text-slate-200">Florida</span>
+                    <span className="text-xs text-orange-500">156 Sites</span>
                   </div>
                 </div>
               </div>
+            </div>
+
+            {/* Facility Locations Section */}
+            <div className="backdrop-blur-2xl bg-gradient-to-br from-[#28292b]/80 via-[#28292b]/50 to-[rgba(40,41,43,0.2)] rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.4)] border border-orange-500/15 p-4 relative overflow-hidden flex-1">
+              <div className="flex items-center justify-between mb-3">
+                <h2 className="text-lg font-bold text-white flex items-center gap-3">
+                  <MdLocationOn className="text-orange-500" />
+                  Facility Locations
+                </h2>
+                <div className="flex items-center gap-4 text-sm">
+                  <span className="flex items-center gap-2">
+                    <div className="w-3 h-3 rounded-full bg-orange-500/80"></div>
+                    <span className="text-slate-200">High Activity</span>
+                  </span>
+                  <span className="flex items-center gap-2">
+                    <div className="w-3 h-3 rounded-full bg-orange-500/60"></div>
+                    <span className="text-slate-200">Active Markets</span>
+                  </span>
+                </div>
+              </div>
               
-              <div className="bg-[rgba(27,34,42,0.75)] rounded-xl p-4 border border-orange-500/10">
-                <h3 className="text-white text-sm font-medium mb-2">Growth Metrics</h3>
-                <div className="space-y-3">
+              <div className="h-[calc(100%-3rem)]">
+                <USMap className="w-full h-full" />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Lead Enrichment Section */}
+        <div className="rounded-3xl bg-gradient-to-br from-[#28292b]/80 via-[#28292b]/50 to-[rgba(40,41,43,0.2)] backdrop-blur-xl border border-purple-500/15 shadow-[0_8px_32px_rgba(0,0,0,0.5)] relative overflow-hidden group">
+          {/* Background patterns matching Database section */}
+          <div className="absolute inset-0 bg-gradient-to-tr from-purple-500/30 via-violet-500/20 to-purple-600/15 opacity-25"></div>
+          <div className="absolute -top-20 left-1/4 w-40 h-40 bg-gradient-to-br from-purple-500/40 to-transparent rounded-full blur-3xl transform rotate-45"></div>
+          <div className="absolute bottom-1/3 -right-10 w-32 h-32 bg-gradient-to-tl from-violet-500/30 to-transparent rounded-full blur-2xl"></div>
+          <div className="absolute top-1/2 left-1/3 w-24 h-24 bg-gradient-to-br from-purple-600/25 to-transparent rounded-full blur-xl transform -rotate-45"></div>
+
+          <div className="p-5 pt-6 relative z-10 bg-gradient-to-br from-white/[0.08] to-transparent rounded-2xl h-full flex flex-col">
+            {/* Header */}
+            <div className="flex items-start justify-between mb-4">
+              <div className="flex items-center">
+                <div className="h-14 w-14 rounded-full bg-gradient-to-br from-purple-600 to-violet-500 flex items-center justify-center shadow-lg shadow-purple-600/20">
+                  <MdOutlineLightbulb className="text-white text-3xl" />
+                </div>
+                <div className="ml-3">
+                  <div className="text-4xl font-bold text-white tracking-tight">5.5<span className="text-lg font-normal text-white/80">k</span></div>
+                  <div className="text-xs text-purple-400 font-medium mt-0.5">Data Points</div>
+                </div>
+              </div>
+              <div className="bg-[rgba(30,41,59,0.7)] backdrop-blur-md p-1.5 rounded-full shadow-sm border border-purple-500/10">
+                <MdOutlineSearch className="text-xl text-white/70" />
+              </div>
+            </div>
+            
+            <h3 className="text-xl font-bold text-white mb-2">Lead Enrichment</h3>
+            
+            {/* Status Indicators */}
+            <div className="space-y-2 mb-4">
+              <div className="flex items-center">
+                <div className="flex items-center justify-center w-6 h-6 mr-3 text-purple-400">
+                  <MdSun className="text-xl" />
+                </div>
+                <div className="text-sm text-slate-200">Solar Potential: High</div>
+              </div>
+              <div className="flex items-center">
+                <div className="flex items-center justify-center w-6 h-6 mr-3 text-purple-400">
+                  <MdOutlineLocationOn />
+                </div>
+                <div className="text-sm text-slate-200">Coverage: 37 States</div>
+              </div>
+              <div className="flex items-center">
+                <div className="flex items-center justify-center w-6 h-6 mr-3 text-purple-400">
+                  <MdAccessTime />
+                </div>
+                <div className="text-sm text-slate-200">Last Updated: 4h ago</div>
+              </div>
+            </div>
+
+            {/* System Specs Box */}
+            <div className="bg-[rgba(27,34,42,0.75)] backdrop-blur-md rounded-xl p-3 border border-purple-500/10 mb-4 relative overflow-hidden group">
+              {/* Glassmorphic effects */}
+              <div className="absolute inset-0 bg-gradient-to-tr from-purple-500/10 via-violet-500/5 to-purple-600/10 opacity-25 group-hover:opacity-30 transition-opacity"></div>
+              <div className="absolute -top-10 -right-10 w-24 h-24 bg-gradient-to-br from-purple-500/20 to-transparent rounded-full blur-2xl"></div>
+              <div className="relative z-10">
+                <h3 className="text-white text-sm font-medium mb-2">System Specs</h3>
+                <div className="grid grid-cols-2 gap-x-6 gap-y-2">
                   <div>
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="text-slate-200">Monthly Growth</span>
-                      <span className="text-green-400">+12.5%</span>
-                    </div>
-                    <div className="mt-1 h-1.5 bg-[rgba(27,34,42,0.95)] rounded-full overflow-hidden">
-                      <div className="h-full bg-green-500 rounded-full" style={{ width: '72%' }}></div>
-                    </div>
+                    <div className="text-slate-400 text-xs">Capacity</div>
+                    <div className="text-white font-bold">250 kW</div>
                   </div>
                   <div>
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="text-slate-200">Market Penetration</span>
-                      <span className="text-orange-400">68%</span>
-                    </div>
-                    <div className="mt-1 h-1.5 bg-[rgba(27,34,42,0.95)] rounded-full overflow-hidden">
-                      <div className="h-full bg-orange-500 rounded-full" style={{ width: '68%' }}></div>
-                    </div>
+                    <div className="text-slate-400 text-xs">Efficiency</div>
+                    <div className="text-white font-bold">21.4%</div>
+                  </div>
+                  <div>
+                    <div className="text-slate-400 text-xs">Annual Output</div>
+                    <div className="text-white font-bold">375 MWh</div>
+                  </div>
+                  <div>
+                    <div className="text-slate-400 text-xs">Lifespan</div>
+                    <div className="text-white font-bold">25+ yrs</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Solar Panel Image Box */}
+            <div className="flex-1 bg-[rgba(27,34,42,0.75)] backdrop-blur-md rounded-xl p-4 border border-purple-500/10 relative overflow-hidden group">
+              {/* Glassmorphic effects */}
+              <div className="absolute inset-0 bg-gradient-to-tr from-purple-500/10 via-violet-500/5 to-purple-600/10 opacity-25 group-hover:opacity-30 transition-opacity"></div>
+              <div className="absolute -top-10 -right-10 w-24 h-24 bg-gradient-to-br from-purple-500/20 to-transparent rounded-full blur-2xl"></div>
+              <div className="relative z-10 h-full flex flex-col">
+                <div className="relative flex-1 flex items-center justify-center">
+                  <img 
+                    src="/images/solar/Solar_panel2.png" 
+                    alt="Solar Panel Installation" 
+                    className="w-[85%] h-auto object-contain max-h-[75%]"
+                  />
+                  {/* Annotations */}
+                  <div className="absolute top-4 left-4 bg-[#0f172a] p-2.5 rounded-lg border border-purple-500/20 shadow-lg">
+                    <div className="text-purple-400 text-sm font-medium">Average Energy Cost</div>
+                    <div className="text-white text-lg font-bold">$12,500/mo</div>
+                  </div>
+                  <div className="absolute top-4 right-4 bg-[#0f172a] p-2.5 rounded-lg border border-purple-500/20 shadow-lg">
+                    <div className="text-purple-400 text-sm font-medium">Solar Savings</div>
+                    <div className="text-white text-lg font-bold">-65%</div>
+                  </div>
+                  <div className="absolute bottom-4 left-4 bg-[#0f172a] p-2.5 rounded-lg border border-purple-500/20 shadow-lg">
+                    <div className="text-purple-400 text-sm font-medium">ROI Period</div>
+                    <div className="text-white text-lg font-bold">4.2 Years</div>
+                  </div>
+                  <div className="absolute bottom-4 right-4 bg-[#0f172a] p-2.5 rounded-lg border border-purple-500/20 shadow-lg">
+                    <div className="text-purple-400 text-sm font-medium">Carbon Reduction</div>
+                    <div className="text-white text-lg font-bold">840 tons/yr</div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
-      
-      {/* Workflow Section */}
-      <div className="mb-8">
-        <div className="flex items-center gap-3 mb-5">
-          <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-orange-600 to-amber-500 flex items-center justify-center shadow-lg shadow-orange-600/20 backdrop-blur-md">
-            <MdDashboard className="text-white text-xl" />
+
+        {/* Personalized Outreach Section */}
+        <div className="rounded-3xl bg-gradient-to-br from-[#28292b]/80 via-[#28292b]/50 to-[rgba(40,41,43,0.2)] backdrop-blur-xl border border-green-500/15 shadow-[0_8px_32px_rgba(0,0,0,0.5)] relative overflow-hidden group">
+          {/* Background patterns matching Database section */}
+          <div className="absolute inset-0 bg-gradient-to-tr from-green-500/30 via-emerald-500/20 to-green-600/15 opacity-25"></div>
+          <div className="absolute -top-20 left-1/4 w-40 h-40 bg-gradient-to-br from-green-500/40 to-transparent rounded-full blur-3xl transform rotate-45"></div>
+          <div className="absolute bottom-1/3 -right-10 w-32 h-32 bg-gradient-to-tl from-emerald-500/30 to-transparent rounded-full blur-2xl"></div>
+          <div className="absolute top-1/2 left-1/3 w-24 h-24 bg-gradient-to-br from-green-600/25 to-transparent rounded-full blur-xl transform -rotate-45"></div>
+
+          <div className="p-5 pt-6 relative z-10 bg-gradient-to-br from-white/[0.08] to-transparent rounded-2xl h-full flex flex-col">
+            {/* Header */}
+            <div className="flex items-start justify-between mb-4">
+              <div className="flex items-center">
+                <div className="h-14 w-14 rounded-full bg-gradient-to-br from-green-600 to-emerald-500 flex items-center justify-center shadow-lg shadow-green-600/20">
+                  <MdOutlineEmail className="text-white text-3xl" />
+                </div>
+                <div className="ml-3">
+                  <div className="text-4xl font-bold text-white tracking-tight">42<span className="text-lg font-normal text-white/80">%</span></div>
+                  <div className="text-xs text-green-400 font-medium mt-0.5">Response Rate</div>
+                </div>
+              </div>
+              <div className="bg-[rgba(30,41,59,0.7)] backdrop-blur-md p-1.5 rounded-full shadow-sm border border-green-500/10">
+                <MdOutlineSearch className="text-xl text-white/70" />
+              </div>
+            </div>
+            
+            <h3 className="text-xl font-bold text-white mb-2">Personalized Outreach</h3>
+            
+            {/* Status Indicators */}
+            <div className="space-y-2 mb-4">
+              <div className="flex items-center">
+                <div className="flex items-center justify-center w-6 h-6 mr-3 text-green-400">
+                  <MdOutlineCloud className="text-xl" />
+                </div>
+                <div className="text-sm text-slate-200">Emails Sent: 85</div>
+              </div>
+              <div className="flex items-center">
+                <div className="flex items-center justify-center w-6 h-6 mr-3 text-green-400">
+                  <MdOutlineLocationOn />
+                </div>
+                <div className="text-sm text-slate-200">Top Market: California</div>
+              </div>
+              <div className="flex items-center">
+                <div className="flex items-center justify-center w-6 h-6 mr-3 text-green-400">
+                  <MdAccessTime />
+                </div>
+                <div className="text-sm text-slate-200">Last Campaign: 2d ago</div>
+              </div>
+            </div>
+
+            {/* Stats Cards */}
+            <div className="bg-[rgba(27,34,42,0.75)] backdrop-blur-md rounded-xl p-3 border border-green-500/10 mb-4 relative overflow-hidden group">
+              {/* Glassmorphic effects */}
+              <div className="absolute inset-0 bg-gradient-to-tr from-green-500/10 via-emerald-500/5 to-green-600/10 opacity-25 group-hover:opacity-30 transition-opacity"></div>
+              <div className="absolute -top-10 -right-10 w-24 h-24 bg-gradient-to-br from-green-500/20 to-transparent rounded-full blur-2xl"></div>
+              <div className="relative z-10">
+                <div className="grid grid-cols-5 gap-3">
+                  <div className="text-center">
+                    <div className="text-green-400 text-sm mb-1">Sequence started</div>
+                    <div className="text-white text-xl font-bold">636</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-green-400 text-sm mb-1">Open rate</div>
+                    <div className="text-white text-xl font-bold">48%<span className="text-sm text-slate-400">| 307</span></div>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-green-400 text-sm mb-1">Click rate</div>
+                    <div className="text-white text-xl font-bold">12%<span className="text-sm text-slate-400">| 79</span></div>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-green-400 text-sm mb-1">Reply rate</div>
+                    <div className="text-white text-xl font-bold">5%<span className="text-sm text-slate-400">| 32</span></div>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-green-400 text-sm mb-1">Opportunities</div>
+                    <div className="text-white text-xl font-bold">5<span className="text-sm text-slate-400">| $0</span></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Campaign Performance Graph */}
+            <div className="flex-1 bg-[rgba(27,34,42,0.75)] backdrop-blur-md rounded-xl p-4 border border-green-500/10 relative overflow-hidden group mt-6">
+              {/* Glassmorphic effects */}
+              <div className="absolute inset-0 bg-gradient-to-tr from-green-500/10 via-emerald-500/5 to-green-600/10 opacity-25 group-hover:opacity-30 transition-opacity"></div>
+              <div className="absolute -top-10 -right-10 w-24 h-24 bg-gradient-to-br from-green-500/20 to-transparent rounded-full blur-2xl"></div>
+              <div className="relative z-10 h-full flex flex-col">
+                <div className="flex items-center justify-between mb-3">
+                  <h3 className="text-white text-sm font-medium">Campaign Performance</h3>
+                  <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-1.5">
+                      <div className="w-2 h-2 rounded-full bg-green-500"></div>
+                      <span className="text-xs text-slate-300">Sent</span>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <div className="w-2 h-2 rounded-full bg-green-500"></div>
+                      <span className="text-xs text-slate-300">Opens</span>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <div className="w-2 h-2 rounded-full bg-green-500"></div>
+                      <span className="text-xs text-slate-300">Unique</span>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <div className="w-2 h-2 rounded-full bg-green-500"></div>
+                      <span className="text-xs text-slate-300">Replies</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex-1">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <LineChart data={campaignData}>
+                      <XAxis 
+                        dataKey="date" 
+                        stroke="#64748b"
+                        fontSize={12}
+                        tickLine={false}
+                        axisLine={false}
+                      />
+                      <YAxis 
+                        stroke="#64748b"
+                        fontSize={12}
+                        tickLine={false}
+                        axisLine={false}
+                      />
+                      <Tooltip
+                        contentStyle={{
+                          backgroundColor: 'rgba(15, 23, 42, 0.9)',
+                          border: '1px solid rgba(34, 197, 94, 0.2)',
+                          borderRadius: '0.5rem',
+                          boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+                        }}
+                        itemStyle={{ color: '#e2e8f0' }}
+                        labelStyle={{ color: '#e2e8f0' }}
+                      />
+                      <Line 
+                        type="monotone" 
+                        dataKey="sent" 
+                        stroke="#22c55e" 
+                        strokeWidth={2}
+                        dot={false}
+                      />
+                      <Line 
+                        type="monotone" 
+                        dataKey="totalOpens" 
+                        stroke="#22c55e" 
+                        strokeWidth={2}
+                        dot={false}
+                      />
+                      <Line 
+                        type="monotone" 
+                        dataKey="uniqueOpens" 
+                        stroke="#22c55e" 
+                        strokeWidth={2}
+                        dot={false}
+                      />
+                      <Line 
+                        type="monotone" 
+                        dataKey="replies" 
+                        stroke="#22c55e" 
+                        strokeWidth={2}
+                        dot={false}
+                      />
+                    </LineChart>
+                  </ResponsiveContainer>
+                </div>
+              </div>
+            </div>
           </div>
-          <h2 className="text-xl font-bold text-white relative">
-            Dashboard Overview
-            <span className="absolute bottom-0 left-0 w-full h-0.5 bg-gradient-to-r from-orange-500/50 to-transparent"></span>
-          </h2>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-5">
-          <WorkflowCard 
-            number={1}
-            title="Facility Data Scraper"
-            description="View and manage facility data collection"
-            icon={<MdFactory />}
-            route="/facility-data-scraper"
-            chartData={dashboardData.facilitiesScraped.chartData}
-            chartType="sparkline"
-            stats={
-              <div className="flex justify-between">
-                <div> 
-                  <p className="text-sm text-slate-400">Total Facilities</p>
-                  <p className="text-xl font-bold bg-gradient-to-r from-white to-slate-300 text-transparent bg-clip-text">{dashboardData.facilitiesScraped.total}</p>
-                </div>
-                <div>
-                  <p className="text-sm text-slate-400">Enriched</p>
-                  <p className="text-xl font-bold bg-gradient-to-r from-white to-slate-300 text-transparent bg-clip-text">{dashboardData.facilitiesScraped.enriched}</p>
-                </div>
-              </div>
-            }
-          />
-          
-          <WorkflowCard 
-            number={2}
-            title="Facility AI Analysis"
-            description="Review AI-powered facility analysis"
-            icon={<MdOutlineRoofing />}
-            route="/facility-ai-analysis"
-            chartData={[
-              { name: "Analyzed", value: dashboardData.facilitiesAnalyzed.total },
-              { name: "Pending", value: dashboardData.facilitiesScraped.total - dashboardData.facilitiesAnalyzed.total }
-            ]}
-            chartType="progress"
-            stats={
-              <div>
-                <p className="text-sm text-slate-400">Analyzed</p>
-                <p className="text-xl font-bold bg-gradient-to-r from-white to-slate-300 text-transparent bg-clip-text">{dashboardData.facilitiesAnalyzed.total}</p>
-                <div className="w-full bg-slate-700 rounded-full h-2 mt-2">
-                  <div 
-                    className="bg-gradient-to-r from-orange-500 to-orange-400 h-2 rounded-full" 
-                    style={{ width: `${dashboardData.facilitiesAnalyzed.percentage}%` }}
-                  ></div>
-                </div>
-                <p className="text-xs text-orange-400/80 mt-1">{dashboardData.facilitiesAnalyzed.percentage}% complete</p>
-              </div>
-            }
-          />
-          
-          <WorkflowCard 
-            number={3}
-            title="Energy Usage Estimation"
-            description="Monitor energy consumption patterns"
-            icon={<MdElectricBolt />}
-            route="/energy-usage-estimation"
-            chartData={[
-              { name: "Current", value: dashboardData.energyEstimations.chartData[dashboardData.energyEstimations.chartData.length - 1].value },
-              { name: "Previous", value: dashboardData.energyEstimations.chartData[dashboardData.energyEstimations.chartData.length - 2].value }
-            ]}
-            chartType="metric"
-            stats={
-              <div className="flex justify-between">
-                <div>
-                  <p className="text-sm text-slate-400">Avg. Annual Usage</p>
-                  <p className="text-xl font-bold bg-gradient-to-r from-white to-slate-300 text-transparent bg-clip-text">{dashboardData.energyEstimations.averageUsage}</p>
-                </div>
-                <div>
-                  <p className="text-sm text-slate-400">Avg. Annual Cost</p>
-                  <p className="text-xl font-bold bg-gradient-to-r from-white to-slate-300 text-transparent bg-clip-text">{dashboardData.energyEstimations.averageCost}</p>
-                </div>
-              </div>
-            }
-          />
-          
-          <WorkflowCard 
-            number={4}
-            title="Solar Panel Potential"
-            description="Track solar potential and ROI"
-            icon={<MdSolarPower />}
-            route="/solar-panel-potential"
-            chartData={[
-              { name: "ROI", value: parseFloat(dashboardData.solarPotential.averageROI) },
-              { name: "Payback", value: parseFloat(dashboardData.solarPotential.averagePayback) * 10 },
-              { name: "Savings", value: parseFloat(dashboardData.solarPotential.totalSavings.replace(/[^0-9.-]+/g, "")) / 1000000 }
-            ]}
-            chartType="progress"
-            stats={
-              <div className="flex justify-between">
-                <div>
-                  <p className="text-sm text-slate-400">Avg. ROI</p>
-                  <p className="text-xl font-bold text-white">{dashboardData.solarPotential.averageROI}</p>
-                </div>
-                <div>
-                  <p className="text-sm text-slate-400">Avg. Payback</p>
-                  <p className="text-xl font-bold text-white">{dashboardData.solarPotential.averagePayback}</p>
-                </div>
-              </div>
-            }
-          />
-          
-          <WorkflowCard 
-            number={5}
-            title="Email Automation"
-            description="Manage email campaigns"
-            icon={<MdOutlineEmail />}
-            route="/email-automation"
-            chartData={[
-              { name: "Sent", value: dashboardData.emailCampaigns.emailsSent },
-              { name: "Opened", value: dashboardData.emailCampaigns.emailsOpened },
-              { name: "Replied", value: dashboardData.emailCampaigns.repliedRate * dashboardData.emailCampaigns.emailsSent / 100 }
-            ]}
-            chartType="progress"
-            stats={
-              <div className="flex justify-between">
-                <div>
-                  <p className="text-sm text-slate-400">Emails Sent</p>
-                  <p className="text-xl font-bold text-white">{dashboardData.emailCampaigns.emailsSent}</p>
-                </div>
-                <div>
-                  <p className="text-sm text-slate-400">Open Rate</p>
-                  <p className="text-xl font-bold text-white">{dashboardData.emailCampaigns.openRate}%</p>
-                </div>
-              </div>
-            }
-          />
-          
-          <WorkflowCard 
-            number={6}
-            title="Outreach Tracking"
-            description="Monitor engagement metrics"
-            icon={<MdOutlineTrackChanges />}
-            route="/outreach-tracking"
-            chartData={[
-              { name: "Sent", value: dashboardData.emailCampaigns.emailsSent },
-              { name: "Opened", value: dashboardData.emailCampaigns.emailsOpened },
-              { name: "Replied", value: dashboardData.emailCampaigns.repliedRate * dashboardData.emailCampaigns.emailsSent / 100 },
-              { name: "Interested", value: dashboardData.emailCampaigns.interestedRate * dashboardData.emailCampaigns.emailsSent / 100 }
-            ]}
-            chartType="progress"
-            stats={
-              <div className="flex justify-between">
-                <div>
-                  <p className="text-sm text-slate-500 dark:text-slate-400">Reply Rate</p>
-                  <p className="text-xl font-bold text-slate-800 dark:text-white">{dashboardData.emailCampaigns.repliedRate}%</p>
-                </div>
-                <div>
-                  <p className="text-sm text-slate-500 dark:text-slate-400">Interest Rate</p>
-                  <p className="text-xl font-bold text-slate-800 dark:text-white">{dashboardData.emailCampaigns.interestedRate}%</p>
-                </div>
-              </div>
-            }
-          />
         </div>
       </div>
     </div>

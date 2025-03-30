@@ -11,12 +11,21 @@ const groupMenuItems = () => {
   const mainItems = menu.find(item => item.catalog === 'main')?.listItems || [];
   const workflowItems = menu.find(item => item.catalog === 'imperum solis workflow')?.listItems || [];
   
-  // Create the groups
+  // Create the groups with color schemes
   const groups = [
     { name: 'main', items: mainItems },
-    { name: 'facilities', items: workflowItems.slice(0, 2) },
-    { name: 'energy', items: workflowItems.slice(2, 4) },
-    { name: 'outreach', items: workflowItems.slice(4, 6) }
+    { 
+      name: 'facilities', 
+      items: workflowItems.slice(0, 2).map(item => ({ ...item, colorScheme: 'orange' }))
+    },
+    { 
+      name: 'energy', 
+      items: workflowItems.slice(2, 4).map(item => ({ ...item, colorScheme: 'purple' }))
+    },
+    { 
+      name: 'outreach', 
+      items: workflowItems.slice(4, 6).map(item => ({ ...item, colorScheme: 'green' }))
+    }
   ];
   
   return groups;

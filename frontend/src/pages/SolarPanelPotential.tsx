@@ -351,9 +351,17 @@ const SolarPanelPotential = () => {
   
   const COLORS = ['#4ade80', '#94a3b8'];
 
+  // Safe function to show modals
+  const showModal = (modalId: string) => {
+    const modal = document.getElementById(modalId) as HTMLDialogElement | null;
+    if (modal && typeof modal.showModal === 'function') {
+      modal.showModal();
+    }
+  };
+
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-800 flex items-center justify-center relative overflow-hidden">
+      <div className="min-h-screen bg-[#020305] flex items-center justify-center relative overflow-hidden">
         {/* Animated background patterns */}
         <div className="absolute inset-0 opacity-10">
           <div className="absolute inset-0" 
@@ -365,13 +373,13 @@ const SolarPanelPotential = () => {
         </div>
         
         {/* Animated gradient orbs */}
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-gradient-to-br from-amber-500/20 to-transparent rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-gradient-to-br from-orange-500/20 to-transparent rounded-full blur-3xl animate-pulse"></div>
         <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-gradient-to-br from-blue-500/20 to-transparent rounded-full blur-3xl animate-pulse delay-1000"></div>
         
         <div className="relative z-10 flex flex-col items-center gap-8">
           <div className="relative">
-            <div className="absolute inset-0 bg-gradient-to-r from-amber-500 to-amber-600 rounded-full blur-xl opacity-50 animate-pulse"></div>
-            <div className="loading loading-spinner loading-lg text-amber-500 relative"></div>
+            <div className="absolute inset-0 bg-gradient-to-r from-orange-500 to-orange-600 rounded-full blur-xl opacity-50 animate-pulse"></div>
+            <div className="loading loading-spinner loading-lg text-orange-500 relative"></div>
           </div>
           <div className="text-center">
             <h2 className="text-2xl font-bold text-white mb-2">Loading Analysis</h2>
@@ -382,26 +390,33 @@ const SolarPanelPotential = () => {
     );
   }
 
+  // Define base classes for cards to match the Home page styling
+  const cardBaseClass = "backdrop-blur-2xl bg-gradient-to-br from-[#28292b]/80 via-[#28292b]/50 to-[rgba(40,41,43,0.2)] rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.4)] transition-all duration-300 border border-orange-500/15 group relative overflow-hidden";
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
+    <div className="w-full px-1 py-2 bg-[#020305] min-h-screen min-w-full relative">
+      {/* Background gradient orbs */}
+      <div className="fixed top-20 right-40 w-96 h-96 bg-gradient-to-br from-orange-500/5 to-transparent rounded-full blur-3xl transform rotate-12 opacity-70 pointer-events-none"></div>
+      <div className="fixed bottom-40 left-20 w-80 h-80 bg-gradient-to-tr from-orange-500/5 to-transparent rounded-full blur-3xl transform -rotate-12 opacity-60 pointer-events-none"></div>
+      
       <div className="container mx-auto px-4 py-8">
         <div className="flex flex-col gap-6">
-          <div className="flex justify-between items-center sticky top-0 z-50 bg-white/80 dark:bg-gray-900/80 py-4 px-6 rounded-xl shadow-lg backdrop-blur-md border border-gray-200/50 dark:border-gray-700/50">
+          <div className="flex justify-between items-center sticky top-0 z-50 bg-gradient-to-br from-[#28292b]/80 via-[#28292b]/40 to-[rgba(40,41,43,0.2)] backdrop-blur-2xl py-4 px-6 shadow-[0_8px_32px_rgba(0,0,0,0.4)] border border-orange-500/20 rounded-xl">
             <div className="flex items-center gap-3">
               <button 
                 onClick={() => navigate('/energy-usage-estimation')}
-                className="btn btn-circle btn-ghost hover:bg-amber-500/10 transition-colors"
+                className="btn btn-circle btn-ghost hover:bg-orange-500/10 transition-colors"
               >
-                <MdArrowBack size={24} className="text-amber-500" />
+                <MdArrowBack size={24} className="text-orange-500" />
               </button>
-              <h1 className="text-2xl font-bold bg-gradient-to-r from-amber-500 to-amber-600 bg-clip-text text-transparent">
+              <h1 className="text-2xl font-bold bg-gradient-to-r from-white via-white/90 to-white/80 bg-clip-text text-transparent">
                 Solar Panel Potential
               </h1>
             </div>
           </div>
-
+          
           {isCalculating ? (
-            <div className="card bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900 shadow-xl border border-gray-100 dark:border-gray-700 relative overflow-hidden">
+            <div className={cardBaseClass}>
               {/* Decorative patterns */}
               <div className="absolute inset-0 opacity-5">
                 <div className="absolute inset-0" 
@@ -413,15 +428,15 @@ const SolarPanelPotential = () => {
               </div>
               
               {/* Gradient orbs */}
-              <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-bl from-amber-500/10 to-transparent rounded-bl-full"></div>
+              <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-bl from-orange-500/10 to-transparent rounded-bl-full"></div>
               <div className="absolute bottom-0 left-0 w-64 h-64 bg-gradient-to-tr from-blue-500/10 to-transparent rounded-tr-full"></div>
               
               <div className="card-body flex flex-col items-center justify-center py-16 relative z-10">
                 <div className="relative mb-8">
-                  <div className="absolute inset-0 bg-gradient-to-r from-amber-500 to-amber-600 rounded-full blur-xl opacity-50 animate-pulse"></div>
-                  <div className="loading loading-spinner loading-lg text-amber-500 relative"></div>
+                  <div className="absolute inset-0 bg-gradient-to-r from-orange-500 to-orange-600 rounded-full blur-xl opacity-50 animate-pulse"></div>
+                  <div className="loading loading-spinner loading-lg text-orange-500 relative"></div>
                 </div>
-                <h3 className="text-2xl font-bold bg-gradient-to-r from-amber-500 to-amber-600 bg-clip-text text-transparent mb-4">
+                <h3 className="text-2xl font-bold bg-gradient-to-r from-orange-500 to-orange-600 bg-clip-text text-transparent mb-4">
                   Calculating Solar Potential
                 </h3>
                 <p className="text-gray-600 dark:text-gray-400 text-center max-w-md mb-8">
@@ -431,40 +446,40 @@ const SolarPanelPotential = () => {
                   <div>
                     <div className="flex justify-between mb-2">
                       <span className="text-gray-700 dark:text-gray-300">Analyzing roof geometry</span>
-                      <span className="text-amber-500 font-medium">100%</span>
+                      <span className="text-orange-500 font-medium">100%</span>
                     </div>
                     <div className="h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
-                      <div className="h-full w-full bg-gradient-to-r from-amber-500 to-amber-600 rounded-full"></div>
+                      <div className="h-full w-full bg-gradient-to-r from-orange-500 to-orange-600 rounded-full"></div>
                     </div>
                   </div>
                   
                   <div>
                     <div className="flex justify-between mb-2">
                       <span className="text-gray-700 dark:text-gray-300">Calculating sun exposure</span>
-                      <span className="text-amber-500 font-medium">95%</span>
+                      <span className="text-orange-500 font-medium">95%</span>
                     </div>
                     <div className="h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
-                      <div className="h-full w-[95%] bg-gradient-to-r from-amber-500 to-amber-600 rounded-full"></div>
+                      <div className="h-full w-[95%] bg-gradient-to-r from-orange-500 to-orange-600 rounded-full"></div>
                     </div>
                   </div>
                   
                   <div>
                     <div className="flex justify-between mb-2">
                       <span className="text-gray-700 dark:text-gray-300">Determining optimal panel placement</span>
-                      <span className="text-amber-500 font-medium">80%</span>
+                      <span className="text-orange-500 font-medium">80%</span>
                     </div>
                     <div className="h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
-                      <div className="h-full w-[80%] bg-gradient-to-r from-amber-500 to-amber-600 rounded-full"></div>
+                      <div className="h-full w-[80%] bg-gradient-to-r from-orange-500 to-orange-600 rounded-full"></div>
                     </div>
                   </div>
                   
                   <div>
                     <div className="flex justify-between mb-2">
                       <span className="text-gray-700 dark:text-gray-300">Estimating energy production</span>
-                      <span className="text-amber-500 font-medium">60%</span>
+                      <span className="text-orange-500 font-medium">60%</span>
                     </div>
                     <div className="h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
-                      <div className="h-full w-[60%] bg-gradient-to-r from-amber-500 to-amber-600 rounded-full"></div>
+                      <div className="h-full w-[60%] bg-gradient-to-r from-orange-500 to-orange-600 rounded-full"></div>
                     </div>
                   </div>
                 </div>
@@ -473,7 +488,7 @@ const SolarPanelPotential = () => {
           ) : (
             <>
               {/* Solar Image */}
-              <div className="card bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900 shadow-xl border border-gray-100 dark:border-gray-700 relative overflow-hidden group hover:shadow-2xl transition-all duration-300">
+              <div className={cardBaseClass}>
                 {/* Decorative patterns */}
                 <div className="absolute inset-0 opacity-5">
                   <div className="absolute inset-0" 
@@ -485,7 +500,7 @@ const SolarPanelPotential = () => {
                 </div>
                 
                 {/* Gradient orbs */}
-                <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-bl from-amber-500/10 to-transparent rounded-bl-full"></div>
+                <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-bl from-orange-500/10 to-transparent rounded-bl-full"></div>
                 <div className="absolute bottom-0 left-0 w-64 h-64 bg-gradient-to-tr from-blue-500/10 to-transparent rounded-tr-full"></div>
                 
                 <div className="card-body p-0 relative z-10">
@@ -497,11 +512,11 @@ const SolarPanelPotential = () => {
                     />
                     <div className="absolute top-6 right-6 bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900 px-8 py-3 rounded-xl shadow-xl border border-gray-100 dark:border-gray-700 z-20 w-[295px]">
                       <div className="flex items-center gap-4">
-                        <div className="bg-gradient-to-br from-amber-500 to-amber-600 p-2 rounded-lg">
+                        <div className="bg-gradient-to-br from-orange-500 to-orange-600 p-2 rounded-lg">
                           <MdSolarPower className="text-lg text-white" />
                         </div>
                         <div>
-                          <h3 className="font-bold text-base bg-gradient-to-r from-amber-500 to-amber-600 bg-clip-text text-transparent">IMPERIUM SOLIS</h3>
+                          <h3 className="font-bold text-base bg-gradient-to-r from-orange-500 to-orange-600 bg-clip-text text-transparent">IMPERIUM SOLIS</h3>
                           <p className="text-sm text-gray-600 dark:text-gray-400">Solar Potential Analysis</p>
                         </div>
                       </div>
@@ -511,7 +526,7 @@ const SolarPanelPotential = () => {
               </div>
 
               {/* Solar Overview */}
-              <div className="card bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900 shadow-xl border border-gray-100 dark:border-gray-700 relative overflow-hidden group hover:shadow-2xl transition-all duration-300">
+              <div className={cardBaseClass}>
                 {/* Decorative patterns */}
                 <div className="absolute inset-0 opacity-5">
                   <div className="absolute inset-0" 
@@ -523,16 +538,16 @@ const SolarPanelPotential = () => {
                 </div>
                 
                 {/* Gradient orbs */}
-                <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-bl from-amber-500/10 to-transparent rounded-bl-full"></div>
+                <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-bl from-orange-500/10 to-transparent rounded-bl-full"></div>
                 <div className="absolute bottom-0 left-0 w-64 h-64 bg-gradient-to-tr from-blue-500/10 to-transparent rounded-tr-full"></div>
                 
                 <div className="card-body relative z-10">
                   <div className="flex items-start gap-6">
-                    <div className="bg-gradient-to-br from-amber-500 to-amber-600 p-6 rounded-xl text-white shadow-lg transform group-hover:scale-105 transition-transform duration-300">
+                    <div className="bg-gradient-to-br from-orange-500 to-orange-600 p-6 rounded-xl text-white shadow-lg transform group-hover:scale-105 transition-transform duration-300">
                       <FaSolarPanel size={24} />
                     </div>
                     <div>
-                      <h2 className="text-xl font-bold bg-gradient-to-r from-amber-500 to-amber-600 bg-clip-text text-transparent">
+                      <h2 className="text-xl font-bold bg-gradient-to-r from-orange-500 to-orange-600 bg-clip-text text-transparent">
                         Solar Installation Overview
                       </h2>
                       <p className="text-gray-600 dark:text-gray-400 mt-3">
@@ -544,10 +559,10 @@ const SolarPanelPotential = () => {
                 </div>
               </div>
 
-              {/* Solar Stats Grid */}
+              {/* Solar Stats Grid - four column cards */}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 {/* Installation Details Card */}
-                <div className="card bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900 shadow-xl border border-gray-100 dark:border-gray-700 relative overflow-hidden group hover:shadow-2xl transition-all duration-300 hover:-translate-y-1">
+                <div className={cardBaseClass}>
                   {/* Decorative patterns */}
                   <div className="absolute inset-0 opacity-5">
                     <div className="absolute inset-0" 
@@ -559,15 +574,15 @@ const SolarPanelPotential = () => {
                   </div>
                   
                   {/* Gradient orbs */}
-                  <div className="absolute top-0 right-0 w-40 h-40 bg-gradient-to-bl from-amber-500/10 to-transparent rounded-bl-full"></div>
+                  <div className="absolute top-0 right-0 w-40 h-40 bg-gradient-to-bl from-orange-500/10 to-transparent rounded-bl-full"></div>
                   <div className="absolute -bottom-4 -left-4 w-24 h-24 rounded-full bg-blue-500/10 blur-2xl group-hover:bg-blue-500/20 transition-all duration-300"></div>
                   
                   <div className="card-body relative z-10">
-                    <div className="bg-gradient-to-br from-amber-500 to-amber-600 w-14 h-14 rounded-xl flex items-center justify-center text-white shadow-lg mb-6 transform group-hover:scale-110 transition-transform duration-300">
+                    <div className="bg-gradient-to-br from-orange-500 to-orange-600 w-14 h-14 rounded-xl flex items-center justify-center text-white shadow-lg mb-6 transform group-hover:scale-110 transition-transform duration-300">
                       <FaSolarPanel className="text-2xl" />
                     </div>
                     
-                    <h3 className="text-xl font-bold bg-gradient-to-r from-amber-500 to-amber-600 bg-clip-text text-transparent mb-6">Installation Details</h3>
+                    <h3 className="text-xl font-bold bg-gradient-to-r from-orange-500 to-orange-600 bg-clip-text text-transparent mb-6">Installation Details</h3>
                     
                     <div className="space-y-4">
                       <div className="flex justify-between items-center py-3 border-b border-gray-100 dark:border-gray-700">
@@ -591,7 +606,7 @@ const SolarPanelPotential = () => {
                 </div>
 
                 {/* Financial Benefits Card */}
-                <div className="card bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900 shadow-xl border border-gray-100 dark:border-gray-700 relative overflow-hidden group hover:shadow-2xl transition-all duration-300 hover:-translate-y-1">
+                <div className={cardBaseClass}>
                   {/* Decorative patterns */}
                   <div className="absolute inset-0 opacity-5">
                     <div className="absolute inset-0" 
@@ -635,7 +650,7 @@ const SolarPanelPotential = () => {
                 </div>
 
                 {/* Solar Potential Card */}
-                <div className="card bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900 shadow-xl border border-gray-100 dark:border-gray-700 relative overflow-hidden group hover:shadow-2xl transition-all duration-300 hover:-translate-y-1">
+                <div className={cardBaseClass}>
                   {/* Decorative patterns */}
                   <div className="absolute inset-0 opacity-5">
                     <div className="absolute inset-0" 
@@ -679,7 +694,7 @@ const SolarPanelPotential = () => {
                 </div>
 
                 {/* Environmental Impact Card */}
-                <div className="card bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900 shadow-xl border border-gray-100 dark:border-gray-700 relative overflow-hidden group hover:shadow-2xl transition-all duration-300 hover:-translate-y-1">
+                <div className={cardBaseClass}>
                   {/* Decorative patterns */}
                   <div className="absolute inset-0 opacity-5">
                     <div className="absolute inset-0" 
@@ -724,7 +739,7 @@ const SolarPanelPotential = () => {
               </div>
 
               {/* Energy Production Chart */}
-              <div className="card bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900 shadow-xl border border-gray-100 dark:border-gray-700 relative overflow-hidden group hover:shadow-2xl transition-all duration-300">
+              <div className={cardBaseClass}>
                 {/* Decorative patterns */}
                 <div className="absolute inset-0 opacity-5">
                   <div className="absolute inset-0" 
@@ -736,16 +751,16 @@ const SolarPanelPotential = () => {
                 </div>
                 
                 {/* Gradient orbs */}
-                <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-bl from-amber-500/10 to-transparent rounded-bl-full"></div>
+                <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-bl from-orange-500/10 to-transparent rounded-bl-full"></div>
                 <div className="absolute bottom-0 left-0 w-64 h-64 bg-gradient-to-tr from-blue-500/10 to-transparent rounded-tr-full"></div>
                 
                 <div className="card-body relative z-10">
                   <div className="flex items-start gap-6 mb-8">
-                    <div className="bg-gradient-to-br from-amber-500 to-amber-600 p-6 rounded-xl text-white shadow-lg transform group-hover:scale-105 transition-transform duration-300">
+                    <div className="bg-gradient-to-br from-orange-500 to-orange-600 p-6 rounded-xl text-white shadow-lg transform group-hover:scale-105 transition-transform duration-300">
                       <FaChartLine size={24} />
                     </div>
                     <div>
-                      <h3 className="text-xl font-bold bg-gradient-to-r from-amber-500 to-amber-600 bg-clip-text text-transparent">
+                      <h3 className="text-xl font-bold bg-gradient-to-r from-orange-500 to-orange-600 bg-clip-text text-transparent">
                         Monthly Energy Production
                       </h3>
                       <p className="text-gray-600 dark:text-gray-400 mt-2">
@@ -835,7 +850,7 @@ const SolarPanelPotential = () => {
               </div>
 
               {/* ROI Analysis */}
-              <div className="card bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900 shadow-xl border border-gray-100 dark:border-gray-700 relative overflow-hidden group hover:shadow-2xl transition-all duration-300">
+              <div className={cardBaseClass}>
                 {/* Decorative patterns */}
                 <div className="absolute inset-0 opacity-5">
                   <div className="absolute inset-0" 
@@ -847,16 +862,16 @@ const SolarPanelPotential = () => {
                 </div>
                 
                 {/* Gradient orbs */}
-                <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-bl from-amber-500/10 to-transparent rounded-bl-full"></div>
+                <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-bl from-orange-500/10 to-transparent rounded-bl-full"></div>
                 <div className="absolute bottom-0 left-0 w-64 h-64 bg-gradient-to-tr from-blue-500/10 to-transparent rounded-tr-full"></div>
                 
                 <div className="card-body relative z-10">
                   <div className="flex items-start gap-6 mb-8">
-                    <div className="bg-gradient-to-br from-amber-500 to-amber-600 p-6 rounded-xl text-white shadow-lg transform group-hover:scale-105 transition-transform duration-300">
+                    <div className="bg-gradient-to-br from-orange-500 to-orange-600 p-6 rounded-xl text-white shadow-lg transform group-hover:scale-105 transition-transform duration-300">
                       <MdOutlineCalculate size={24} />
                     </div>
                     <div>
-                      <h3 className="text-xl font-bold bg-gradient-to-r from-amber-500 to-amber-600 bg-clip-text text-transparent">
+                      <h3 className="text-xl font-bold bg-gradient-to-r from-orange-500 to-orange-600 bg-clip-text text-transparent">
                         Return on Investment Analysis
                       </h3>
                       <p className="text-gray-600 dark:text-gray-400 mt-2">
@@ -907,7 +922,7 @@ const SolarPanelPotential = () => {
               </div>
 
               {/* Installation Timeline */}
-              <div className="card bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900 shadow-xl border border-gray-100 dark:border-gray-700 relative overflow-hidden group hover:shadow-2xl transition-all duration-300">
+              <div className={cardBaseClass}>
                 {/* Decorative patterns */}
                 <div className="absolute inset-0 opacity-5">
                   <div className="absolute inset-0" 
@@ -919,16 +934,16 @@ const SolarPanelPotential = () => {
                 </div>
                 
                 {/* Gradient orbs */}
-                <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-bl from-amber-500/10 to-transparent rounded-bl-full"></div>
+                <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-bl from-orange-500/10 to-transparent rounded-bl-full"></div>
                 <div className="absolute bottom-0 left-0 w-64 h-64 bg-gradient-to-tr from-blue-500/10 to-transparent rounded-tr-full"></div>
                 
                 <div className="card-body relative z-10">
                   <div className="flex items-start gap-6 mb-8">
-                    <div className="bg-gradient-to-br from-amber-500 to-amber-600 p-6 rounded-xl text-white shadow-lg transform group-hover:scale-105 transition-transform duration-300">
+                    <div className="bg-gradient-to-br from-orange-500 to-orange-600 p-6 rounded-xl text-white shadow-lg transform group-hover:scale-105 transition-transform duration-300">
                       <FaRegCalendarAlt size={24} />
                     </div>
                     <div>
-                      <h3 className="text-xl font-bold bg-gradient-to-r from-amber-500 to-amber-600 bg-clip-text text-transparent">
+                      <h3 className="text-xl font-bold bg-gradient-to-r from-orange-500 to-orange-600 bg-clip-text text-transparent">
                         Installation Timeline
                       </h3>
                       <p className="text-gray-600 dark:text-gray-400 mt-2">
@@ -943,7 +958,7 @@ const SolarPanelPotential = () => {
                         <div className="flex">
                           <div className="w-24 flex-shrink-0 text-right pr-4 font-semibold">Week 1-2</div>
                           <div className="flex-1">
-                            <div className="bg-gradient-to-r from-amber-500 to-amber-600 text-white p-4 rounded-xl shadow-lg transform hover:scale-105 transition-transform duration-300">
+                            <div className="bg-gradient-to-r from-orange-500 to-orange-600 text-white p-4 rounded-xl shadow-lg transform hover:scale-105 transition-transform duration-300">
                               <h4 className="font-semibold">Site Assessment & Engineering</h4>
                               <p className="text-sm opacity-90">Detailed roof inspection, structural analysis, and system design</p>
                             </div>
@@ -986,21 +1001,8 @@ const SolarPanelPotential = () => {
               </div>
 
               {/* Next Steps */}
-              <div className="card bg-gradient-to-br from-amber-500 to-amber-600 shadow-xl relative overflow-hidden group hover:shadow-2xl transition-all duration-300">
-                {/* Decorative patterns */}
-                <div className="absolute inset-0 opacity-10">
-                  <div className="absolute inset-0" 
-                    style={{
-                      backgroundImage: 'repeating-linear-gradient(45deg, transparent, transparent 20px, #ffffff 20px, #ffffff 22px)',
-                      backgroundSize: '30px 30px'
-                    }}
-                  ></div>
-                </div>
-                
-                {/* Gradient orbs */}
-                <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-bl from-white/10 to-transparent rounded-bl-full"></div>
-                <div className="absolute bottom-0 left-0 w-64 h-64 bg-gradient-to-tr from-black/10 to-transparent rounded-tr-full"></div>
-                
+              <div className={cardBaseClass}>
+                <div className="absolute inset-0 bg-gradient-to-tl from-orange-500/30 via-orange-500/20 to-orange-500/25 opacity-25"></div>
                 <div className="card-body relative z-10">
                   <div className="flex items-start gap-6 mb-8">
                     <div className="bg-white/10 p-6 rounded-xl text-white shadow-lg backdrop-blur-sm transform group-hover:scale-105 transition-transform duration-300">
@@ -1019,7 +1021,7 @@ const SolarPanelPotential = () => {
                     <button className="px-6 py-3 rounded-xl bg-white/10 hover:bg-white/20 text-white font-medium transition-all backdrop-blur-sm transform hover:scale-105">
                       Contact Facility Manager
                     </button>
-                    <button className="px-6 py-3 rounded-xl bg-white hover:bg-gray-50 text-amber-600 font-medium transition-all shadow-lg hover:shadow-xl transform hover:scale-105">
+                    <button className="px-6 py-3 rounded-xl bg-white hover:bg-gray-50 text-orange-600 font-medium transition-all shadow-lg hover:shadow-xl transform hover:scale-105">
                       Generate Proposal
                     </button>
                   </div>
@@ -1030,15 +1032,23 @@ const SolarPanelPotential = () => {
               <div className="flex justify-center mt-8">
                 <button 
                   onClick={handleContinue}
-                  className="relative group overflow-hidden"
+                  className="bg-gradient-to-br from-orange-500 via-orange-600 to-orange-600 text-white py-4 px-8 rounded-xl font-medium transition-all shadow-xl hover:shadow-2xl hover:-translate-y-1 inline-flex items-center gap-3 group relative overflow-hidden"
                 >
-                  <div className="relative z-10 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white py-4 px-8 rounded-xl font-medium transition-all shadow-xl hover:shadow-2xl hover:-translate-y-1 inline-flex items-center gap-3">
-                    <span className="text-lg">Continue to Email Automation</span>
-                    <MdArrowForward className="text-2xl group-hover:translate-x-1 transition-transform duration-300" />
+                  {/* Decorative patterns */}
+                  <div className="absolute inset-0 opacity-10">
+                    <div className="absolute inset-0" 
+                      style={{
+                        backgroundImage: 'repeating-linear-gradient(45deg, transparent, transparent 20px, #ffffff 20px, #ffffff 22px)',
+                        backgroundSize: '30px 30px'
+                      }}
+                    ></div>
                   </div>
                   
-                  {/* Button decoration */}
-                  <div className="absolute inset-0 bg-gradient-to-r from-amber-400 to-amber-500 blur-xl opacity-50 group-hover:opacity-75 transition-opacity duration-300"></div>
+                  {/* Gradient orbs */}
+                  <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-white/10 to-transparent rounded-bl-full"></div>
+                  
+                  <span className="relative z-10 text-lg">Continue to Email Automation</span>
+                  <MdArrowForward className="relative z-10 text-2xl group-hover:translate-x-1 transition-transform duration-300" />
                 </button>
               </div>
             </>

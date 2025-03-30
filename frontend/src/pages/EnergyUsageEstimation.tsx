@@ -1,13 +1,47 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { MdArrowBack, MdArrowForward, MdElectricBolt, MdOutlineCalculate, MdOutlineAnalytics, MdOutlineShowChart } from 'react-icons/md';
+import { MdElectricBolt, MdOutlineCalculate, MdOutlineAnalytics, MdOutlineShowChart, MdArrowForward } from 'react-icons/md';
 import { FaSolarPanel, FaBuilding, FaChartLine, FaLightbulb } from 'react-icons/fa';
 import { toast } from 'react-hot-toast';
+
+// Define the SolarWindow interface for TypeScript
+declare global {
+  interface Window {
+    SolarWindow?: {
+      embed: (options: {
+        containerId: string;
+        height: string;
+        width: string;
+      }) => {
+        onMessage: (type: string, callback: (data: any) => void) => void;
+        sendMessage: (type: string, payload: any) => void;
+      };
+    };
+  }
+}
+
+// Dashboard-Engine communication interfaces
+interface DashboardMessage {
+  type: 'COMMAND' | 'STATE_REQUEST';
+  payload: string;
+}
+
+interface EngineMessage {
+  type: 'STATE_UPDATE' | 'ENGINE_READY' | 'INTERACTION';
+  payload: any;
+}
 
 const EnergyUsageEstimation = () => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
   const [isCalculating, setIsCalculating] = useState(true);
+  const iframeRef = useRef<HTMLIFrameElement>(null);
+  const [engineReady, setEngineReady] = useState(false);
+  const [useEmbedHelper, setUseEmbedHelper] = useState(false);
+  const [solarWindowInstance, setSolarWindowInstance] = useState<any>(null);
+  
+  // URL for the Solar Window application
+  const SOLAR_WINDOW_URL = 'http://localhost:5177'; // Solar Window local instance
   
   // Energy usage data
   const energyData = {
@@ -40,6 +74,137 @@ const EnergyUsageEstimation = () => {
     ]
   };
 
+  // Initialize the embedding helper
+  useEffect(() => {
+    // Check if the SolarWindow embedding helper is available
+    if (window.SolarWindow && document.getElementById('solar-window-container')) {
+      try {
+        const instance = window.SolarWindow.embed({
+          containerId: 'solar-window-container',
+          height: '85vh', // Increased height to maximize space
+          width: '100%'
+        });
+        
+        setSolarWindowInstance(instance);
+        setUseEmbedHelper(true);
+        
+        // Listen for state updates
+        instance.onMessage('STATE_UPDATE', (state) => {
+          console.log('Solar analysis state:', state);
+          handleSolarWindowStateUpdate(state);
+        });
+        
+        // Listen for user interactions
+        instance.onMessage('INTERACTION', (data) => {
+          console.log('User interaction:', data);
+          handleSolarWindowInteraction(data);
+        });
+        
+        // Listen for ready event
+        instance.onMessage('ENGINE_READY', () => {
+          setEngineReady(true);
+          // Initialize the app
+          instance.sendMessage('COMMAND', 'INITIALIZE');
+        });
+        
+        return () => {
+          // No direct cleanup method provided in the docs, but we can set state
+          setSolarWindowInstance(null);
+        };
+      } catch (error) {
+        console.error('Error initializing SolarWindow embedding:', error);
+        setUseEmbedHelper(false);
+        toast.error('Failed to initialize Solar Window embedding, falling back to iframe');
+      }
+    } else {
+      setUseEmbedHelper(false);
+    }
+  }, []);
+
+  // Handle state updates from the Solar Window app
+  const handleSolarWindowStateUpdate = (state: any) => {
+    console.log('Received state update from Solar Window:', state);
+    if (state.energyData) {
+      toast.success('Energy data updated from Solar Window');
+    }
+  };
+
+  // Handle interactions from the Solar Window app
+  const handleSolarWindowInteraction = (data: any) => {
+    console.log('User interacted with Solar Window:', data);
+    if (data.action === 'update_energy_usage') {
+      toast.success('Energy usage updated from Solar Window');
+    }
+  };
+
+  // Send commands to engine (iframe approach)
+  const sendToEngine = (message: DashboardMessage) => {
+    if (useEmbedHelper && solarWindowInstance) {
+      // Use the embed helper API
+      solarWindowInstance.sendMessage(message.type, message.payload);
+    } else if (iframeRef.current?.contentWindow) {
+      // Use the iframe postMessage API
+      iframeRef.current.contentWindow.postMessage(message, SOLAR_WINDOW_URL);
+    }
+  };
+
+  // Handle engine messages (iframe approach)
+  useEffect(() => {
+    // Only set up message listener if we're using the iframe approach
+    if (useEmbedHelper) return;
+    
+    const messageHandler = (event: MessageEvent<EngineMessage>) => {
+      if (event.origin !== SOLAR_WINDOW_URL) return;
+
+      switch (event.data.type) {
+        case 'ENGINE_READY':
+          setEngineReady(true);
+          sendToEngine({
+            type: 'COMMAND',
+            payload: 'INITIALIZE'
+          });
+          break;
+          
+        case 'STATE_UPDATE':
+          console.log('Engine state:', event.data.payload);
+          handleSolarWindowStateUpdate(event.data.payload);
+          break;
+          
+        case 'INTERACTION':
+          handleSolarWindowInteraction(event.data.payload);
+          break;
+      }
+    };
+
+    window.addEventListener('message', messageHandler);
+    return () => window.removeEventListener('message', messageHandler);
+  }, [useEmbedHelper]);
+
+  // Load the embedding script
+  useEffect(() => {
+    const loadEmbedScript = () => {
+      const script = document.createElement('script');
+      script.src = `${SOLAR_WINDOW_URL}/lib/embed.js`;
+      script.async = true;
+      script.onload = () => console.log('Solar Window embed script loaded');
+      script.onerror = () => {
+        console.error('Failed to load Solar Window embed script');
+        setUseEmbedHelper(false);
+      };
+      document.body.appendChild(script);
+    };
+
+    loadEmbedScript();
+    
+    return () => {
+      // Remove the script when component unmounts
+      const script = document.querySelector(`script[src="${SOLAR_WINDOW_URL}/lib/embed.js"]`);
+      if (script) {
+        document.body.removeChild(script);
+      }
+    };
+  }, []);
+
   useEffect(() => {
     setIsLoading(true);
     setTimeout(() => {
@@ -56,7 +221,7 @@ const EnergyUsageEstimation = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-800 flex items-center justify-center relative overflow-hidden">
+      <div className="min-h-screen bg-[#020305] flex items-center justify-center relative overflow-hidden">
         {/* Animated background patterns */}
         <div className="absolute inset-0 opacity-10">
           <div className="absolute inset-0" 
@@ -68,13 +233,13 @@ const EnergyUsageEstimation = () => {
         </div>
         
         {/* Animated gradient orbs */}
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-gradient-to-br from-amber-500/20 to-transparent rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-gradient-to-br from-orange-500/20 to-transparent rounded-full blur-3xl animate-pulse"></div>
         <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-gradient-to-br from-blue-500/20 to-transparent rounded-full blur-3xl animate-pulse delay-1000"></div>
         
         <div className="relative z-10 flex flex-col items-center gap-8">
           <div className="relative">
-            <div className="absolute inset-0 bg-gradient-to-r from-amber-500 to-amber-600 rounded-full blur-xl opacity-50 animate-pulse"></div>
-            <div className="loading loading-spinner loading-lg text-amber-500 relative"></div>
+            <div className="absolute inset-0 bg-gradient-to-r from-orange-500 to-orange-600 rounded-full blur-xl opacity-50 animate-pulse"></div>
+            <div className="loading loading-spinner loading-lg text-orange-500 relative"></div>
           </div>
           <div className="text-center">
             <h2 className="text-2xl font-bold text-white mb-2">Loading Analysis</h2>
@@ -85,26 +250,78 @@ const EnergyUsageEstimation = () => {
     );
   }
 
+  // Define base classes for cards to match the Home page styling
+  const cardBaseClass = "backdrop-blur-2xl bg-gradient-to-br from-[#28292b]/80 via-[#28292b]/50 to-[rgba(40,41,43,0.2)] rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.4)] transition-all duration-300 border border-orange-500/15 group relative overflow-hidden";
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
+    <div className="w-full px-1 py-2 bg-[#020305] min-h-screen min-w-full relative">
+      {/* Background gradient orbs */}
+      <div className="fixed top-20 right-40 w-96 h-96 bg-gradient-to-br from-orange-500/5 to-transparent rounded-full blur-3xl transform rotate-12 opacity-70 pointer-events-none"></div>
+      <div className="fixed bottom-40 left-20 w-80 h-80 bg-gradient-to-tr from-orange-500/5 to-transparent rounded-full blur-3xl transform -rotate-12 opacity-60 pointer-events-none"></div>
+      
       <div className="container mx-auto px-4 py-8">
         <div className="flex flex-col gap-6">
-          <div className="flex justify-between items-center sticky top-0 z-50 bg-white/80 dark:bg-gray-900/80 py-4 px-6 rounded-xl shadow-lg backdrop-blur-md border border-gray-200/50 dark:border-gray-700/50">
+          {/* Simple title without a box - left aligned */}
+          <div className="flex items-center justify-start py-4">
             <div className="flex items-center gap-3">
-              <button 
-                onClick={() => navigate('/facility-ai-analysis')}
-                className="btn btn-circle btn-ghost hover:bg-amber-500/10 transition-colors"
-              >
-                <MdArrowBack size={24} className="text-amber-500" />
-              </button>
-              <h1 className="text-2xl font-bold bg-gradient-to-r from-amber-500 to-amber-600 bg-clip-text text-transparent">
+              <MdElectricBolt size={28} className="text-orange-500" />
+              <h1 className="text-3xl font-bold bg-gradient-to-r from-white via-white/90 to-white/80 bg-clip-text text-transparent">
                 Energy Usage Estimation
               </h1>
             </div>
           </div>
 
+          {/* Solar Window Integration - Full Size */}
+          <div className={cardBaseClass + " min-h-[85vh]"}>
+            {/* Decorative patterns */}
+            <div className="absolute inset-0 opacity-5">
+              <div className="absolute inset-0" 
+                style={{
+                  backgroundImage: 'repeating-linear-gradient(45deg, transparent, transparent 20px, #000000 20px, #000000 22px)',
+                  backgroundSize: '30px 30px'
+                }}
+              ></div>
+            </div>
+            
+            {/* Gradient orbs */}
+            <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-bl from-amber-500/10 to-transparent rounded-bl-full"></div>
+            <div className="absolute bottom-0 left-0 w-64 h-64 bg-gradient-to-tr from-blue-500/10 to-transparent rounded-tr-full"></div>
+            
+            {/* Solar Window Container - Simplified, no header */}
+            <div className="relative z-10 p-2 h-full">
+              {/* External App container */}
+              <div className="w-full h-full relative backdrop-blur-md rounded-xl overflow-hidden border border-amber-500/20 shadow-xl">
+                {!engineReady && (
+                  <div className="absolute inset-0 flex items-center justify-center bg-gray-900/70 z-10">
+                    <div className="text-center">
+                      <div className="loading loading-spinner loading-lg text-amber-500 mb-4"></div>
+                      <p className="text-white text-lg">Connecting to Solar Window...</p>
+                    </div>
+                  </div>
+                )}
+                
+                {/* Embed Helper Container */}
+                <div 
+                  id="solar-window-container" 
+                  className={`w-full h-full min-h-[85vh] ${useEmbedHelper ? 'block' : 'hidden'}`}
+                ></div>
+                
+                {/* Fallback iframe for manual integration */}
+                {!useEmbedHelper && (
+                  <iframe
+                    ref={iframeRef}
+                    src={SOLAR_WINDOW_URL}
+                    sandbox="allow-scripts allow-same-origin allow-forms"
+                    className="w-full h-full min-h-[85vh] bg-transparent"
+                    title="Solar Window Analysis Engine"
+                  />
+                )}
+              </div>
+            </div>
+          </div>
+
           {isCalculating ? (
-            <div className="card bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900 shadow-xl border border-gray-100 dark:border-gray-700 relative overflow-hidden">
+            <div className={cardBaseClass}>
               {/* Decorative patterns */}
               <div className="absolute inset-0 opacity-5">
                 <div className="absolute inset-0" 
@@ -176,7 +393,7 @@ const EnergyUsageEstimation = () => {
           ) : (
             <>
               {/* Energy Usage Overview */}
-              <div className="card bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900 shadow-xl border border-gray-100 dark:border-gray-700 relative overflow-hidden group hover:shadow-2xl transition-all duration-300">
+              <div className={cardBaseClass}>
                 {/* Decorative patterns */}
                 <div className="absolute inset-0 opacity-5">
                   <div className="absolute inset-0" 
@@ -210,7 +427,7 @@ const EnergyUsageEstimation = () => {
 
               {/* Energy Stats */}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <div className="card bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900 shadow-xl border border-gray-100 dark:border-gray-700 relative overflow-hidden group hover:shadow-2xl transition-all duration-300 hover:-translate-y-1">
+                <div className={cardBaseClass}>
                   {/* Decorative patterns */}
                   <div className="absolute inset-0 opacity-5">
                     <div className="absolute inset-0" 
@@ -257,7 +474,7 @@ const EnergyUsageEstimation = () => {
                   </div>
                 </div>
 
-                <div className="card bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900 shadow-xl border border-gray-100 dark:border-gray-700 relative overflow-hidden group hover:shadow-2xl transition-all duration-300 hover:-translate-y-1">
+                <div className={cardBaseClass}>
                   {/* Decorative patterns */}
                   <div className="absolute inset-0 opacity-5">
                     <div className="absolute inset-0" 
@@ -304,7 +521,7 @@ const EnergyUsageEstimation = () => {
                   </div>
                 </div>
 
-                <div className="card bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900 shadow-xl border border-gray-100 dark:border-gray-700 relative overflow-hidden group hover:shadow-2xl transition-all duration-300 hover:-translate-y-1">
+                <div className={cardBaseClass}>
                   {/* Decorative patterns */}
                   <div className="absolute inset-0 opacity-5">
                     <div className="absolute inset-0" 
@@ -353,7 +570,7 @@ const EnergyUsageEstimation = () => {
               </div>
 
               {/* Usage Breakdown */}
-              <div className="card bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900 shadow-xl border border-gray-100 dark:border-gray-700 relative overflow-hidden group hover:shadow-2xl transition-all duration-300">
+              <div className={cardBaseClass}>
                 {/* Decorative patterns */}
                 <div className="absolute inset-0 opacity-5">
                   <div className="absolute inset-0" 
@@ -485,490 +702,15 @@ const EnergyUsageEstimation = () => {
                 </div>
               </div>
 
-              {/* Monthly Usage Chart */}
-              <div className="card bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900 shadow-xl border border-gray-100 dark:border-gray-700 relative overflow-hidden group hover:shadow-2xl transition-all duration-300">
-                {/* Decorative patterns */}
-                <div className="absolute inset-0 opacity-5">
-                  <div className="absolute inset-0" 
-                    style={{
-                      backgroundImage: 'repeating-linear-gradient(45deg, transparent, transparent 20px, #000000 20px, #000000 22px)',
-                      backgroundSize: '30px 30px'
-                    }}
-                  ></div>
-                </div>
-                
-                {/* Gradient orbs */}
-                <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-bl from-amber-500/10 to-transparent rounded-bl-full"></div>
-                <div className="absolute bottom-0 left-0 w-64 h-64 bg-gradient-to-tr from-blue-500/10 to-transparent rounded-tr-full"></div>
-                
-                <div className="card-body relative z-10">
-                  <div className="flex items-start gap-6 mb-8">
-                    <div className="bg-gradient-to-br from-amber-500 to-amber-600 p-6 rounded-xl text-white shadow-lg transform group-hover:scale-105 transition-transform duration-300">
-                      <MdOutlineShowChart size={24} />
-                    </div>
-                    <div>
-                      <h3 className="text-xl font-bold bg-gradient-to-r from-amber-500 to-amber-600 bg-clip-text text-transparent">
-                        Monthly Usage Patterns
-                      </h3>
-                      <p className="text-gray-600 dark:text-gray-400 mt-2">
-                        Energy consumption and cost trends throughout the year
-                      </p>
-                    </div>
-                  </div>
-                  
-                  <div className="mt-6">
-                    <div className="bg-gray-50 dark:bg-gray-800/50 rounded-xl p-6 backdrop-blur-sm">
-                      <div className="relative h-80">
-                        {/* Y-axis labels - Usage */}
-                        <div className="absolute left-0 top-0 bottom-10 w-16 flex flex-col justify-between">
-                          {[25000, 20000, 15000, 10000, 5000, 0].map((value) => (
-                            <div key={value} className="text-xs text-gray-500 dark:text-gray-400 -translate-x-2">
-                              {value.toLocaleString()}
-                            </div>
-                          ))}
-                        </div>
-                        
-                        {/* Y-axis labels - Cost */}
-                        <div className="absolute right-0 top-0 bottom-10 w-16 flex flex-col justify-between">
-                          {[8000, 6400, 4800, 3200, 1600, 0].map((value) => (
-                            <div key={value} className="text-xs text-gray-500 dark:text-gray-400 translate-x-2">
-                              ${value.toLocaleString()}
-                            </div>
-                          ))}
-                        </div>
-
-                        {/* Graph area */}
-                        <div className="absolute left-16 right-16 top-0 bottom-0">
-                          {/* Grid lines */}
-                          <div className="absolute inset-0 grid grid-rows-5 gap-0">
-                            {[...Array(6)].map((_, i) => (
-                              <div
-                                key={i}
-                                className="border-t border-gray-200 dark:border-gray-700"
-                              />
-                            ))}
-                          </div>
-
-                          {/* Bars container */}
-                          <div className="absolute inset-0 flex items-end justify-between pb-10">
-                            {energyData.monthlyUsage.map((month, index) => (
-                              <div
-                                key={month.month}
-                                className="relative group"
-                                style={{ height: '100%', width: `${100 / 12}%` }}
-                              >
-                                {/* Usage bar */}
-                                <div
-                                  className="absolute bottom-0 left-1/2 w-4 -translate-x-1/2 bg-gradient-to-t from-amber-600 to-amber-500 rounded-t-lg transition-all duration-300 group-hover:to-amber-400"
-                                  style={{ height: `${(month.usage / 25000) * 100}%` }}
-                                >
-                                  {/* Tooltip */}
-                                  <div className="absolute -top-12 left-1/2 -translate-x-1/2 bg-gray-900 text-white text-xs py-2 px-3 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">
-                                    <div className="font-medium">{month.usage.toLocaleString()} kWh</div>
-                                    <div className="text-gray-300">${month.cost.toLocaleString()}</div>
-                                  </div>
-                                </div>
-
-                                {/* Cost line point */}
-                                <div
-                                  className="absolute bottom-0 left-1/2 w-2 h-2 bg-blue-500 rounded-full -translate-x-1/2 transition-transform duration-300 group-hover:scale-150 group-hover:bg-blue-400"
-                                  style={{ bottom: `${(month.cost / 8000) * 100}%` }}
-                                />
-
-                                {/* Month label */}
-                                <div className="absolute bottom-0 left-1/2 -translate-x-1/2 -translate-y-6 text-xs font-medium text-gray-600 dark:text-gray-400">
-                                  {month.month}
-                                </div>
-                              </div>
-                            ))}
-                          </div>
-
-                          {/* Cost line */}
-                          <svg className="absolute inset-0 pb-10" style={{ height: '100%' }}>
-                            <path
-                              d={energyData.monthlyUsage.map((month, index) => {
-                                const x = (index * (100 / 11)) + '%';
-                                const y = (100 - (month.cost / 8000) * 100) + '%';
-                                return (index === 0 ? 'M' : 'L') + ` ${x} ${y}`;
-                              }).join(' ')}
-                              className="stroke-blue-500 stroke-2 fill-none"
-                            />
-                          </svg>
-                        </div>
-                      </div>
-
-                      {/* Legend */}
-                      <div className="flex justify-center gap-8 mt-8 pt-4 border-t border-gray-200 dark:border-gray-700">
-                        <div className="flex items-center gap-2">
-                          <div className="w-3 h-8 bg-gradient-to-t from-amber-600 to-amber-500 rounded"></div>
-                          <span className="text-sm text-gray-600 dark:text-gray-400">Energy Usage (kWh)</span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <div className="w-8 h-0.5 bg-blue-500"></div>
-                          <span className="text-sm text-gray-600 dark:text-gray-400">Cost ($)</span>
-                        </div>
-                      </div>
-
-                      {/* Stats */}
-                      <div className="grid grid-cols-2 gap-4 mt-6">
-                        <div className="bg-white dark:bg-gray-700/50 rounded-lg p-4 shadow-sm">
-                          <div className="text-sm text-gray-500 dark:text-gray-400">Peak Usage</div>
-                          <div className="text-lg font-semibold text-gray-900 dark:text-white">25,000 kWh</div>
-                          <div className="text-xs text-gray-500 dark:text-gray-400">August</div>
-                        </div>
-                        <div className="bg-white dark:bg-gray-700/50 rounded-lg p-4 shadow-sm">
-                          <div className="text-sm text-gray-500 dark:text-gray-400">Peak Cost</div>
-                          <div className="text-lg font-semibold text-gray-900 dark:text-white">$7,750</div>
-                          <div className="text-xs text-gray-500 dark:text-gray-400">August</div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Energy Saving Opportunities */}
-              <div className="card bg-gradient-to-br from-gray-800 to-gray-900 shadow-xl border border-gray-700 relative overflow-hidden group hover:shadow-2xl transition-all duration-300">
-                {/* Decorative patterns */}
-                <div className="absolute inset-0 opacity-5">
-                  <div className="absolute inset-0" 
-                    style={{
-                      backgroundImage: 'repeating-linear-gradient(45deg, transparent, transparent 20px, #ffffff 20px, #ffffff 22px)',
-                      backgroundSize: '30px 30px'
-                    }}
-                  ></div>
-                </div>
-                
-                {/* Gradient orbs */}
-                <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-bl from-amber-500/10 to-transparent rounded-bl-full"></div>
-                <div className="absolute bottom-0 left-0 w-64 h-64 bg-gradient-to-tr from-blue-500/10 to-transparent rounded-tr-full"></div>
-                
-                <div className="card-body relative z-10">
-                  <div className="flex items-start gap-6 mb-8">
-                    <div className="bg-gradient-to-br from-amber-500 to-amber-600 p-6 rounded-xl text-white shadow-lg transform group-hover:scale-105 transition-transform duration-300">
-                      <FaLightbulb size={24} />
-                    </div>
-                    <div>
-                      <h3 className="text-xl font-bold bg-gradient-to-r from-amber-500 to-amber-600 bg-clip-text text-transparent">
-                        Energy Saving Opportunities
-                      </h3>
-                    </div>
-                  </div>
-                  
-                  <div className="mt-4">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      <div className="bg-gray-800 rounded-xl p-6 backdrop-blur-sm group hover:shadow-lg transition-all duration-300 border border-gray-700/50">
-                        <div className="flex items-center gap-4 mb-4">
-                          <div className="bg-gradient-to-br from-blue-500 to-blue-600 p-3 rounded-lg text-white shadow-lg transform group-hover:scale-110 transition-transform duration-300">
-                            <FaSolarPanel size={20} />
-                          </div>
-                          <h4 className="font-semibold text-white">HVAC Optimization</h4>
-                        </div>
-                        <p className="text-gray-400 text-sm mb-6">
-                          Upgrading to a more efficient HVAC system could reduce energy consumption by up to 30%.
-                        </p>
-
-                        <div className="flex items-center justify-between mb-4">
-                          <div className="relative w-24 h-24">
-                            <svg className="w-full h-full" viewBox="0 0 120 120">
-                              <circle 
-                                cx="60" 
-                                cy="60" 
-                                r="54" 
-                                fill="none" 
-                                stroke="#1e293b" 
-                                strokeWidth="12"
-                              />
-                              <circle 
-                                cx="60" 
-                                cy="60" 
-                                r="54" 
-                                fill="none" 
-                                stroke="url(#hvacCircleGradient)" 
-                                strokeWidth="12"
-                                strokeDasharray="339.3"
-                                strokeDashoffset="135.7" // 339.3 * 0.4 = 135.7 (60% filled)
-                                transform="rotate(-90 60 60)"
-                                className="drop-shadow"
-                              />
-                              <defs>
-                                <linearGradient id="hvacCircleGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                                  <stop offset="0%" stopColor="#3b82f6" />
-                                  <stop offset="100%" stopColor="#2563eb" />
-                                </linearGradient>
-                              </defs>
-                              <text x="60" y="55" fontSize="22" fontWeight="bold" fill="#ffffff" textAnchor="middle">60%</text>
-                              <text x="60" y="75" fontSize="10" fill="#9ca3af" textAnchor="middle">Savings</text>
-                            </svg>
-                          </div>
-                          <div className="text-right">
-                            <span className="text-2xl font-bold text-white block">$9,700</span>
-                            <span className="text-sm text-gray-400">yearly savings</span>
-                          </div>
-                        </div>
-
-                        <div className="space-y-2 mt-6">
-                          <div className="flex justify-between items-center">
-                            <div className="flex items-center gap-2">
-                              <div className="w-3 h-3 rounded-full bg-blue-500"></div>
-                              <span className="text-xs text-gray-300">Energy Savings</span>
-                            </div>
-                            <span className="text-sm font-medium text-white">$5,820</span>
-                          </div>
-                          <div className="flex justify-between items-center">
-                            <div className="flex items-center gap-2">
-                              <div className="w-3 h-3 rounded-full bg-blue-400"></div>
-                              <span className="text-xs text-gray-300">Maintenance</span>
-                            </div>
-                            <span className="text-sm font-medium text-white">$2,425</span>
-                          </div>
-                          <div className="flex justify-between items-center">
-                            <div className="flex items-center gap-2">
-                              <div className="w-3 h-3 rounded-full bg-blue-300"></div>
-                              <span className="text-xs text-gray-300">Equipment</span>
-                            </div>
-                            <span className="text-sm font-medium text-white">$1,455</span>
-                          </div>
-                        </div>
-                      </div>
-                      
-                      <div className="bg-gray-800 rounded-xl p-6 backdrop-blur-sm group hover:shadow-lg transition-all duration-300 border border-gray-700/50">
-                        <div className="flex items-center gap-4 mb-4">
-                          <div className="bg-gradient-to-br from-amber-500 to-amber-600 p-3 rounded-lg text-white shadow-lg transform group-hover:scale-110 transition-transform duration-300">
-                            <FaLightbulb size={20} />
-                          </div>
-                          <h4 className="font-semibold text-white">LED Lighting Upgrade</h4>
-                        </div>
-                        <p className="text-gray-400 text-sm mb-6">
-                          Replacing current lighting with LED fixtures could reduce lighting energy use by up to 60%.
-                        </p>
-                        
-                        <div className="flex items-center justify-between mb-4">
-                          <div className="relative w-24 h-24">
-                            <svg className="w-full h-full" viewBox="0 0 120 120">
-                              <circle 
-                                cx="60" 
-                                cy="60" 
-                                r="54" 
-                                fill="none" 
-                                stroke="#1e293b" 
-                                strokeWidth="12"
-                              />
-                              <circle 
-                                cx="60" 
-                                cy="60" 
-                                r="54" 
-                                fill="none" 
-                                stroke="url(#ledCircleGradient)" 
-                                strokeWidth="12"
-                                strokeDasharray="339.3"
-                                strokeDashoffset="84.8" // 339.3 * 0.25 = 84.8 (75% filled)
-                                transform="rotate(-90 60 60)"
-                                className="drop-shadow"
-                              />
-                              <defs>
-                                <linearGradient id="ledCircleGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                                  <stop offset="0%" stopColor="#f59e0b" />
-                                  <stop offset="100%" stopColor="#d97706" />
-                                </linearGradient>
-                              </defs>
-                              <text x="60" y="55" fontSize="22" fontWeight="bold" fill="#ffffff" textAnchor="middle">75%</text>
-                              <text x="60" y="75" fontSize="10" fill="#9ca3af" textAnchor="middle">Savings</text>
-                            </svg>
-                          </div>
-                          <div className="text-right">
-                            <span className="text-2xl font-bold text-white block">$7,200</span>
-                            <span className="text-sm text-gray-400">yearly savings</span>
-                          </div>
-                        </div>
-
-                        <div className="space-y-2 mt-6">
-                          <div className="flex justify-between items-center">
-                            <div className="flex items-center gap-2">
-                              <div className="w-3 h-3 rounded-full bg-amber-500"></div>
-                              <span className="text-xs text-gray-300">Energy Savings</span>
-                            </div>
-                            <span className="text-sm font-medium text-white">$5,400</span>
-                          </div>
-                          <div className="flex justify-between items-center">
-                            <div className="flex items-center gap-2">
-                              <div className="w-3 h-3 rounded-full bg-amber-400"></div>
-                              <span className="text-xs text-gray-300">Installation</span>
-                            </div>
-                            <span className="text-sm font-medium text-white">$1,440</span>
-                          </div>
-                          <div className="flex justify-between items-center">
-                            <div className="flex items-center gap-2">
-                              <div className="w-3 h-3 rounded-full bg-amber-300"></div>
-                              <span className="text-xs text-gray-300">Bulb Costs</span>
-                            </div>
-                            <span className="text-sm font-medium text-white">$360</span>
-                          </div>
-                        </div>
-                      </div>
-                      
-                      <div className="bg-gray-800 rounded-xl p-6 backdrop-blur-sm group hover:shadow-lg transition-all duration-300 border border-gray-700/50">
-                        <div className="flex items-center gap-4 mb-4">
-                          <div className="bg-gradient-to-br from-purple-500 to-purple-600 p-3 rounded-lg text-white shadow-lg transform group-hover:scale-110 transition-transform duration-300">
-                            <FaBuilding size={20} />
-                          </div>
-                          <h4 className="font-semibold text-white">Smart Building Controls</h4>
-                        </div>
-                        <p className="text-gray-400 text-sm mb-6">
-                          Implementing smart controls for lighting and HVAC could reduce overall energy use by 15%.
-                        </p>
-                        
-                        <div className="flex items-center justify-between mb-4">
-                          <div className="relative w-24 h-24">
-                            <svg className="w-full h-full" viewBox="0 0 120 120">
-                              <circle 
-                                cx="60" 
-                                cy="60" 
-                                r="54" 
-                                fill="none" 
-                                stroke="#1e293b" 
-                                strokeWidth="12"
-                              />
-                              <circle 
-                                cx="60" 
-                                cy="60" 
-                                r="54" 
-                                fill="none" 
-                                stroke="url(#smartCircleGradient)" 
-                                strokeWidth="12"
-                                strokeDasharray="339.3"
-                                strokeDashoffset="196.8" // 339.3 * 0.58 = 196.8 (42% filled)
-                                transform="rotate(-90 60 60)"
-                                className="drop-shadow"
-                              />
-                              <defs>
-                                <linearGradient id="smartCircleGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                                  <stop offset="0%" stopColor="#8b5cf6" />
-                                  <stop offset="100%" stopColor="#7c3aed" />
-                                </linearGradient>
-                              </defs>
-                              <text x="60" y="55" fontSize="22" fontWeight="bold" fill="#ffffff" textAnchor="middle">42%</text>
-                              <text x="60" y="75" fontSize="10" fill="#9ca3af" textAnchor="middle">HVAC</text>
-                            </svg>
-                          </div>
-                          <div className="text-right">
-                            <span className="text-2xl font-bold text-white block">$11,500</span>
-                            <span className="text-sm text-gray-400">yearly savings</span>
-                          </div>
-                        </div>
-
-                        <div className="space-y-2 mt-6">
-                          <div className="flex justify-between items-center">
-                            <div className="flex items-center gap-2">
-                              <div className="w-3 h-3 rounded-full bg-purple-500"></div>
-                              <span className="text-xs text-gray-300">HVAC Savings</span>
-                            </div>
-                            <span className="text-sm font-medium text-white">$4,830</span>
-                          </div>
-                          <div className="flex justify-between items-center">
-                            <div className="flex items-center gap-2">
-                              <div className="w-3 h-3 rounded-full bg-purple-400"></div>
-                              <span className="text-xs text-gray-300">Lighting Savings</span>
-                            </div>
-                            <span className="text-sm font-medium text-white">$3,220</span>
-                          </div>
-                          <div className="flex justify-between items-center">
-                            <div className="flex items-center gap-2">
-                              <div className="w-3 h-3 rounded-full bg-purple-300"></div>
-                              <span className="text-xs text-gray-300">Maintenance/Other</span>
-                            </div>
-                            <span className="text-sm font-medium text-white">$3,450</span>
-                          </div>
-                        </div>
-                      </div>
-                      
-                      <div className="bg-gray-800 rounded-xl p-6 backdrop-blur-sm group hover:shadow-lg transition-all duration-300 border border-gray-700/50">
-                        <div className="flex items-center gap-4 mb-4">
-                          <div className="bg-gradient-to-br from-green-500 to-green-600 p-3 rounded-lg text-white shadow-lg transform group-hover:scale-110 transition-transform duration-300">
-                            <FaSolarPanel size={20} />
-                          </div>
-                          <h4 className="font-semibold text-white">Solar Energy Installation</h4>
-                        </div>
-                        <p className="text-gray-400 text-sm mb-6">
-                          Installing solar panels could offset up to 100% of the facility's electricity consumption.
-                        </p>
-                        
-                        <div className="flex items-center justify-between mb-4">
-                          <div className="relative w-24 h-24">
-                            <svg className="w-full h-full" viewBox="0 0 120 120">
-                              <circle 
-                                cx="60" 
-                                cy="60" 
-                                r="54" 
-                                fill="none" 
-                                stroke="#1e293b" 
-                                strokeWidth="12"
-                              />
-                              <circle 
-                                cx="60" 
-                                cy="60" 
-                                r="54" 
-                                fill="none" 
-                                stroke="url(#solarCircleGradient)" 
-                                strokeWidth="12"
-                                strokeDasharray="339.3"
-                                strokeDashoffset="118.8" // 339.3 * 0.35 = 118.8 (65% filled)
-                                transform="rotate(-90 60 60)"
-                                className="drop-shadow"
-                              />
-                              <defs>
-                                <linearGradient id="solarCircleGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                                  <stop offset="0%" stopColor="#22c55e" />
-                                  <stop offset="100%" stopColor="#16a34a" />
-                                </linearGradient>
-                              </defs>
-                              <text x="60" y="55" fontSize="22" fontWeight="bold" fill="#ffffff" textAnchor="middle">65%</text>
-                              <text x="60" y="75" fontSize="10" fill="#9ca3af" textAnchor="middle">Energy</text>
-                            </svg>
-                          </div>
-                          <div className="text-right">
-                            <span className="text-2xl font-bold text-white block">$77,200</span>
-                            <span className="text-sm text-gray-400">yearly savings</span>
-                          </div>
-                        </div>
-
-                        <div className="space-y-2 mt-6">
-                          <div className="flex justify-between items-center">
-                            <div className="flex items-center gap-2">
-                              <div className="w-3 h-3 rounded-full bg-green-500"></div>
-                              <span className="text-xs text-gray-300">Energy Savings</span>
-                            </div>
-                            <span className="text-sm font-medium text-white">$50,180</span>
-                          </div>
-                          <div className="flex justify-between items-center">
-                            <div className="flex items-center gap-2">
-                              <div className="w-3 h-3 rounded-full bg-green-400"></div>
-                              <span className="text-xs text-gray-300">Tax Credits</span>
-                            </div>
-                            <span className="text-sm font-medium text-white">$16,984</span>
-                          </div>
-                          <div className="flex justify-between items-center">
-                            <div className="flex items-center gap-2">
-                              <div className="w-3 h-3 rounded-full bg-green-300"></div>
-                              <span className="text-xs text-gray-300">Performance & Other</span>
-                            </div>
-                            <span className="text-sm font-medium text-white">$10,036</span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
               {/* Solar Potential Teaser */}
-              <div className="card bg-primary text-primary-content">
-                <div className="card-body">
-                  <h3 className="card-title text-lg flex items-center gap-2">
+              <div className="card bg-gradient-to-br from-[#28292b]/80 via-[#28292b]/50 to-[rgba(40,41,43,0.2)] rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.4)] border border-orange-500/15 overflow-hidden relative">
+                <div className="absolute inset-0 bg-gradient-to-tl from-orange-500/30 via-amber-500/20 to-orange-500/25 opacity-25"></div>
+                <div className="card-body relative z-10">
+                  <h3 className="card-title text-lg flex items-center gap-2 text-white">
                     <FaSolarPanel size={20} />
                     Solar Energy Potential
                   </h3>
-                  <p>
+                  <p className="text-white/90">
                     Based on our energy usage analysis, this facility is an excellent candidate for solar energy. 
                     With the current energy consumption patterns, a properly sized solar installation could 
                     significantly reduce or even eliminate electricity costs.
@@ -976,7 +718,7 @@ const EnergyUsageEstimation = () => {
                   <div className="card-actions justify-end mt-4">
                     <button 
                       onClick={handleContinueToSolarPotential}
-                      className="btn btn-outline btn-sm"
+                      className="px-4 py-2 bg-gradient-to-br from-orange-500 via-orange-600 to-amber-600 text-white rounded-lg hover:bg-orange-600 transition-all border border-white/20 hover:shadow-lg hover:shadow-orange-500/20"
                     >
                       View Solar Potential Analysis
                     </button>
@@ -988,15 +730,23 @@ const EnergyUsageEstimation = () => {
               <div className="flex justify-center mt-8">
                 <button 
                   onClick={handleContinueToSolarPotential}
-                  className="relative group overflow-hidden"
+                  className="bg-gradient-to-br from-orange-500 via-orange-600 to-amber-600 text-white py-4 px-8 rounded-xl font-medium transition-all shadow-xl hover:shadow-2xl hover:-translate-y-1 inline-flex items-center gap-3 group relative overflow-hidden"
                 >
-                  <div className="relative z-10 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white py-4 px-8 rounded-xl font-medium transition-all shadow-xl hover:shadow-2xl hover:-translate-y-1 inline-flex items-center gap-3">
-                    <span className="text-lg">Continue to Solar Panel Potential</span>
-                    <MdArrowForward className="text-2xl group-hover:translate-x-1 transition-transform duration-300" />
+                  {/* Decorative patterns */}
+                  <div className="absolute inset-0 opacity-10">
+                    <div className="absolute inset-0" 
+                      style={{
+                        backgroundImage: 'repeating-linear-gradient(45deg, transparent, transparent 20px, #ffffff 20px, #ffffff 22px)',
+                        backgroundSize: '30px 30px'
+                      }}
+                    ></div>
                   </div>
                   
-                  {/* Button decoration */}
-                  <div className="absolute inset-0 bg-gradient-to-r from-amber-400 to-amber-500 blur-xl opacity-50 group-hover:opacity-75 transition-opacity duration-300"></div>
+                  {/* Gradient orbs */}
+                  <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-white/10 to-transparent rounded-bl-full"></div>
+                  
+                  <span className="relative z-10 text-lg">Continue to Solar Panel Potential</span>
+                  <MdArrowForward className="relative z-10 text-2xl group-hover:translate-x-1 transition-transform duration-300" />
                 </button>
               </div>
             </>

@@ -20,7 +20,7 @@
     "@fullcalendar/timegrid": "^6.1.11",
     "@mui/material": "^5.15.7",
     "@mui/x-data-grid": "^6.19.2",
-    "@tanstack/react-query": "^5.18.1",
+    "@tanstack/react-query": "^5.71.0",
     "@types/react-simple-maps": "^3.0.6",
     "@types/topojson-client": "^3.1.5",
     "axios": "^1.6.7",
@@ -30,10 +30,10 @@
     "react-dom": "^18.2.0",
     "react-full-screen": "^1.1.1",
     "react-hot-toast": "^2.4.1",
-    "react-icons": "^5.0.1",
+    "react-icons": "^5.5.0",
     "react-router-dom": "^6.21.3",
     "react-simple-maps": "^3.0.0",
-    "recharts": "^2.11.0",
+    "recharts": "^2.15.1",
     "topojson-client": "^3.1.0"
   },
   "devDependencies": {

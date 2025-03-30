@@ -244,29 +244,19 @@ Solar Energy Consultant`
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-800 flex items-center justify-center relative overflow-hidden">
-        {/* Animated background patterns */}
-        <div className="absolute inset-0 opacity-10">
-          <div className="absolute inset-0" 
-            style={{
-              backgroundImage: 'repeating-linear-gradient(45deg, transparent, transparent 20px, #ffffff 20px, #ffffff 22px)',
-              backgroundSize: '30px 30px'
-            }}
-          ></div>
-        </div>
-        
-        {/* Animated gradient orbs */}
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-gradient-to-br from-amber-500/20 to-transparent rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-gradient-to-br from-blue-500/20 to-transparent rounded-full blur-3xl animate-pulse delay-1000"></div>
+      <div className="min-h-screen bg-[#020305] flex items-center justify-center relative overflow-hidden">
+        {/* Background gradient orbs */}
+        <div className="fixed top-20 right-40 w-96 h-96 bg-gradient-to-br from-orange-500/5 to-transparent rounded-full blur-3xl transform rotate-12 opacity-70 pointer-events-none"></div>
+        <div className="fixed bottom-40 left-20 w-80 h-80 bg-gradient-to-tr from-orange-500/5 to-transparent rounded-full blur-3xl transform -rotate-12 opacity-60 pointer-events-none"></div>
         
         <div className="relative z-10 flex flex-col items-center gap-8">
           <div className="relative">
-            <div className="absolute inset-0 bg-gradient-to-r from-amber-500 to-amber-600 rounded-full blur-xl opacity-50 animate-pulse"></div>
-            <div className="loading loading-spinner loading-lg text-amber-500 relative"></div>
+            <div className="absolute inset-0 bg-gradient-to-r from-orange-500 to-amber-600 rounded-full blur-xl opacity-50 animate-pulse"></div>
+            <div className="loading loading-spinner loading-lg text-orange-500 relative"></div>
           </div>
           <div className="text-center">
             <h2 className="text-2xl font-bold text-white mb-2">Loading Email Automation</h2>
-            <p className="text-gray-400">Preparing your email templates and contacts...</p>
+            <p className="text-white/60">Preparing your email templates and contacts...</p>
           </div>
         </div>
       </div>
@@ -274,18 +264,22 @@ Solar Energy Consultant`
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
+    <div className="w-full px-1 py-2 bg-[#020305] min-h-screen min-w-full relative">
+      {/* Background gradient orbs */}
+      <div className="fixed top-20 right-40 w-96 h-96 bg-gradient-to-br from-orange-500/5 to-transparent rounded-full blur-3xl transform rotate-12 opacity-70 pointer-events-none"></div>
+      <div className="fixed bottom-40 left-20 w-80 h-80 bg-gradient-to-tr from-orange-500/5 to-transparent rounded-full blur-3xl transform -rotate-12 opacity-60 pointer-events-none"></div>
+
       <div className="container mx-auto px-4 py-8">
         <div className="flex flex-col gap-6">
-          <div className="flex justify-between items-center sticky top-0 z-50 bg-white/80 dark:bg-gray-900/80 py-4 px-6 rounded-xl shadow-lg backdrop-blur-md border border-gray-200/50 dark:border-gray-700/50">
+          <div className="flex justify-between items-center sticky top-0 z-50 backdrop-blur-2xl bg-gradient-to-br from-[#28292b]/80 via-[#28292b]/50 to-[rgba(40,41,43,0.2)] rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.4)] border border-orange-500/15 py-4 px-6">
             <div className="flex items-center gap-3">
               <button 
                 onClick={() => navigate('/solar-panel-potential')}
-                className="btn btn-circle btn-ghost hover:bg-amber-500/10 transition-colors"
+                className="btn btn-circle bg-transparent hover:bg-orange-500/10 border border-orange-500/30 transition-colors"
               >
-                <MdArrowBack size={24} className="text-amber-500" />
+                <MdArrowBack size={24} className="text-orange-500" />
               </button>
-              <h1 className="text-2xl font-bold bg-gradient-to-r from-amber-500 to-amber-600 bg-clip-text text-transparent">
+              <h1 className="text-2xl font-bold text-white bg-gradient-to-r from-white via-white/90 to-white/80 bg-clip-text text-transparent">
                 Email Automation
               </h1>
             </div>
@@ -295,306 +289,239 @@ Solar Energy Consultant`
             {/* Left Column - Email Templates and Editor */}
             <div className="lg:col-span-1 flex flex-col gap-6">
               {/* Email Templates */}
-              <div className="card bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900 shadow-xl border border-gray-100 dark:border-gray-700 relative overflow-hidden group hover:shadow-2xl transition-all duration-300">
-                {/* Subtle pattern background */}
-                <div className="absolute inset-0 opacity-[0.02]">
-                  <div className="absolute inset-0" 
-                    style={{
-                      backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 30 L15 0 L45 0 L60 30 L45 60 L15 60' fill='none' stroke='%23000000' stroke-width='0.5'/%3E%3C/svg%3E")`,
-                      backgroundSize: '60px 60px'
-                    }}
-                  ></div>
+              <div className="backdrop-blur-2xl bg-gradient-to-br from-[#28292b]/80 via-[#28292b]/50 to-[rgba(40,41,43,0.2)] rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.4)] border border-orange-500/15 p-4 relative overflow-hidden group hover:shadow-[0_8px_32px_rgba(0,0,0,0.6)] transition-all duration-300">
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="bg-gradient-to-br from-orange-500 to-amber-600 p-4 rounded-xl text-white shadow-lg transform group-hover:scale-105 transition-transform duration-300">
+                    <MdOutlineEmail size={24} />
+                  </div>
+                  <h2 className="text-lg font-semibold text-white">Email Templates</h2>
                 </div>
                 
-                {/* Subtle gradient */}
-                <div className="absolute inset-0 bg-gradient-to-br from-amber-500/5 via-orange-500/5 to-transparent"></div>
-                
-                <div className="card-body relative z-10">
-                  <div className="flex items-start gap-6 mb-8">
-                    <div className="bg-gradient-to-br from-amber-500 to-amber-600 p-6 rounded-xl text-white shadow-lg transform group-hover:scale-105 transition-transform duration-300">
-                      <MdOutlineEmail size={24} />
-                    </div>
-                    <div>
-                      <h2 className="text-xl font-bold bg-gradient-to-r from-amber-500 to-amber-600 bg-clip-text text-transparent">
-                        Email Templates
-                      </h2>
-                    </div>
+                <div className="mt-4">
+                  <div className="flex flex-col gap-3">
+                    {templates.map(template => (
+                      <div 
+                        key={template.id}
+                        className={`backdrop-blur-md bg-[#28292b]/40 rounded-lg p-3 border border-orange-500/10 cursor-pointer hover:border-orange-500/30 transition-all duration-300 ${
+                          selectedTemplate === template.id 
+                            ? 'ring-1 ring-orange-500 shadow-lg shadow-orange-500/10' 
+                            : ''
+                        }`}
+                        onClick={() => handleTemplateChange(template.id)}
+                      >
+                        <h3 className="font-medium text-white">{template.name}</h3>
+                        <p className="text-sm text-white/60 truncate">{template.subject}</p>
+                      </div>
+                    ))}
                   </div>
                   
-                  <div className="mt-4">
-                    <div className="flex flex-col gap-3">
-                      {templates.map(template => (
-                        <div 
-                          key={template.id}
-                          className={`card bg-gray-50 dark:bg-gray-800/50 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 transition-all duration-300 ${
-                            selectedTemplate === template.id 
-                              ? 'ring-2 ring-amber-500 shadow-lg transform scale-[1.02]' 
-                              : ''
-                          }`}
-                          onClick={() => handleTemplateChange(template.id)}
-                        >
-                          <div className="card-body p-4">
-                            <h3 className="font-medium text-gray-900 dark:text-white">{template.name}</h3>
-                            <p className="text-sm text-gray-600 dark:text-gray-400 truncate">{template.subject}</p>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                    
-                    <div className="flex justify-end mt-4">
-                      <button className="btn btn-sm bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white border-0 gap-2 shadow-lg hover:shadow-xl transition-all">
-                        <FaRegEdit size={16} />
-                        Create New Template
-                      </button>
-                    </div>
+                  <div className="flex justify-end mt-4">
+                    <button className="btn btn-sm bg-gradient-to-br from-orange-500 to-amber-600 hover:from-orange-600 hover:to-amber-700 text-white border-0 gap-2 shadow-lg hover:shadow-orange-500/20 transition-all">
+                      <FaRegEdit size={16} />
+                      Create New Template
+                    </button>
                   </div>
                 </div>
               </div>
 
               {/* Automation Settings (Collapsible) */}
-              <div className="card bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900 shadow-xl border border-gray-100 dark:border-gray-700 relative overflow-hidden group hover:shadow-2xl transition-all duration-300">
-                <div className="card-body relative z-10">
-                  <details className="w-full">
-                    <summary className="flex items-center gap-6 cursor-pointer">
-                      <div className="bg-gradient-to-br from-blue-500 to-blue-600 p-4 rounded-xl text-white shadow-lg">
-                        <MdOutlineSettings size={24} />
-                      </div>
-                      <h2 className="text-xl font-bold bg-gradient-to-r from-blue-500 to-blue-600 bg-clip-text text-transparent">
-                        Automation Settings
-                      </h2>
-                    </summary>
-                    
-                    <div className="mt-6 space-y-4 pl-16">
-                      <div className="form-control">
-                        <label className="label">
-                          <span className="label-text font-medium">Follow-up Timing</span>
-                        </label>
-                        <select className="select select-bordered w-full bg-white dark:bg-gray-800">
-                          <option value="3">After 3 days</option>
-                          <option value="5">After 5 days</option>
-                          <option value="7">After 7 days</option>
-                          <option value="14">After 14 days</option>
-                        </select>
-                      </div>
-                      
-                      <div className="form-control">
-                        <label className="label">
-                          <span className="label-text font-medium">Maximum Follow-ups</span>
-                        </label>
-                        <select className="select select-bordered w-full bg-white dark:bg-gray-800">
-                          <option value="1">1 follow-up</option>
-                          <option value="2">2 follow-ups</option>
-                          <option value="3">3 follow-ups</option>
-                        </select>
-                      </div>
-                      
-                      <div className="form-control">
-                        <label className="flex items-center gap-2 cursor-pointer group/checkbox">
-                          <input type="checkbox" className="checkbox checkbox-primary" defaultChecked />
-                          <span className="label-text">Stop sequence if reply received</span>
-                        </label>
-                      </div>
-                      
-                      <div className="form-control">
-                        <label className="flex items-center gap-2 cursor-pointer group/checkbox">
-                          <input type="checkbox" className="checkbox checkbox-primary" defaultChecked />
-                          <span className="label-text">Track email opens and clicks</span>
-                        </label>
-                      </div>
+              <div className="backdrop-blur-2xl bg-gradient-to-br from-[#28292b]/80 via-[#28292b]/50 to-[rgba(40,41,43,0.2)] rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.4)] border border-orange-500/15 p-4 relative overflow-hidden group hover:shadow-[0_8px_32px_rgba(0,0,0,0.6)] transition-all duration-300">
+                <details className="w-full">
+                  <summary className="flex items-center gap-3 cursor-pointer mb-4">
+                    <div className="bg-gradient-to-br from-orange-500 to-amber-600 p-4 rounded-xl text-white shadow-lg transform group-hover:scale-105 transition-transform duration-300">
+                      <MdOutlineSettings size={24} />
                     </div>
-                  </details>
-                </div>
+                    <h2 className="text-lg font-semibold text-white">Automation Settings</h2>
+                  </summary>
+                  
+                  <div className="mt-6 space-y-4 pl-12">
+                    <div className="form-control">
+                      <label className="label">
+                        <span className="label-text font-medium text-white/80">Follow-up Timing</span>
+                      </label>
+                      <select className="select w-full backdrop-blur-md bg-[#28292b]/60 border border-orange-500/20 text-white focus:border-orange-500">
+                        <option value="3">After 3 days</option>
+                        <option value="5">After 5 days</option>
+                        <option value="7">After 7 days</option>
+                        <option value="14">After 14 days</option>
+                      </select>
+                    </div>
+                    
+                    <div className="form-control">
+                      <label className="label">
+                        <span className="label-text font-medium text-white/80">Maximum Follow-ups</span>
+                      </label>
+                      <select className="select w-full backdrop-blur-md bg-[#28292b]/60 border border-orange-500/20 text-white focus:border-orange-500">
+                        <option value="1">1 follow-up</option>
+                        <option value="2">2 follow-ups</option>
+                        <option value="3">3 follow-ups</option>
+                      </select>
+                    </div>
+                    
+                    <div className="form-control">
+                      <label className="flex items-center gap-2 cursor-pointer group/checkbox">
+                        <input type="checkbox" className="checkbox checkbox-warning" defaultChecked />
+                        <span className="label-text text-white/80">Stop sequence if reply received</span>
+                      </label>
+                    </div>
+                    
+                    <div className="form-control">
+                      <label className="flex items-center gap-2 cursor-pointer group/checkbox">
+                        <input type="checkbox" className="checkbox checkbox-warning" defaultChecked />
+                        <span className="label-text text-white/80">Track email opens and clicks</span>
+                      </label>
+                    </div>
+                  </div>
+                </details>
               </div>
 
               {/* Delivery Rules (Collapsible) */}
-              <div className="card bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900 shadow-xl border border-gray-100 dark:border-gray-700 relative overflow-hidden group hover:shadow-2xl transition-all duration-300">
-                <div className="card-body relative z-10">
-                  <details className="w-full">
-                    <summary className="flex items-center gap-6 cursor-pointer">
-                      <div className="bg-gradient-to-br from-teal-500 to-teal-600 p-4 rounded-xl text-white shadow-lg">
-                        <MdOutlineRule size={24} />
-                      </div>
-                      <h2 className="text-xl font-bold bg-gradient-to-r from-teal-500 to-teal-600 bg-clip-text text-transparent">
-                        Delivery Rules
-                      </h2>
-                    </summary>
-                    
-                    <div className="mt-6 space-y-4 pl-16">
-                      <div className="form-control">
-                        <label className="label">
-                          <span className="label-text font-medium">Delivery Window</span>
-                        </label>
-                        <div className="flex gap-4">
-                          <input 
-                            type="time" 
-                            className="input input-bordered flex-1 bg-white dark:bg-gray-800"
-                            defaultValue="09:00"
-                          />
-                          <input 
-                            type="time" 
-                            className="input input-bordered flex-1 bg-white dark:bg-gray-800"
-                            defaultValue="17:00"
-                          />
-                        </div>
-                      </div>
-                      
-                      <div className="form-control">
-                        <label className="label">
-                          <span className="label-text font-medium">Time Zone</span>
-                        </label>
-                        <select className="select select-bordered w-full bg-white dark:bg-gray-800">
-                          <option>Recipient's Local Time</option>
-                          <option>Your Local Time</option>
-                          <option>UTC</option>
-                        </select>
-                      </div>
-                      
-                      <div className="form-control">
-                        <label className="flex items-center gap-2 cursor-pointer group/checkbox">
-                          <input type="checkbox" className="checkbox checkbox-primary" defaultChecked />
-                          <span className="label-text">Respect business hours only</span>
-                        </label>
-                      </div>
-                      
-                      <div className="form-control">
-                        <label className="flex items-center gap-2 cursor-pointer group/checkbox">
-                          <input type="checkbox" className="checkbox checkbox-primary" defaultChecked />
-                          <span className="label-text">Skip weekends</span>
-                        </label>
+              <div className="backdrop-blur-2xl bg-gradient-to-br from-[#28292b]/80 via-[#28292b]/50 to-[rgba(40,41,43,0.2)] rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.4)] border border-orange-500/15 p-4 relative overflow-hidden group hover:shadow-[0_8px_32px_rgba(0,0,0,0.6)] transition-all duration-300">
+                <details className="w-full">
+                  <summary className="flex items-center gap-3 cursor-pointer mb-4">
+                    <div className="bg-gradient-to-br from-orange-500 to-amber-600 p-4 rounded-xl text-white shadow-lg transform group-hover:scale-105 transition-transform duration-300">
+                      <MdOutlineRule size={24} />
+                    </div>
+                    <h2 className="text-lg font-semibold text-white">Delivery Rules</h2>
+                  </summary>
+                  
+                  <div className="mt-6 space-y-4 pl-12">
+                    <div className="form-control">
+                      <label className="label">
+                        <span className="label-text font-medium text-white/80">Delivery Window</span>
+                      </label>
+                      <div className="flex gap-4">
+                        <input 
+                          type="time" 
+                          className="input flex-1 backdrop-blur-md bg-[#28292b]/60 border border-orange-500/20 text-white focus:border-orange-500"
+                          defaultValue="09:00"
+                        />
+                        <input 
+                          type="time" 
+                          className="input flex-1 backdrop-blur-md bg-[#28292b]/60 border border-orange-500/20 text-white focus:border-orange-500"
+                          defaultValue="17:00"
+                        />
                       </div>
                     </div>
-                  </details>
-                </div>
+                    
+                    <div className="form-control">
+                      <label className="label">
+                        <span className="label-text font-medium text-white/80">Time Zone</span>
+                      </label>
+                      <select className="select w-full backdrop-blur-md bg-[#28292b]/60 border border-orange-500/20 text-white focus:border-orange-500">
+                        <option>Recipient's Local Time</option>
+                        <option>Your Local Time</option>
+                        <option>UTC</option>
+                      </select>
+                    </div>
+                    
+                    <div className="form-control">
+                      <label className="flex items-center gap-2 cursor-pointer group/checkbox">
+                        <input type="checkbox" className="checkbox checkbox-warning" defaultChecked />
+                        <span className="label-text text-white/80">Respect business hours only</span>
+                      </label>
+                    </div>
+                    
+                    <div className="form-control">
+                      <label className="flex items-center gap-2 cursor-pointer group/checkbox">
+                        <input type="checkbox" className="checkbox checkbox-warning" defaultChecked />
+                        <span className="label-text text-white/80">Skip weekends</span>
+                      </label>
+                    </div>
+                  </div>
+                </details>
               </div>
             </div>
 
             {/* Right Column - Email Editor and Preview */}
             <div className="lg:col-span-2 flex flex-col gap-6">
               {/* Email Editor */}
-              <div className="card bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900 shadow-xl border border-gray-100 dark:border-gray-700 relative overflow-hidden group hover:shadow-2xl transition-all duration-300">
-                {/* Subtle pattern background */}
-                <div className="absolute inset-0 opacity-[0.02]">
-                  <div className="absolute inset-0" 
-                    style={{
-                      backgroundImage: `url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='10' cy='10' r='0.5' fill='%23000000'/%3E%3C/svg%3E")`,
-                      backgroundSize: '20px 20px'
-                    }}
-                  ></div>
+              <div className="backdrop-blur-2xl bg-gradient-to-br from-[#28292b]/80 via-[#28292b]/50 to-[rgba(40,41,43,0.2)] rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.4)] border border-orange-500/15 p-4 relative overflow-hidden group hover:shadow-[0_8px_32px_rgba(0,0,0,0.6)] transition-all duration-300">
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="bg-gradient-to-br from-orange-500 to-amber-600 p-4 rounded-xl text-white shadow-lg transform group-hover:scale-105 transition-transform duration-300">
+                    <FaRegEdit size={24} />
+                  </div>
+                  <h2 className="text-lg font-semibold text-white">Email Editor</h2>
                 </div>
                 
-                {/* Subtle gradient */}
-                <div className="absolute inset-0 bg-gradient-to-br from-amber-500/5 via-orange-500/5 to-transparent"></div>
-                
-                <div className="card-body relative z-10">
-                  <div className="flex items-start gap-6 mb-8">
-                    <div className="bg-gradient-to-br from-amber-500 to-amber-600 p-6 rounded-xl text-white shadow-lg transform group-hover:scale-105 transition-transform duration-300">
-                      <FaRegEdit size={24} />
-                    </div>
-                    <div>
-                      <h2 className="text-xl font-bold bg-gradient-to-r from-amber-500 to-amber-600 bg-clip-text text-transparent">
-                        Email Editor
-                      </h2>
-                    </div>
+                <div className="mt-4 space-y-4">
+                  <div className="form-control">
+                    <label className="label">
+                      <span className="label-text font-medium text-white/80">Subject</span>
+                    </label>
+                    <input 
+                      type="text" 
+                      value={emailSubject}
+                      onChange={(e) => setEmailSubject(e.target.value)}
+                      className="input w-full backdrop-blur-md bg-[#28292b]/60 border border-orange-500/20 text-white focus:border-orange-500"
+                    />
                   </div>
                   
-                  <div className="mt-4 space-y-4">
-                    <div className="form-control">
-                      <label className="label">
-                        <span className="label-text font-medium">Subject</span>
-                      </label>
-                      <input 
-                        type="text" 
-                        value={emailSubject}
-                        onChange={(e) => setEmailSubject(e.target.value)}
-                        className="input input-bordered w-full bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 focus:border-amber-500 focus:ring-amber-500"
-                      />
-                    </div>
-                    
-                    <div className="form-control">
-                      <label className="label">
-                        <span className="label-text font-medium">Email Body</span>
-                      </label>
-                      <textarea 
-                        value={emailBody}
-                        onChange={(e) => setEmailBody(e.target.value)}
-                        className="textarea textarea-bordered h-64 bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 focus:border-amber-500 focus:ring-amber-500"
-                      />
-                    </div>
-                    
-                    <div className="flex justify-end gap-2">
-                      <button className="btn btn-sm bg-gradient-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 text-white border-0 gap-2 shadow-lg hover:shadow-xl transition-all">
-                        <FaRegCopy size={16} />
-                        Copy
-                      </button>
-                      <button className="btn btn-sm bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white border-0 gap-2 shadow-lg hover:shadow-xl transition-all">
-                        <FaRegSave size={16} />
-                        Save as Template
-                      </button>
-                    </div>
+                  <div className="form-control">
+                    <label className="label">
+                      <span className="label-text font-medium text-white/80">Email Body</span>
+                    </label>
+                    <textarea 
+                      value={emailBody}
+                      onChange={(e) => setEmailBody(e.target.value)}
+                      className="textarea h-64 backdrop-blur-md bg-[#28292b]/60 border border-orange-500/20 text-white focus:border-orange-500"
+                    />
+                  </div>
+                  
+                  <div className="flex justify-end gap-2">
+                    <button className="btn btn-sm bg-gradient-to-br from-[#28292b]/80 to-[#28292b]/60 hover:from-[#28292b]/90 hover:to-[#28292b]/70 text-white border border-orange-500/20 gap-2 shadow-lg hover:shadow-orange-500/10 transition-all">
+                      <FaRegCopy size={16} />
+                      Copy
+                    </button>
+                    <button className="btn btn-sm bg-gradient-to-br from-orange-500 to-amber-600 hover:from-orange-600 hover:to-amber-700 text-white border-0 gap-2 shadow-lg hover:shadow-orange-500/20 transition-all">
+                      <FaRegSave size={16} />
+                      Save as Template
+                    </button>
                   </div>
                 </div>
               </div>
 
               {/* Email Preview */}
-              <div className="card bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900 shadow-xl border border-gray-100 dark:border-gray-700 relative overflow-hidden group hover:shadow-2xl transition-all duration-300">
-                {/* Subtle pattern background */}
-                <div className="absolute inset-0 opacity-[0.02]">
-                  <div className="absolute inset-0" 
-                    style={{
-                      backgroundImage: `url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 40 L40 0' stroke='%23000000' stroke-width='0.5'/%3E%3C/svg%3E")`,
-                      backgroundSize: '40px 40px'
-                    }}
-                  ></div>
+              <div className="backdrop-blur-2xl bg-gradient-to-br from-[#28292b]/80 via-[#28292b]/50 to-[rgba(40,41,43,0.2)] rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.4)] border border-orange-500/15 p-4 relative overflow-hidden group hover:shadow-[0_8px_32px_rgba(0,0,0,0.6)] transition-all duration-300">
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="bg-gradient-to-br from-orange-500 to-amber-600 p-4 rounded-xl text-white shadow-lg transform group-hover:scale-105 transition-transform duration-300">
+                    <MdOutlineEmail size={24} />
+                  </div>
+                  <h2 className="text-lg font-semibold text-white">Email Preview</h2>
                 </div>
                 
-                {/* Subtle gradient */}
-                <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 via-pink-500/5 to-transparent"></div>
-                
-                <div className="card-body relative z-10">
-                  <div className="flex items-start gap-6 mb-8">
-                    <div className="bg-gradient-to-br from-amber-500 to-amber-600 p-6 rounded-xl text-white shadow-lg transform group-hover:scale-105 transition-transform duration-300">
-                      <MdOutlineEmail size={24} />
-                    </div>
-                    <div>
-                      <h2 className="text-xl font-bold bg-gradient-to-r from-amber-500 to-amber-600 bg-clip-text text-transparent">
-                        Email Preview
-                      </h2>
-                    </div>
-                  </div>
-                  
-                  <div className="mt-4">
-                    {selectedContacts.length > 0 ? (
-                      <div className="bg-gradient-to-br from-gray-50/90 to-gray-50/70 dark:from-gray-800/90 dark:to-gray-800/70 rounded-xl p-6 backdrop-blur-lg shadow-inner">
-                        <div className="mb-2 text-gray-600 dark:text-gray-400 flex items-center gap-2">
-                          <span className="font-medium">To:</span>
-                          <div className="flex items-center gap-1">
-                            <span className="bg-amber-500/10 px-2 py-1 rounded">{contacts.find(c => c.name === selectedContacts[0])?.email}</span>
-                            {selectedContacts.length > 1 && (
-                              <span className="bg-amber-500/10 px-2 py-1 rounded">+{selectedContacts.length - 1} more</span>
-                            )}
-                          </div>
-                        </div>
-                        <div className="mb-4 text-gray-600 dark:text-gray-400">
-                          <span className="font-medium">Subject:</span>
-                          <div className="bg-amber-500/10 px-3 py-2 rounded mt-1">
-                            {personalize(emailSubject, contacts.find(c => c.name === selectedContacts[0]))}
-                          </div>
-                        </div>
-                        <div className="whitespace-pre-line border-t border-gray-200 dark:border-gray-700 pt-4 text-gray-900 dark:text-white">
-                          {personalize(emailBody, contacts.find(c => c.name === selectedContacts[0]))}
+                <div className="mt-4">
+                  {selectedContacts.length > 0 ? (
+                    <div className="backdrop-blur-md bg-[#28292b]/40 rounded-lg p-4 border border-orange-500/10">
+                      <div className="mb-2 text-white/80 flex items-center gap-2">
+                        <span className="font-medium">To:</span>
+                        <div className="flex items-center gap-1">
+                          <span className="bg-orange-500/10 px-2 py-1 rounded border border-orange-500/20 text-white">{contacts.find(c => c.name === selectedContacts[0])?.email}</span>
+                          {selectedContacts.length > 1 && (
+                            <span className="bg-orange-500/10 px-2 py-1 rounded border border-orange-500/20 text-white">+{selectedContacts.length - 1} more</span>
+                          )}
                         </div>
                       </div>
-                    ) : (
-                      <div className="text-center py-12 bg-gradient-to-br from-gray-50/90 to-gray-50/70 dark:from-gray-800/90 dark:to-gray-800/70 rounded-xl backdrop-blur-lg">
-                        <div className="text-amber-500 mb-4">
-                          <MdOutlineEmail size={48} className="mx-auto" />
+                      <div className="mb-4 text-white/80">
+                        <span className="font-medium">Subject:</span>
+                        <div className="bg-orange-500/10 px-3 py-2 rounded mt-1 border border-orange-500/20 text-white">
+                          {personalize(emailSubject, contacts.find(c => c.name === selectedContacts[0]))}
                         </div>
-                        <p className="text-gray-500 dark:text-gray-400">
-                          Select a contact to preview the personalized email
-                        </p>
                       </div>
-                    )}
-                  </div>
+                      <div className="whitespace-pre-line border-t border-orange-500/20 pt-4 text-white">
+                        {personalize(emailBody, contacts.find(c => c.name === selectedContacts[0]))}
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="text-center py-12 backdrop-blur-md bg-[#28292b]/40 rounded-lg border border-orange-500/10">
+                      <div className="text-orange-500 mb-4">
+                        <MdOutlineEmail size={48} className="mx-auto" />
+                      </div>
+                      <p className="text-white/60">
+                        Select a contact to preview the personalized email
+                      </p>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
@@ -603,148 +530,110 @@ Solar Energy Consultant`
           {/* Contact Selection and Schedule */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-6">
             {/* Contact Selection */}
-            <div className="lg:col-span-2 card bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900 shadow-xl border border-gray-100 dark:border-gray-700 relative overflow-hidden group hover:shadow-2xl transition-all duration-300">
-              {/* Subtle pattern background */}
-              <div className="absolute inset-0 opacity-[0.02]">
-                <div className="absolute inset-0" 
-                  style={{
-                    backgroundImage: `url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 20 h40 M20 0 v40' stroke='%23000000' stroke-width='0.5'/%3E%3C/svg%3E")`,
-                    backgroundSize: '40px 40px'
-                  }}
-                ></div>
+            <div className="lg:col-span-2 backdrop-blur-2xl bg-gradient-to-br from-[#28292b]/80 via-[#28292b]/50 to-[rgba(40,41,43,0.2)] rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.4)] border border-orange-500/15 p-4 relative overflow-hidden group hover:shadow-[0_8px_32px_rgba(0,0,0,0.6)] transition-all duration-300">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="bg-gradient-to-br from-orange-500 to-amber-600 p-4 rounded-xl text-white shadow-lg transform group-hover:scale-105 transition-transform duration-300">
+                  <MdOutlinePersonAdd size={24} />
+                </div>
+                <h2 className="text-lg font-semibold text-white">Select Recipients</h2>
               </div>
               
-              {/* Subtle gradient */}
-              <div className="absolute inset-0 bg-gradient-to-br from-green-500/5 via-emerald-500/5 to-transparent"></div>
-              
-              <div className="card-body relative z-10">
-                <div className="flex items-start gap-6 mb-8">
-                  <div className="bg-gradient-to-br from-amber-500 to-amber-600 p-6 rounded-xl text-white shadow-lg transform group-hover:scale-105 transition-transform duration-300">
-                    <MdOutlinePersonAdd size={24} />
-                  </div>
-                  <div>
-                    <h2 className="text-xl font-bold bg-gradient-to-r from-amber-500 to-amber-600 bg-clip-text text-transparent">
-                      Select Recipients
-                    </h2>
-                  </div>
+              <div className="mt-4">
+                <div className="flex flex-col gap-2">
+                  {contacts.map(contact => (
+                    <div 
+                      key={contact.id}
+                      className="flex items-center gap-3 p-3 rounded-lg backdrop-blur-sm bg-[#28292b]/30 border border-orange-500/10 hover:border-orange-500/30 transition-all duration-300 group/contact"
+                    >
+                      <div className="relative">
+                        <input 
+                          type="checkbox" 
+                          className="checkbox checkbox-warning"
+                          checked={selectedContacts.includes(contact.name)}
+                          onChange={() => handleContactToggle(contact.name)}
+                        />
+                        <div className="absolute inset-0 bg-orange-500/20 rounded-lg filter blur-lg opacity-0 group-hover/contact:opacity-100 transition-opacity duration-300"></div>
+                      </div>
+                      <div className="transform group-hover/contact:translate-x-1 transition-transform duration-300">
+                        <div className="font-medium text-white">{contact.name}</div>
+                        <div className="text-sm text-white/80">{contact.email}</div>
+                        <div className="text-xs text-white/60">{contact.company} - {contact.position}</div>
+                      </div>
+                    </div>
+                  ))}
                 </div>
                 
-                <div className="mt-4">
-                  <div className="flex flex-col gap-2">
-                    {contacts.map(contact => (
-                      <div 
-                        key={contact.id}
-                        className="flex items-center gap-3 p-3 rounded-xl bg-gradient-to-r hover:from-gray-50/50 hover:to-gray-100/50 dark:hover:from-gray-800/50 dark:hover:to-gray-700/50 transition-all duration-300 group/contact"
-                      >
-                        <div className="relative">
-                          <input 
-                            type="checkbox" 
-                            className="checkbox checkbox-primary"
-                            checked={selectedContacts.includes(contact.name)}
-                            onChange={() => handleContactToggle(contact.name)}
-                          />
-                          <div className="absolute inset-0 bg-amber-500/20 rounded-lg filter blur-lg opacity-0 group-hover/contact:opacity-100 transition-opacity duration-300"></div>
-                        </div>
-                        <div className="transform group-hover/contact:translate-x-1 transition-transform duration-300">
-                          <div className="font-medium text-gray-900 dark:text-white">{contact.name}</div>
-                          <div className="text-sm text-gray-600 dark:text-gray-400">{contact.email}</div>
-                          <div className="text-xs text-gray-500 dark:text-gray-500">{contact.company} - {contact.position}</div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                  
-                  <div className="flex justify-between mt-4">
-                    <span className="text-sm text-gray-600 dark:text-gray-400">
-                      {selectedContacts.length} contacts selected
-                    </span>
-                    <button className="btn btn-sm bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white border-0 gap-2 shadow-lg hover:shadow-xl transition-all">
-                      Import Contacts
-                    </button>
-                  </div>
+                <div className="flex justify-between mt-4">
+                  <span className="text-sm text-white/60">
+                    {selectedContacts.length} contacts selected
+                  </span>
+                  <button className="btn btn-sm bg-gradient-to-br from-orange-500 to-amber-600 hover:from-orange-600 hover:to-amber-700 text-white border-0 gap-2 shadow-lg hover:shadow-orange-500/20 transition-all">
+                    Import Contacts
+                  </button>
                 </div>
               </div>
             </div>
 
             {/* Schedule */}
-            <div className="card bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900 shadow-xl border border-gray-100 dark:border-gray-700 relative overflow-hidden group hover:shadow-2xl transition-all duration-300">
-              {/* Subtle pattern background */}
-              <div className="absolute inset-0 opacity-[0.02]">
-                <div className="absolute inset-0" 
-                  style={{
-                    backgroundImage: `url("data:image/svg+xml,%3Csvg width='30' height='30' viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='20' height='20' x='5' y='5' fill='none' stroke='%23000000' stroke-width='0.5'/%3E%3C/svg%3E")`,
-                    backgroundSize: '30px 30px'
-                  }}
-                ></div>
+            <div className="backdrop-blur-2xl bg-gradient-to-br from-[#28292b]/80 via-[#28292b]/50 to-[rgba(40,41,43,0.2)] rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.4)] border border-orange-500/15 p-4 relative overflow-hidden group hover:shadow-[0_8px_32px_rgba(0,0,0,0.6)] transition-all duration-300">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="bg-gradient-to-br from-orange-500 to-amber-600 p-4 rounded-xl text-white shadow-lg transform group-hover:scale-105 transition-transform duration-300">
+                  <MdScheduleSend size={24} />
+                </div>
+                <h2 className="text-lg font-semibold text-white">Schedule Delivery</h2>
               </div>
               
-              {/* Subtle gradient */}
-              <div className="absolute inset-0 bg-gradient-to-br from-amber-500/5 via-orange-500/5 to-transparent"></div>
-              
-              <div className="card-body relative z-10">
-                <div className="flex items-start gap-6 mb-8">
-                  <div className="bg-gradient-to-br from-amber-500 to-amber-600 p-6 rounded-xl text-white shadow-lg transform group-hover:scale-105 transition-transform duration-300">
-                    <MdScheduleSend size={24} />
-                  </div>
-                  <div>
-                    <h2 className="text-xl font-bold bg-gradient-to-r from-amber-500 to-amber-600 bg-clip-text text-transparent">
-                      Schedule Delivery
-                    </h2>
+              <div className="mt-4 space-y-4">
+                <div className="form-control">
+                  <label className="label">
+                    <span className="label-text font-medium text-white/80">Date</span>
+                  </label>
+                  <div className="relative group/input">
+                    <input 
+                      type="date" 
+                      value={scheduledDate}
+                      onChange={(e) => setScheduledDate(e.target.value)}
+                      className="input w-full backdrop-blur-md bg-[#28292b]/60 border border-orange-500/20 text-white focus:border-orange-500 pr-10"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-r from-orange-500/0 via-orange-500/5 to-orange-500/0 opacity-0 group-hover/input:opacity-100 transition-opacity duration-300"></div>
                   </div>
                 </div>
                 
-                <div className="mt-4 space-y-4">
-                  <div className="form-control">
-                    <label className="label">
-                      <span className="label-text font-medium">Date</span>
-                    </label>
-                    <div className="relative group/input">
-                      <input 
-                        type="date" 
-                        value={scheduledDate}
-                        onChange={(e) => setScheduledDate(e.target.value)}
-                        className="input input-bordered w-full bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 focus:border-amber-500 focus:ring-amber-500 pr-10"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-r from-amber-500/0 via-amber-500/5 to-amber-500/0 opacity-0 group-hover/input:opacity-100 transition-opacity duration-300"></div>
-                    </div>
+                <div className="form-control">
+                  <label className="label">
+                    <span className="label-text font-medium text-white/80">Time</span>
+                  </label>
+                  <div className="relative group/input">
+                    <input 
+                      type="time" 
+                      value={scheduledTime}
+                      onChange={(e) => setScheduledTime(e.target.value)}
+                      className="input w-full backdrop-blur-md bg-[#28292b]/60 border border-orange-500/20 text-white focus:border-orange-500 pr-10"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-r from-orange-500/0 via-orange-500/5 to-orange-500/0 opacity-0 group-hover/input:opacity-100 transition-opacity duration-300"></div>
                   </div>
-                  
-                  <div className="form-control">
-                    <label className="label">
-                      <span className="label-text font-medium">Time</span>
-                    </label>
-                    <div className="relative group/input">
-                      <input 
-                        type="time" 
-                        value={scheduledTime}
-                        onChange={(e) => setScheduledTime(e.target.value)}
-                        className="input input-bordered w-full bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 focus:border-amber-500 focus:ring-amber-500 pr-10"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-r from-amber-500/0 via-amber-500/5 to-amber-500/0 opacity-0 group-hover/input:opacity-100 transition-opacity duration-300"></div>
-                    </div>
-                  </div>
-                  
-                  <div className="form-control">
-                    <label className="flex items-center gap-2 cursor-pointer group/checkbox">
-                      <input type="checkbox" className="checkbox checkbox-primary" />
-                      <span className="label-text group-hover/checkbox:text-amber-500 transition-colors duration-300">
-                        Send follow-up if no response after 3 days
-                      </span>
-                    </label>
-                  </div>
-                  
-                  <button 
-                    onClick={handleSendEmails}
-                    className="btn w-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white border-0 gap-2 shadow-lg hover:shadow-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed group/button relative overflow-hidden"
-                    disabled={selectedContacts.length === 0}
-                  >
-                    <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/10 to-white/0 translate-x-[-200%] group-hover/button:translate-x-[200%] transition-transform duration-1000"></div>
-                    <MdSend size={18} className="transform group-hover/button:rotate-12 transition-transform duration-300" />
-                    {selectedContacts.length > 0 
-                      ? `Schedule ${selectedContacts.length} Emails` 
-                      : 'Select Recipients First'}
-                  </button>
                 </div>
+                
+                <div className="form-control">
+                  <label className="flex items-center gap-2 cursor-pointer group/checkbox">
+                    <input type="checkbox" className="checkbox checkbox-warning" />
+                    <span className="label-text text-white/80 group-hover/checkbox:text-orange-500 transition-colors duration-300">
+                      Send follow-up if no response after 3 days
+                    </span>
+                  </label>
+                </div>
+                
+                <button 
+                  onClick={handleSendEmails}
+                  className="btn w-full bg-gradient-to-br from-orange-500 to-amber-600 hover:from-orange-600 hover:to-amber-700 text-white border-0 gap-2 shadow-lg hover:shadow-orange-500/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed group/button relative overflow-hidden"
+                  disabled={selectedContacts.length === 0}
+                >
+                  <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/10 to-white/0 translate-x-[-200%] group-hover/button:translate-x-[200%] transition-transform duration-1000"></div>
+                  <MdSend size={18} className="transform group-hover/button:rotate-12 transition-transform duration-300" />
+                  {selectedContacts.length > 0 
+                    ? `Schedule ${selectedContacts.length} Emails` 
+                    : 'Select Recipients First'}
+                </button>
               </div>
             </div>
           </div>
@@ -755,13 +644,13 @@ Solar Energy Consultant`
               onClick={handleContinueToOutreachTracking}
               className="relative group overflow-hidden"
             >
-              <div className="relative z-10 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white py-4 px-8 rounded-xl font-medium transition-all shadow-xl hover:shadow-2xl hover:-translate-y-1 inline-flex items-center gap-3">
+              <div className="relative z-10 bg-gradient-to-br from-orange-500 to-amber-600 hover:from-orange-600 hover:to-amber-700 text-white py-4 px-8 rounded-xl font-medium transition-all shadow-xl hover:shadow-2xl hover:-translate-y-1 inline-flex items-center gap-3">
                 <span className="text-lg">Continue to Outreach Tracking</span>
                 <MdArrowForward className="text-2xl group-hover:translate-x-1 transition-transform duration-300" />
               </div>
               
               {/* Button decoration */}
-              <div className="absolute inset-0 bg-gradient-to-r from-amber-400 to-amber-500 blur-xl opacity-50 group-hover:opacity-75 transition-opacity duration-300"></div>
+              <div className="absolute inset-0 bg-gradient-to-r from-orange-400 to-amber-500 blur-xl opacity-50 group-hover:opacity-75 transition-opacity duration-300"></div>
             </button>
           </div>
         </div>
