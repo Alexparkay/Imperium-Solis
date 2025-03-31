@@ -64,9 +64,12 @@ const Menu: React.FC = () => {
         <div className="absolute -top-6 -left-6 w-16 h-16 bg-gradient-to-br from-orange-500/60 via-amber-500/40 to-transparent rounded-full blur-xl transform rotate-12 pointer-events-none"></div>
         <Link to={'/'} className="flex flex-col items-center justify-center">
           <div className="relative bg-gradient-to-br from-orange-500 via-amber-500 to-orange-600 w-12 h-12 rounded-xl flex items-center justify-center shadow-lg shadow-orange-600/20">
-            <MdSolarPower className="text-white text-2xl" />
+            <img 
+              src="/images/Untitled design.svg" 
+              alt="Solar Logo" 
+              className="w-8 h-8 object-contain"
+            />
           </div>
-          <span className="text-white/90 text-xs mt-2 font-semibold">WeaMify</span>
         </Link>
       </div>
 
@@ -94,9 +97,13 @@ const Menu: React.FC = () => {
           <div
             tabIndex={0}
             role="button"
-            className="relative cursor-pointer group w-14 h-14 rounded-full bg-gradient-to-br from-orange-500 via-amber-500 to-orange-600 flex items-center justify-center text-white font-semibold shadow-lg shadow-orange-500/10 hover:shadow-orange-500/20 transition-all duration-300 overflow-hidden border border-orange-500/20"
+            className="relative cursor-pointer group w-14 h-14 rounded-full bg-black flex items-center justify-center text-white font-semibold shadow-lg shadow-black/30 hover:shadow-black/50 transition-all duration-300 overflow-hidden border border-white/10"
           >
-            <span className="text-base">Q</span>
+            <img 
+              src="/images/q-solar-logo-black.png" 
+              alt="Q-Solar Logo" 
+              className="w-10 h-10 object-contain"
+            />
             <div className="absolute top-0 left-0 right-0 h-1/3 bg-gradient-to-b from-white/20 to-transparent rounded-t-full pointer-events-none"></div>
           </div>
           

@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { MdArrowBack, MdArrowForward, MdOutlineEmail, MdScheduleSend, MdSend, MdOutlinePersonAdd, MdOutlineSettings, MdOutlineRule } from 'react-icons/md';
-import { FaRegCopy, FaRegEdit, FaRegSave, FaRegTrashAlt } from 'react-icons/fa';
+import { FaRegCopy, FaRegEdit, FaRegSave, FaRegTrashAlt, FaRegLightbulb, FaDatabase, FaRegChartBar } from 'react-icons/fa';
 import { toast } from 'react-hot-toast';
+import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
+import { RiFlowChart, RiMailSendLine, RiMailCheckLine, RiMailCloseLine, RiArrowRightLine, RiSplitCellsHorizontal } from 'react-icons/ri';
 
 interface Facility {
   id: number;
@@ -48,6 +50,8 @@ const EmailAutomation = () => {
   const [selectedContacts, setSelectedContacts] = useState<string[]>([]);
   const [scheduledDate, setScheduledDate] = useState('');
   const [scheduledTime, setScheduledTime] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(12);
   
   // Email templates
   const templates = [
@@ -57,11 +61,13 @@ const EmailAutomation = () => {
       subject: 'Independent research on {{company}}\'s energy savings',
       body: `Hey {{name}},
 
-I came across {{company}} and was really impressed by your work in the renewable energy sector. I decided to run some independent research on your facility at {{location}} to see if solar could be a game-changer for you.
+I came across your recent podcast interview on "Sustainable Business Leaders" where you discussed {{company}}'s commitment to reducing carbon footprint. Your insights about balancing operational efficiency with sustainability goals really resonated with me.
 
-Based on our calculations, your facility's estimated energy usage is 249,087 kWh per year, with a rough annual electricity cost of £77,217. If you were to install 155.7 kW of solar panels, you could generate 1823% of your energy needs in-house and save around £47,892 per year. With available solar incentives, your return on investment would be just 8.2 years.
+After listening, I was inspired to run some independent research on your facility at {{location}} to see if solar could be a game-changer for you.
 
-Would you be interested in seeing a visualisation of this data? I'll send it right away!
+Based on our calculations, your facility's estimated energy usage is around 250,000 kWh per year, with an approximate annual electricity cost of £80,000. If you were to install a 160 kW solar system, you could generate about 180% of your energy needs in-house and save approximately £50,000 per year. With available solar incentives, your return on investment would be just over 8 years.
+
+I noticed your facility has that south-facing roof area that's actually perfect for panel placement. Would you be interested in seeing a visualization of how this could transform your energy profile?
 
 Best,
 Your Name`
@@ -72,15 +78,17 @@ Your Name`
       subject: 'Reduce Energy Costs with Solar - Personalized Analysis for {{company}}',
       body: `Dear {{name}},
 
-I hope this email finds you well. I'm reaching out because we've conducted an analysis of {{company}}'s facility at {{location}} and identified significant potential for solar energy savings.
+I hope this email finds you well. I recently read your interview in Industry Today where you mentioned {{company}}'s sustainability initiatives, and I was particularly impressed by your commitment to reducing operational costs while maintaining environmental responsibility.
+
+We've conducted an analysis of {{company}}'s facility at {{location}} and identified significant potential for solar energy savings.
 
 Our analysis shows:
-• Potential annual savings of $77,217
-• 155.7 kW system capacity
-• 622 solar panels
-• 1823% energy coverage
+• Potential annual savings of $80,000
+• 160 kW system capacity
+• 620 solar panels
+• 180% energy coverage
 
-Would you be available for a 15-minute call next week to discuss how these savings could benefit {{company}}?
+I noticed your recent facility expansion has created even more roof space that could be leveraged for solar installation. Would you be available for a 15-minute call next week to discuss how these savings could specifically benefit {{company}}'s operations in the {{location}} area?
 
 Best regards,
 Your Name
@@ -92,15 +100,15 @@ Solar Energy Consultant`
       subject: 'Following Up: Solar Energy Savings for {{company}}',
       body: `Dear {{name}},
 
-I wanted to follow up on my previous email regarding the solar energy potential we identified for {{company}}'s facility.
+I wanted to follow up on my previous email regarding the solar energy potential we identified for {{company}}'s facility. I noticed your recent LinkedIn post about reducing operational costs and thought this might align perfectly with your current priorities.
 
-Our analysis indicates that implementing solar energy at your facility could result in:
-• Significant reduction in energy costs
-• Protection against rising utility rates
-• Enhanced sustainability profile
-• Potential tax incentives and rebates
+Our analysis indicates that implementing solar energy at your {{location}} facility could result in:
+• Significant reduction in energy costs (approximately $80,000 annually)
+• Protection against rising utility rates in the {{location}} region
+• Enhanced sustainability profile, supporting your public commitment to reduce carbon emissions
+• Potential tax incentives specific to your industry and location
 
-I'd be happy to share our detailed analysis with you. Would you have time for a brief call this week?
+I've also prepared a custom visualization showing how the installation would look on your specific building. I'd be happy to share this detailed analysis with you. Would you have time for a brief call this Thursday or Friday?
 
 Best regards,
 Your Name
@@ -114,12 +122,14 @@ Solar Energy Consultant`
 
 Thank you for your interest in exploring solar energy solutions for {{company}}. As promised, I've attached our detailed proposal for your facility at {{location}}.
 
-Key highlights of our proposal:
-• System Size: 155.7 kW
-• Annual Production: 249,087 kWh
-• Annual Savings: $77,217
-• ROI Timeline: Detailed in the attached proposal
-• Environmental Impact: Reduction of 176 tons of CO2 annually
+Based on the architectural plans you shared and our site assessment, here are the key highlights of our proposal:
+• System Size: 160 kW
+• Annual Production: 250,000 kWh
+• Annual Savings: $80,000
+• ROI Timeline: Just over 8 years
+• Environmental Impact: Reduction of 180 tons of CO2 annually
+
+The proposal includes the custom design that accounts for your facility's unique roof structure and that skylight area you mentioned was important to preserve. We've also included financial projections based on your current energy consumption patterns and the specific utility rates in your area.
 
 Please review the attached proposal at your convenience. I'm available to answer any questions you might have or to schedule a site visit.
 
@@ -271,30 +281,28 @@ Solar Energy Consultant`
 
       <div className="container mx-auto px-4 py-8">
         <div className="flex flex-col gap-6">
-          <div className="flex justify-between items-center sticky top-0 z-50 backdrop-blur-2xl bg-gradient-to-br from-[#28292b]/80 via-[#28292b]/50 to-[rgba(40,41,43,0.2)] rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.4)] border border-orange-500/15 py-4 px-6">
-            <div className="flex items-center gap-3">
-              <button 
-                onClick={() => navigate('/solar-panel-potential')}
-                className="btn btn-circle bg-transparent hover:bg-orange-500/10 border border-orange-500/30 transition-colors"
-              >
-                <MdArrowBack size={24} className="text-orange-500" />
-              </button>
-              <h1 className="text-2xl font-bold text-white bg-gradient-to-r from-white via-white/90 to-white/80 bg-clip-text text-transparent">
-                Email Automation
-              </h1>
-            </div>
+          {/* Simple Header */}
+          <div className="pt-4 pb-8">
+            <h1 className="text-3xl font-bold text-white bg-gradient-to-r from-white via-white/90 to-white/80 bg-clip-text text-transparent">
+              Email Automation
+            </h1>
+            <p className="text-white/60 mt-2">Create targeted campaigns with data-driven templates</p>
           </div>
 
+          {/* Main content area */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {/* Left Column - Email Templates and Editor */}
+            {/* Left Column - Email Templates */}
             <div className="lg:col-span-1 flex flex-col gap-6">
               {/* Email Templates */}
-              <div className="backdrop-blur-2xl bg-gradient-to-br from-[#28292b]/80 via-[#28292b]/50 to-[rgba(40,41,43,0.2)] rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.4)] border border-orange-500/15 p-4 relative overflow-hidden group hover:shadow-[0_8px_32px_rgba(0,0,0,0.6)] transition-all duration-300">
+              <div className="backdrop-blur-2xl bg-gradient-to-br from-[#28292b]/80 via-[#28292b]/50 to-[rgba(40,41,43,0.2)] rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.4)] border border-orange-500/15 p-6 relative overflow-hidden group hover:shadow-[0_8px_32px_rgba(0,0,0,0.6)] transition-all duration-300">
                 <div className="flex items-center gap-3 mb-6">
                   <div className="bg-gradient-to-br from-orange-500 to-amber-600 p-4 rounded-xl text-white shadow-lg transform group-hover:scale-105 transition-transform duration-300">
                     <MdOutlineEmail size={24} />
                   </div>
-                  <h2 className="text-lg font-semibold text-white">Email Templates</h2>
+                  <div>
+                    <h2 className="text-lg font-semibold text-white">Email Templates</h2>
+                    <p className="text-white/60 text-sm">Choose a high-converting starter</p>
+                  </div>
                 </div>
                 
                 <div className="mt-4">
@@ -309,7 +317,21 @@ Solar Energy Consultant`
                         }`}
                         onClick={() => handleTemplateChange(template.id)}
                       >
-                        <h3 className="font-medium text-white">{template.name}</h3>
+                        <div className="flex justify-between">
+                          <h3 className="font-medium text-white">{template.name}</h3>
+                          {template.id === 'solar_intro' && (
+                            <span className="text-xs bg-green-500/20 text-green-400 px-2 py-1 rounded-full inline-flex items-center gap-1">
+                              <FaRegLightbulb size={10} />
+                              <span>38% open rate</span>
+                            </span>
+                          )}
+                          {template.id === 'solar_followup' && (
+                            <span className="text-xs bg-blue-500/20 text-blue-400 px-2 py-1 rounded-full inline-flex items-center gap-1">
+                              <FaRegLightbulb size={10} />
+                              <span>27% reply rate</span>
+                            </span>
+                          )}
+                        </div>
                         <p className="text-sm text-white/60 truncate">{template.subject}</p>
                       </div>
                     ))}
@@ -325,23 +347,30 @@ Solar Energy Consultant`
               </div>
 
               {/* Automation Settings (Collapsible) */}
-              <div className="backdrop-blur-2xl bg-gradient-to-br from-[#28292b]/80 via-[#28292b]/50 to-[rgba(40,41,43,0.2)] rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.4)] border border-orange-500/15 p-4 relative overflow-hidden group hover:shadow-[0_8px_32px_rgba(0,0,0,0.6)] transition-all duration-300">
+              <div className="backdrop-blur-2xl bg-gradient-to-br from-[#28292b]/80 via-[#28292b]/50 to-[rgba(40,41,43,0.2)] rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.4)] border border-orange-500/15 p-6 relative overflow-hidden group hover:shadow-[0_8px_32px_rgba(0,0,0,0.6)] transition-all duration-300">
                 <details className="w-full">
                   <summary className="flex items-center gap-3 cursor-pointer mb-4">
                     <div className="bg-gradient-to-br from-orange-500 to-amber-600 p-4 rounded-xl text-white shadow-lg transform group-hover:scale-105 transition-transform duration-300">
                       <MdOutlineSettings size={24} />
                     </div>
-                    <h2 className="text-lg font-semibold text-white">Automation Settings</h2>
+                    <div>
+                      <h2 className="text-lg font-semibold text-white">Automation Settings</h2>
+                      <p className="text-white/60 text-sm">Optimize your outreach workflow</p>
+                    </div>
                   </summary>
                   
                   <div className="mt-6 space-y-4 pl-12">
                     <div className="form-control">
                       <label className="label">
                         <span className="label-text font-medium text-white/80">Follow-up Timing</span>
+                        <span className="label-text-alt text-green-400 flex items-center gap-1 text-xs">
+                          <FaRegLightbulb size={10} />
+                          5 days optimal
+                        </span>
                       </label>
                       <select className="select w-full backdrop-blur-md bg-[#28292b]/60 border border-orange-500/20 text-white focus:border-orange-500">
                         <option value="3">After 3 days</option>
-                        <option value="5">After 5 days</option>
+                        <option value="5" selected>After 5 days</option>
                         <option value="7">After 7 days</option>
                         <option value="14">After 14 days</option>
                       </select>
@@ -350,10 +379,14 @@ Solar Energy Consultant`
                     <div className="form-control">
                       <label className="label">
                         <span className="label-text font-medium text-white/80">Maximum Follow-ups</span>
+                        <span className="label-text-alt text-green-400 flex items-center gap-1 text-xs">
+                          <FaRegLightbulb size={10} />
+                          2 follow-ups +18% response
+                        </span>
                       </label>
                       <select className="select w-full backdrop-blur-md bg-[#28292b]/60 border border-orange-500/20 text-white focus:border-orange-500">
                         <option value="1">1 follow-up</option>
-                        <option value="2">2 follow-ups</option>
+                        <option value="2" selected>2 follow-ups</option>
                         <option value="3">3 follow-ups</option>
                       </select>
                     </div>
@@ -376,19 +409,26 @@ Solar Energy Consultant`
               </div>
 
               {/* Delivery Rules (Collapsible) */}
-              <div className="backdrop-blur-2xl bg-gradient-to-br from-[#28292b]/80 via-[#28292b]/50 to-[rgba(40,41,43,0.2)] rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.4)] border border-orange-500/15 p-4 relative overflow-hidden group hover:shadow-[0_8px_32px_rgba(0,0,0,0.6)] transition-all duration-300">
+              <div className="backdrop-blur-2xl bg-gradient-to-br from-[#28292b]/80 via-[#28292b]/50 to-[rgba(40,41,43,0.2)] rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.4)] border border-orange-500/15 p-6 relative overflow-hidden group hover:shadow-[0_8px_32px_rgba(0,0,0,0.6)] transition-all duration-300">
                 <details className="w-full">
                   <summary className="flex items-center gap-3 cursor-pointer mb-4">
                     <div className="bg-gradient-to-br from-orange-500 to-amber-600 p-4 rounded-xl text-white shadow-lg transform group-hover:scale-105 transition-transform duration-300">
                       <MdOutlineRule size={24} />
                     </div>
-                    <h2 className="text-lg font-semibold text-white">Delivery Rules</h2>
+                    <div>
+                      <h2 className="text-lg font-semibold text-white">Delivery Rules</h2>
+                      <p className="text-white/60 text-sm">Maximize engagement with timing</p>
+                    </div>
                   </summary>
                   
                   <div className="mt-6 space-y-4 pl-12">
                     <div className="form-control">
                       <label className="label">
                         <span className="label-text font-medium text-white/80">Delivery Window</span>
+                        <span className="label-text-alt text-green-400 flex items-center gap-1 text-xs">
+                          <FaRegLightbulb size={10} />
+                          9-11am highest open rates
+                        </span>
                       </label>
                       <div className="flex gap-4">
                         <input 
@@ -409,7 +449,7 @@ Solar Energy Consultant`
                         <span className="label-text font-medium text-white/80">Time Zone</span>
                       </label>
                       <select className="select w-full backdrop-blur-md bg-[#28292b]/60 border border-orange-500/20 text-white focus:border-orange-500">
-                        <option>Recipient's Local Time</option>
+                        <option selected>Recipient's Local Time</option>
                         <option>Your Local Time</option>
                         <option>UTC</option>
                       </select>
@@ -433,199 +473,404 @@ Solar Energy Consultant`
               </div>
             </div>
 
-            {/* Right Column - Email Editor and Preview */}
-            <div className="lg:col-span-2 flex flex-col gap-6">
-              {/* Email Editor */}
-              <div className="backdrop-blur-2xl bg-gradient-to-br from-[#28292b]/80 via-[#28292b]/50 to-[rgba(40,41,43,0.2)] rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.4)] border border-orange-500/15 p-4 relative overflow-hidden group hover:shadow-[0_8px_32px_rgba(0,0,0,0.6)] transition-all duration-300">
-                <div className="flex items-center gap-3 mb-6">
-                  <div className="bg-gradient-to-br from-orange-500 to-amber-600 p-4 rounded-xl text-white shadow-lg transform group-hover:scale-105 transition-transform duration-300">
-                    <FaRegEdit size={24} />
+            {/* Right Column - Email Editor and Preview Side-by-Side */}
+            <div className="lg:col-span-2">
+              <div className="backdrop-blur-2xl bg-gradient-to-br from-[#28292b]/80 via-[#28292b]/50 to-[rgba(40,41,43,0.2)] rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.4)] border border-orange-500/15 p-6 relative overflow-hidden group hover:shadow-[0_8px_32px_rgba(0,0,0,0.6)] transition-all duration-300">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {/* Email Editor */}
+                  <div>
+                    <div className="flex items-center gap-3 mb-6">
+                      <div className="bg-gradient-to-br from-orange-500 to-amber-600 p-4 rounded-xl text-white shadow-lg transform group-hover:scale-105 transition-transform duration-300">
+                        <FaRegEdit size={24} />
+                      </div>
+                      <div>
+                        <h2 className="text-lg font-semibold text-white">Email Editor</h2>
+                        <p className="text-white/60 text-sm">Craft your message</p>
+                      </div>
+                    </div>
+                    
+                    <div className="space-y-4">
+                      <div className="form-control">
+                        <label className="label">
+                          <span className="label-text font-medium text-white/80">Subject</span>
+                          <span className="label-text-alt text-green-400 flex items-center gap-1 text-xs">
+                            <FaRegLightbulb size={10} />
+                            <span>+23% opens with personalization</span>
+                          </span>
+                        </label>
+                        <input 
+                          type="text" 
+                          value={emailSubject}
+                          onChange={(e) => setEmailSubject(e.target.value)}
+                          className="input w-full backdrop-blur-md bg-[#28292b]/60 border border-orange-500/20 text-white focus:border-orange-500"
+                        />
+                      </div>
+                      
+                      <div className="form-control">
+                        <label className="label">
+                          <span className="label-text font-medium text-white/80">Email Body</span>
+                          <span className="label-text-alt text-green-400 flex items-center gap-1 text-xs">
+                            <FaRegLightbulb size={10} />
+                            <span>~120 words optimal</span>
+                          </span>
+                        </label>
+                        <textarea 
+                          value={emailBody}
+                          onChange={(e) => setEmailBody(e.target.value)}
+                          className="textarea h-96 backdrop-blur-md bg-[#28292b]/60 border border-orange-500/20 text-white focus:border-orange-500"
+                        />
+                      </div>
+                      
+                      <div className="flex justify-end gap-2">
+                        <button className="btn btn-sm bg-gradient-to-br from-[#28292b]/80 to-[#28292b]/60 hover:from-[#28292b]/90 hover:to-[#28292b]/70 text-white border border-orange-500/20 gap-2 shadow-lg hover:shadow-orange-500/10 transition-all">
+                          <FaRegCopy size={16} />
+                          Copy
+                        </button>
+                        <button className="btn btn-sm bg-gradient-to-br from-orange-500 to-amber-600 hover:from-orange-600 hover:to-amber-700 text-white border-0 gap-2 shadow-lg hover:shadow-orange-500/20 transition-all">
+                          <FaRegSave size={16} />
+                          Save as Template
+                        </button>
+                      </div>
+                    </div>
                   </div>
-                  <h2 className="text-lg font-semibold text-white">Email Editor</h2>
-                </div>
-                
-                <div className="mt-4 space-y-4">
-                  <div className="form-control">
-                    <label className="label">
-                      <span className="label-text font-medium text-white/80">Subject</span>
-                    </label>
-                    <input 
-                      type="text" 
-                      value={emailSubject}
-                      onChange={(e) => setEmailSubject(e.target.value)}
-                      className="input w-full backdrop-blur-md bg-[#28292b]/60 border border-orange-500/20 text-white focus:border-orange-500"
-                    />
-                  </div>
-                  
-                  <div className="form-control">
-                    <label className="label">
-                      <span className="label-text font-medium text-white/80">Email Body</span>
-                    </label>
-                    <textarea 
-                      value={emailBody}
-                      onChange={(e) => setEmailBody(e.target.value)}
-                      className="textarea h-64 backdrop-blur-md bg-[#28292b]/60 border border-orange-500/20 text-white focus:border-orange-500"
-                    />
-                  </div>
-                  
-                  <div className="flex justify-end gap-2">
-                    <button className="btn btn-sm bg-gradient-to-br from-[#28292b]/80 to-[#28292b]/60 hover:from-[#28292b]/90 hover:to-[#28292b]/70 text-white border border-orange-500/20 gap-2 shadow-lg hover:shadow-orange-500/10 transition-all">
-                      <FaRegCopy size={16} />
-                      Copy
-                    </button>
-                    <button className="btn btn-sm bg-gradient-to-br from-orange-500 to-amber-600 hover:from-orange-600 hover:to-amber-700 text-white border-0 gap-2 shadow-lg hover:shadow-orange-500/20 transition-all">
-                      <FaRegSave size={16} />
-                      Save as Template
-                    </button>
-                  </div>
-                </div>
-              </div>
 
-              {/* Email Preview */}
-              <div className="backdrop-blur-2xl bg-gradient-to-br from-[#28292b]/80 via-[#28292b]/50 to-[rgba(40,41,43,0.2)] rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.4)] border border-orange-500/15 p-4 relative overflow-hidden group hover:shadow-[0_8px_32px_rgba(0,0,0,0.6)] transition-all duration-300">
-                <div className="flex items-center gap-3 mb-6">
-                  <div className="bg-gradient-to-br from-orange-500 to-amber-600 p-4 rounded-xl text-white shadow-lg transform group-hover:scale-105 transition-transform duration-300">
-                    <MdOutlineEmail size={24} />
+                  {/* Email Preview */}
+                  <div>
+                    <div className="flex items-center gap-3 mb-6">
+                      <div className="bg-gradient-to-br from-orange-500 to-amber-600 p-4 rounded-xl text-white shadow-lg transform group-hover:scale-105 transition-transform duration-300">
+                        <MdOutlineEmail size={24} />
+                      </div>
+                      <div>
+                        <h2 className="text-lg font-semibold text-white">Email Preview</h2>
+                        <p className="text-white/60 text-sm">How recipients will see it</p>
+                      </div>
+                    </div>
+                    
+                    <div>
+                      {selectedContacts.length > 0 ? (
+                        <div className="backdrop-blur-md bg-[#28292b]/40 rounded-lg p-4 border border-orange-500/10">
+                          <div className="mb-2 text-white/80 flex items-center gap-2">
+                            <span className="font-medium">To:</span>
+                            <div className="flex items-center gap-1">
+                              <span className="bg-orange-500/10 px-2 py-1 rounded border border-orange-500/20 text-white">{contacts.find(c => c.name === selectedContacts[0])?.email}</span>
+                              {selectedContacts.length > 1 && (
+                                <span className="bg-orange-500/10 px-2 py-1 rounded border border-orange-500/20 text-white">+{selectedContacts.length - 1} more</span>
+                              )}
+                            </div>
+                          </div>
+                          <div className="mb-4 text-white/80">
+                            <span className="font-medium">Subject:</span>
+                            <div className="bg-orange-500/10 px-3 py-2 rounded mt-1 border border-orange-500/20 text-white">
+                              {personalize(emailSubject, contacts.find(c => c.name === selectedContacts[0]))}
+                            </div>
+                          </div>
+                          <div className="whitespace-pre-line border-t border-orange-500/20 pt-4 text-white">
+                            {personalize(emailBody, contacts.find(c => c.name === selectedContacts[0]))}
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="text-center py-12 backdrop-blur-md bg-[#28292b]/40 rounded-lg border border-orange-500/10">
+                          <div className="text-orange-500 mb-4">
+                            <MdOutlineEmail size={48} className="mx-auto" />
+                          </div>
+                          <p className="text-white/60">
+                            Select a contact to preview the personalized email
+                          </p>
+                        </div>
+                      )}
+                    </div>
                   </div>
-                  <h2 className="text-lg font-semibold text-white">Email Preview</h2>
-                </div>
-                
-                <div className="mt-4">
-                  {selectedContacts.length > 0 ? (
-                    <div className="backdrop-blur-md bg-[#28292b]/40 rounded-lg p-4 border border-orange-500/10">
-                      <div className="mb-2 text-white/80 flex items-center gap-2">
-                        <span className="font-medium">To:</span>
-                        <div className="flex items-center gap-1">
-                          <span className="bg-orange-500/10 px-2 py-1 rounded border border-orange-500/20 text-white">{contacts.find(c => c.name === selectedContacts[0])?.email}</span>
-                          {selectedContacts.length > 1 && (
-                            <span className="bg-orange-500/10 px-2 py-1 rounded border border-orange-500/20 text-white">+{selectedContacts.length - 1} more</span>
-                          )}
-                        </div>
-                      </div>
-                      <div className="mb-4 text-white/80">
-                        <span className="font-medium">Subject:</span>
-                        <div className="bg-orange-500/10 px-3 py-2 rounded mt-1 border border-orange-500/20 text-white">
-                          {personalize(emailSubject, contacts.find(c => c.name === selectedContacts[0]))}
-                        </div>
-                      </div>
-                      <div className="whitespace-pre-line border-t border-orange-500/20 pt-4 text-white">
-                        {personalize(emailBody, contacts.find(c => c.name === selectedContacts[0]))}
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="text-center py-12 backdrop-blur-md bg-[#28292b]/40 rounded-lg border border-orange-500/10">
-                      <div className="text-orange-500 mb-4">
-                        <MdOutlineEmail size={48} className="mx-auto" />
-                      </div>
-                      <p className="text-white/60">
-                        Select a contact to preview the personalized email
-                      </p>
-                    </div>
-                  )}
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Contact Selection and Schedule */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-6">
-            {/* Contact Selection */}
-            <div className="lg:col-span-2 backdrop-blur-2xl bg-gradient-to-br from-[#28292b]/80 via-[#28292b]/50 to-[rgba(40,41,43,0.2)] rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.4)] border border-orange-500/15 p-4 relative overflow-hidden group hover:shadow-[0_8px_32px_rgba(0,0,0,0.6)] transition-all duration-300">
-              <div className="flex items-center gap-3 mb-6">
-                <div className="bg-gradient-to-br from-orange-500 to-amber-600 p-4 rounded-xl text-white shadow-lg transform group-hover:scale-105 transition-transform duration-300">
-                  <MdOutlinePersonAdd size={24} />
-                </div>
-                <h2 className="text-lg font-semibold text-white">Select Recipients</h2>
+          {/* Email Sequencing Visualization */}
+          <div className="backdrop-blur-2xl bg-gradient-to-br from-[#28292b]/80 via-[#28292b]/50 to-[rgba(40,41,43,0.2)] rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.4)] border border-orange-500/15 p-6 relative overflow-hidden group hover:shadow-[0_8px_32px_rgba(0,0,0,0.6)] transition-all duration-300">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="bg-gradient-to-br from-orange-500 to-amber-600 p-4 rounded-xl text-white shadow-lg transform group-hover:scale-105 transition-transform duration-300">
+                <RiFlowChart size={24} />
               </div>
-              
-              <div className="mt-4">
-                <div className="flex flex-col gap-2">
-                  {contacts.map(contact => (
-                    <div 
-                      key={contact.id}
-                      className="flex items-center gap-3 p-3 rounded-lg backdrop-blur-sm bg-[#28292b]/30 border border-orange-500/10 hover:border-orange-500/30 transition-all duration-300 group/contact"
-                    >
-                      <div className="relative">
-                        <input 
-                          type="checkbox" 
-                          className="checkbox checkbox-warning"
-                          checked={selectedContacts.includes(contact.name)}
-                          onChange={() => handleContactToggle(contact.name)}
-                        />
-                        <div className="absolute inset-0 bg-orange-500/20 rounded-lg filter blur-lg opacity-0 group-hover/contact:opacity-100 transition-opacity duration-300"></div>
-                      </div>
-                      <div className="transform group-hover/contact:translate-x-1 transition-transform duration-300">
-                        <div className="font-medium text-white">{contact.name}</div>
-                        <div className="text-sm text-white/80">{contact.email}</div>
-                        <div className="text-xs text-white/60">{contact.company} - {contact.position}</div>
-                      </div>
+              <div>
+                <h2 className="text-lg font-semibold text-white">Email Sequencing</h2>
+                <p className="text-white/60 text-sm">Automated follow-up flow based on recipient actions</p>
+              </div>
+              <div className="ml-auto">
+                <button className="btn btn-sm bg-gradient-to-br from-[#28292b]/80 to-[#28292b]/60 hover:from-[#28292b]/90 hover:to-[#28292b]/70 text-white border border-orange-500/20 gap-2 shadow-lg hover:shadow-orange-500/10 transition-all">
+                  <RiSplitCellsHorizontal size={16} />
+                  Edit Sequence
+                </button>
+              </div>
+            </div>
+            
+            <div className="mt-6 relative">
+              {/* Flow diagram for email sequence */}
+              <div className="flex flex-wrap justify-between items-center gap-4 px-4">
+                {/* Initial Email */}
+                <div className="relative flex flex-col items-center w-40">
+                  <div className="bg-[rgba(27,34,42,0.75)] backdrop-blur-md rounded-xl p-4 border border-orange-500/20 relative group/node">
+                    <div className="absolute inset-0 bg-gradient-to-tr from-orange-500/10 via-amber-500/5 to-orange-600/10 opacity-25 group-hover/node:opacity-40 transition-opacity rounded-xl"></div>
+                    <div className="flex flex-col items-center gap-2">
+                      <RiMailSendLine size={28} className="text-orange-400" />
+                      <div className="text-white text-center font-medium">Initial Email</div>
+                      <div className="text-xs text-white/60 text-center">Day 0</div>
                     </div>
-                  ))}
+                  </div>
+                  <div className="h-8 w-1 bg-gradient-to-b from-orange-500 to-orange-300 mt-2"></div>
                 </div>
                 
-                <div className="flex justify-between mt-4">
-                  <span className="text-sm text-white/60">
-                    {selectedContacts.length} contacts selected
-                  </span>
-                  <button className="btn btn-sm bg-gradient-to-br from-orange-500 to-amber-600 hover:from-orange-600 hover:to-amber-700 text-white border-0 gap-2 shadow-lg hover:shadow-orange-500/20 transition-all">
-                    Import Contacts
-                  </button>
+                {/* Conditional: Opened? */}
+                <div className="relative flex flex-col items-center">
+                  <div className="bg-[rgba(27,34,42,0.75)] backdrop-blur-md rounded-xl py-3 px-4 border border-orange-500/20 relative group/node">
+                    <div className="absolute inset-0 bg-gradient-to-tr from-orange-500/10 via-amber-500/5 to-orange-600/10 opacity-25 group-hover/node:opacity-40 transition-opacity rounded-xl"></div>
+                    <div className="text-white text-center text-sm font-medium">Opened?</div>
+                  </div>
+                  
+                  {/* Yes/No paths */}
+                  <div className="flex gap-10 mt-2">
+                    <div className="flex flex-col items-center">
+                      <div className="h-6 w-1 bg-green-500"></div>
+                      <div className="text-green-400 text-xs">Yes</div>
+                      <div className="h-6 w-1 bg-green-500"></div>
+                    </div>
+                    <div className="flex flex-col items-center">
+                      <div className="h-6 w-1 bg-red-500"></div>
+                      <div className="text-red-400 text-xs">No</div>
+                      <div className="h-6 w-1 bg-red-500"></div>
+                    </div>
+                  </div>
+                </div>
+                
+                {/* Follow-up Email 1 */}
+                <div className="relative flex flex-col items-center w-40">
+                  <div className="bg-[rgba(27,34,42,0.75)] backdrop-blur-md rounded-xl p-4 border border-orange-500/20 relative group/node">
+                    <div className="absolute inset-0 bg-gradient-to-tr from-orange-500/10 via-amber-500/5 to-orange-600/10 opacity-25 group-hover/node:opacity-40 transition-opacity rounded-xl"></div>
+                    <div className="flex flex-col items-center gap-2">
+                      <RiMailCloseLine size={28} className="text-orange-400" />
+                      <div className="text-white text-center font-medium">Follow-up Email 1</div>
+                      <div className="text-xs text-white/60 text-center">Day 3</div>
+                    </div>
+                  </div>
+                  <div className="h-8 w-1 bg-gradient-to-b from-orange-500 to-orange-300 mt-2"></div>
+                </div>
+                
+                {/* Conditional: Replied? */}
+                <div className="relative flex flex-col items-center">
+                  <div className="bg-[rgba(27,34,42,0.75)] backdrop-blur-md rounded-xl py-3 px-4 border border-orange-500/20 relative group/node">
+                    <div className="absolute inset-0 bg-gradient-to-tr from-orange-500/10 via-amber-500/5 to-orange-600/10 opacity-25 group-hover/node:opacity-40 transition-opacity rounded-xl"></div>
+                    <div className="text-white text-center text-sm font-medium">Replied?</div>
+                  </div>
+                  
+                  {/* Yes/No paths */}
+                  <div className="flex gap-10 mt-2">
+                    <div className="flex flex-col items-center">
+                      <div className="h-6 w-1 bg-green-500"></div>
+                      <div className="text-green-400 text-xs">Yes</div>
+                      <div className="h-6 w-1 bg-green-500"></div>
+                    </div>
+                    <div className="flex flex-col items-center">
+                      <div className="h-6 w-1 bg-red-500"></div>
+                      <div className="text-red-400 text-xs">No</div>
+                      <div className="h-6 w-1 bg-red-500"></div>
+                    </div>
+                  </div>
+                </div>
+                
+                {/* Follow-up Email 2 */}
+                <div className="relative flex flex-col items-center w-40">
+                  <div className="bg-[rgba(27,34,42,0.75)] backdrop-blur-md rounded-xl p-4 border border-orange-500/20 relative group/node">
+                    <div className="absolute inset-0 bg-gradient-to-tr from-orange-500/10 via-amber-500/5 to-orange-600/10 opacity-25 group-hover/node:opacity-40 transition-opacity rounded-xl"></div>
+                    <div className="flex flex-col items-center gap-2">
+                      <RiMailCloseLine size={28} className="text-orange-400" />
+                      <div className="text-white text-center font-medium">Follow-up Email 2</div>
+                      <div className="text-xs text-white/60 text-center">Day 7</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              {/* Bottom row outcomes */}
+              <div className="mt-12 flex justify-center gap-12">
+                <div className="bg-[rgba(27,34,42,0.75)] backdrop-blur-md rounded-xl p-4 border border-green-500/20 relative group/node">
+                  <div className="absolute inset-0 bg-gradient-to-tr from-green-500/10 via-green-300/5 to-green-600/10 opacity-25 group-hover/node:opacity-40 transition-opacity rounded-xl"></div>
+                  <div className="flex flex-col items-center gap-2">
+                    <RiMailCheckLine size={24} className="text-green-400" />
+                    <div className="text-white text-center font-medium">Move to Opportunities</div>
+                  </div>
+                </div>
+                
+                <div className="bg-[rgba(27,34,42,0.75)] backdrop-blur-md rounded-xl p-4 border border-orange-500/20 relative group/node">
+                  <div className="absolute inset-0 bg-gradient-to-tr from-orange-500/10 via-amber-500/5 to-orange-600/10 opacity-25 group-hover/node:opacity-40 transition-opacity rounded-xl"></div>
+                  <div className="flex flex-col items-center gap-2">
+                    <RiMailCloseLine size={24} className="text-orange-400" />
+                    <div className="text-white text-center font-medium">Final Email</div>
+                    <div className="text-xs text-white/60 text-center">Day 14</div>
+                  </div>
+                </div>
+              </div>
+              
+              {/* Visual connecting lines */}
+              <svg className="absolute top-0 left-0 w-full h-full pointer-events-none" style={{ zIndex: 0 }}>
+                <defs>
+                  <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="0" refY="3.5" orient="auto">
+                    <polygon points="0 0, 10 3.5, 0 7" fill="#F97316" />
+                  </marker>
+                </defs>
+                {/* Lines would be drawn here in a real implementation */}
+              </svg>
+              
+              {/* Stats about the sequence */}
+              <div className="mt-8 grid grid-cols-4 gap-4">
+                <div className="bg-[rgba(27,34,42,0.75)] backdrop-blur-md rounded-lg p-3 border border-orange-500/10">
+                  <div className="text-sm text-orange-400 mb-1">Average Sequence Length</div>
+                  <div className="text-lg text-white font-bold">9 days</div>
+                </div>
+                <div className="bg-[rgba(27,34,42,0.75)] backdrop-blur-md rounded-lg p-3 border border-orange-500/10">
+                  <div className="text-sm text-orange-400 mb-1">Response Rate</div>
+                  <div className="text-lg text-white font-bold">30% by 2nd email</div>
+                </div>
+                <div className="bg-[rgba(27,34,42,0.75)] backdrop-blur-md rounded-lg p-3 border border-orange-500/10">
+                  <div className="text-sm text-orange-400 mb-1">Meeting Bookings</div>
+                  <div className="text-lg text-white font-bold">15% conversion</div>
+                </div>
+                <div className="bg-[rgba(27,34,42,0.75)] backdrop-blur-md rounded-lg p-3 border border-orange-500/10">
+                  <div className="text-sm text-orange-400 mb-1">Complete Sequence</div>
+                  <div className="text-lg text-white font-bold">40% of contacts</div>
                 </div>
               </div>
             </div>
+          </div>
 
-            {/* Schedule */}
-            <div className="backdrop-blur-2xl bg-gradient-to-br from-[#28292b]/80 via-[#28292b]/50 to-[rgba(40,41,43,0.2)] rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.4)] border border-orange-500/15 p-4 relative overflow-hidden group hover:shadow-[0_8px_32px_rgba(0,0,0,0.6)] transition-all duration-300">
-              <div className="flex items-center gap-3 mb-6">
-                <div className="bg-gradient-to-br from-orange-500 to-amber-600 p-4 rounded-xl text-white shadow-lg transform group-hover:scale-105 transition-transform duration-300">
-                  <MdScheduleSend size={24} />
-                </div>
-                <h2 className="text-lg font-semibold text-white">Schedule Delivery</h2>
+          {/* Contact Database Visualization */}
+          <div className="backdrop-blur-2xl bg-gradient-to-br from-[#28292b]/80 via-[#28292b]/50 to-[rgba(40,41,43,0.2)] rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.4)] border border-orange-500/15 p-6 relative overflow-hidden group hover:shadow-[0_8px_32px_rgba(0,0,0,0.6)] transition-all duration-300">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="bg-gradient-to-br from-orange-500 to-amber-600 p-4 rounded-xl text-white shadow-lg transform group-hover:scale-105 transition-transform duration-300">
+                <FaDatabase size={24} />
+              </div>
+              <div>
+                <h2 className="text-lg font-semibold text-white">Contact Database</h2>
+                <p className="text-white/60 text-sm">Select your audience from 2,347 verified contacts</p>
+              </div>
+              <div className="ml-auto">
+                <span className="badge bg-orange-500/20 text-orange-400 border border-orange-500/20 px-3 py-2 gap-1">
+                  <FaRegChartBar className="text-xs" />
+                  42% avg. open rate
+                </span>
+              </div>
+            </div>
+            
+            <div className="mt-4">
+              <div className="flex flex-col gap-2">
+                {contacts.map(contact => (
+                  <div 
+                    key={contact.id}
+                    className="flex items-center gap-3 p-3 rounded-lg backdrop-blur-sm bg-[#28292b]/30 border border-orange-500/10 hover:border-orange-500/30 transition-all duration-300 group/contact"
+                  >
+                    <div className="relative">
+                      <input 
+                        type="checkbox" 
+                        className="checkbox checkbox-warning"
+                        checked={selectedContacts.includes(contact.name)}
+                        onChange={() => handleContactToggle(contact.name)}
+                      />
+                      <div className="absolute inset-0 bg-orange-500/20 rounded-lg filter blur-lg opacity-0 group-hover/contact:opacity-100 transition-opacity duration-300"></div>
+                    </div>
+                    <div className="transform group-hover/contact:translate-x-1 transition-transform duration-300 flex-1">
+                      <div className="font-medium text-white">{contact.name}</div>
+                      <div className="text-sm text-white/80">{contact.email}</div>
+                      <div className="text-xs text-white/60">{contact.company} - {contact.position}</div>
+                    </div>
+                    <div className="text-white/60 text-sm">
+                      {contact.id === 1 && <span className="text-green-400">Opened previous email</span>}
+                      {contact.id === 2 && <span className="text-blue-400">New contact</span>}
+                      {contact.id === 4 && <span className="text-yellow-400">Clicked link</span>}
+                    </div>
+                  </div>
+                ))}
               </div>
               
-              <div className="mt-4 space-y-4">
-                <div className="form-control">
-                  <label className="label">
-                    <span className="label-text font-medium text-white/80">Date</span>
-                  </label>
-                  <div className="relative group/input">
-                    <input 
-                      type="date" 
-                      value={scheduledDate}
-                      onChange={(e) => setScheduledDate(e.target.value)}
-                      className="input w-full backdrop-blur-md bg-[#28292b]/60 border border-orange-500/20 text-white focus:border-orange-500 pr-10"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-r from-orange-500/0 via-orange-500/5 to-orange-500/0 opacity-0 group-hover/input:opacity-100 transition-opacity duration-300"></div>
-                  </div>
+              {/* Pagination */}
+              <div className="flex justify-between items-center mt-6">
+                <span className="text-sm text-white/60">
+                  {selectedContacts.length} contacts selected from 2,347 total
+                </span>
+                <div className="flex items-center gap-1">
+                  <button className="btn btn-sm btn-circle bg-transparent hover:bg-orange-500/10 border border-orange-500/30 text-white">«</button>
+                  {[...Array(5)].map((_, i) => (
+                    <button 
+                      key={i} 
+                      className={`btn btn-sm btn-circle ${i + 1 === currentPage ? 'bg-orange-500 text-white' : 'bg-transparent hover:bg-orange-500/10 border border-orange-500/30 text-white'}`}
+                      onClick={() => setCurrentPage(i + 1)}
+                    >
+                      {i + 1}
+                    </button>
+                  ))}
+                  <span className="px-1 text-white/60">...</span>
+                  <button className="btn btn-sm btn-circle bg-transparent hover:bg-orange-500/10 border border-orange-500/30 text-white">{totalPages}</button>
+                  <button className="btn btn-sm btn-circle bg-transparent hover:bg-orange-500/10 border border-orange-500/30 text-white">»</button>
                 </div>
-                
-                <div className="form-control">
-                  <label className="label">
-                    <span className="label-text font-medium text-white/80">Time</span>
-                  </label>
-                  <div className="relative group/input">
-                    <input 
-                      type="time" 
-                      value={scheduledTime}
-                      onChange={(e) => setScheduledTime(e.target.value)}
-                      className="input w-full backdrop-blur-md bg-[#28292b]/60 border border-orange-500/20 text-white focus:border-orange-500 pr-10"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-r from-orange-500/0 via-orange-500/5 to-orange-500/0 opacity-0 group-hover/input:opacity-100 transition-opacity duration-300"></div>
-                  </div>
+                <button className="btn btn-sm bg-gradient-to-br from-orange-500 to-amber-600 hover:from-orange-600 hover:to-amber-700 text-white border-0 gap-2 shadow-lg hover:shadow-orange-500/20 transition-all">
+                  Import Contacts
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* Schedule */}
+          <div className="backdrop-blur-2xl bg-gradient-to-br from-[#28292b]/80 via-[#28292b]/50 to-[rgba(40,41,43,0.2)] rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.4)] border border-orange-500/15 p-6 relative overflow-hidden group hover:shadow-[0_8px_32px_rgba(0,0,0,0.6)] transition-all duration-300">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="bg-gradient-to-br from-orange-500 to-amber-600 p-4 rounded-xl text-white shadow-lg transform group-hover:scale-105 transition-transform duration-300">
+                <MdScheduleSend size={24} />
+              </div>
+              <div>
+                <h2 className="text-lg font-semibold text-white">Schedule Delivery</h2>
+                <p className="text-white/60 text-sm">Optimize timing for maximum engagement</p>
+              </div>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="form-control">
+                <label className="label">
+                  <span className="label-text font-medium text-white/80">Date</span>
+                  <span className="label-text-alt text-green-400 flex items-center gap-1 text-xs">
+                    <FaRegLightbulb size={10} />
+                    <span>Tuesday-Thursday optimal</span>
+                  </span>
+                </label>
+                <div className="relative group/input">
+                  <input 
+                    type="date" 
+                    value={scheduledDate}
+                    onChange={(e) => setScheduledDate(e.target.value)}
+                    className="input w-full backdrop-blur-md bg-[#28292b]/60 border border-orange-500/20 text-white focus:border-orange-500 pr-10"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-r from-orange-500/0 via-orange-500/5 to-orange-500/0 opacity-0 group-hover/input:opacity-100 transition-opacity duration-300"></div>
                 </div>
-                
-                <div className="form-control">
-                  <label className="flex items-center gap-2 cursor-pointer group/checkbox">
-                    <input type="checkbox" className="checkbox checkbox-warning" />
-                    <span className="label-text text-white/80 group-hover/checkbox:text-orange-500 transition-colors duration-300">
-                      Send follow-up if no response after 3 days
-                    </span>
-                  </label>
+              </div>
+              
+              <div className="form-control">
+                <label className="label">
+                  <span className="label-text font-medium text-white/80">Time</span>
+                  <span className="label-text-alt text-green-400 flex items-center gap-1 text-xs">
+                    <FaRegLightbulb size={10} />
+                    <span>10:30am highest CTR</span>
+                  </span>
+                </label>
+                <div className="relative group/input">
+                  <input 
+                    type="time" 
+                    value={scheduledTime}
+                    onChange={(e) => setScheduledTime(e.target.value)}
+                    className="input w-full backdrop-blur-md bg-[#28292b]/60 border border-orange-500/20 text-white focus:border-orange-500 pr-10"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-r from-orange-500/0 via-orange-500/5 to-orange-500/0 opacity-0 group-hover/input:opacity-100 transition-opacity duration-300"></div>
                 </div>
-                
+              </div>
+              
+              <div className="form-control flex flex-col justify-end">
                 <button 
                   onClick={handleSendEmails}
-                  className="btn w-full bg-gradient-to-br from-orange-500 to-amber-600 hover:from-orange-600 hover:to-amber-700 text-white border-0 gap-2 shadow-lg hover:shadow-orange-500/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed group/button relative overflow-hidden"
+                  className="btn w-full bg-gradient-to-br from-orange-500 to-amber-600 hover:from-orange-600 hover:to-amber-700 text-white border-0 gap-2 shadow-lg hover:shadow-orange-500/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed group/button relative overflow-hidden h-[42px]"
                   disabled={selectedContacts.length === 0}
                 >
                   <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/10 to-white/0 translate-x-[-200%] group-hover/button:translate-x-[200%] transition-transform duration-1000"></div>
@@ -634,24 +879,17 @@ Solar Energy Consultant`
                     ? `Schedule ${selectedContacts.length} Emails` 
                     : 'Select Recipients First'}
                 </button>
+                
+                <div className="text-center mt-2">
+                  <label className="flex items-center justify-center gap-2 cursor-pointer group/checkbox text-sm">
+                    <input type="checkbox" className="checkbox checkbox-xs checkbox-warning" defaultChecked />
+                    <span className="text-white/80 group-hover/checkbox:text-orange-500 transition-colors duration-300">
+                      Send follow-up if no response after 5 days
+                    </span>
+                  </label>
+                </div>
               </div>
             </div>
-          </div>
-          
-          {/* Continue Button */}
-          <div className="flex justify-center mt-8">
-            <button 
-              onClick={handleContinueToOutreachTracking}
-              className="relative group overflow-hidden"
-            >
-              <div className="relative z-10 bg-gradient-to-br from-orange-500 to-amber-600 hover:from-orange-600 hover:to-amber-700 text-white py-4 px-8 rounded-xl font-medium transition-all shadow-xl hover:shadow-2xl hover:-translate-y-1 inline-flex items-center gap-3">
-                <span className="text-lg">Continue to Outreach Tracking</span>
-                <MdArrowForward className="text-2xl group-hover:translate-x-1 transition-transform duration-300" />
-              </div>
-              
-              {/* Button decoration */}
-              <div className="absolute inset-0 bg-gradient-to-r from-orange-400 to-amber-500 blur-xl opacity-50 group-hover:opacity-75 transition-opacity duration-300"></div>
-            </button>
           </div>
         </div>
       </div>

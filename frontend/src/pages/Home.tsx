@@ -40,7 +40,7 @@ import {
   MdDashboard
 } from 'react-icons/md';
 import { useNavigate } from 'react-router-dom';
-import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
 
 // Mock data for Imperum Solis dashboard
 const dashboardData = {
@@ -163,22 +163,21 @@ const dashboardData = {
 
 // Add this mock data for the campaign performance
 const campaignData = [
-  { date: '13 Dec', sent: 150, totalOpens: 110, uniqueOpens: 80, replies: 35 },
-  { date: '15 Dec', sent: 130, totalOpens: 100, uniqueOpens: 70, replies: 40 },
-  { date: '17 Dec', sent: 180, totalOpens: 150, uniqueOpens: 90, replies: 45 },
-  { date: '19 Dec', sent: 200, totalOpens: 160, uniqueOpens: 95, replies: 50 },
-  { date: '21 Dec', sent: 120, totalOpens: 90, uniqueOpens: 60, replies: 30 },
-  { date: '23 Dec', sent: 100, totalOpens: 80, uniqueOpens: 50, replies: 25 },
-  { date: '25 Dec', sent: 80, totalOpens: 60, uniqueOpens: 40, replies: 20 },
-  { date: '27 Dec', sent: 60, totalOpens: 45, uniqueOpens: 30, replies: 15 },
-  { date: '29 Dec', sent: 40, totalOpens: 30, uniqueOpens: 20, replies: 10 },
-  { date: '31 Dec', sent: 20, totalOpens: 15, uniqueOpens: 10, replies: 5 },
-  { date: '02 Jan', sent: 10, totalOpens: 8, uniqueOpens: 5, replies: 2 },
-  { date: '04 Jan', sent: 220, totalOpens: 180, uniqueOpens: 120, replies: 60 },
-  { date: '06 Jan', sent: 180, totalOpens: 150, uniqueOpens: 100, replies: 50 },
-  { date: '08 Jan', sent: 160, totalOpens: 130, uniqueOpens: 90, replies: 45 },
-  { date: '10 Jan', sent: 140, totalOpens: 110, uniqueOpens: 80, replies: 40 },
-  { date: '12 Jan', sent: 120, totalOpens: 90, uniqueOpens: 70, replies: 35 },
+  { date: '01 Mar', sent: 1250, totalOpens: 875, uniqueOpens: 625, replies: 245 },
+  { date: '03 Mar', sent: 1450, totalOpens: 1015, uniqueOpens: 725, replies: 285 },
+  { date: '05 Mar', sent: 1680, totalOpens: 1175, uniqueOpens: 840, replies: 340 },
+  { date: '07 Mar', sent: 1920, totalOpens: 1345, uniqueOpens: 960, replies: 390 },
+  { date: '09 Mar', sent: 2240, totalOpens: 1570, uniqueOpens: 1120, replies: 448 },
+  { date: '11 Mar', sent: 2580, totalOpens: 1805, uniqueOpens: 1290, replies: 515 },
+  { date: '13 Mar', sent: 2950, totalOpens: 2065, uniqueOpens: 1475, replies: 590 },
+  { date: '15 Mar', sent: 3280, totalOpens: 2295, uniqueOpens: 1640, replies: 655 },
+  { date: '17 Mar', sent: 3650, totalOpens: 2555, uniqueOpens: 1825, replies: 730 },
+  { date: '19 Mar', sent: 4120, totalOpens: 2885, uniqueOpens: 2060, replies: 825 },
+  { date: '21 Mar', sent: 4580, totalOpens: 3205, uniqueOpens: 2290, replies: 915 },
+  { date: '23 Mar', sent: 4980, totalOpens: 3485, uniqueOpens: 2490, replies: 995 },
+  { date: '25 Mar', sent: 5320, totalOpens: 3725, uniqueOpens: 2660, replies: 1065 },
+  { date: '27 Mar', sent: 5720, totalOpens: 4005, uniqueOpens: 2860, replies: 1145 },
+  { date: '29 Mar', sent: 6280, totalOpens: 4395, uniqueOpens: 3140, replies: 1255 },
 ];
 
 const Home = () => {
@@ -634,31 +633,31 @@ const Home = () => {
             </div>
 
             {/* Solar Panel Image Box */}
-            <div className="flex-1 bg-[rgba(27,34,42,0.75)] backdrop-blur-md rounded-xl p-4 border border-purple-500/10 relative overflow-hidden group">
+            <div className="flex-1 bg-[rgba(27,34,42,0.75)] backdrop-blur-md rounded-xl p-0 border border-purple-500/10 relative overflow-hidden group">
               {/* Glassmorphic effects */}
               <div className="absolute inset-0 bg-gradient-to-tr from-purple-500/10 via-violet-500/5 to-purple-600/10 opacity-25 group-hover:opacity-30 transition-opacity"></div>
               <div className="absolute -top-10 -right-10 w-24 h-24 bg-gradient-to-br from-purple-500/20 to-transparent rounded-full blur-2xl"></div>
               <div className="relative z-10 h-full flex flex-col">
-                <div className="relative flex-1 flex items-center justify-center">
+                <div className="relative flex-1 flex items-center justify-center w-full h-full">
                   <img 
                     src="/images/solar/Solar_panel2.png" 
                     alt="Solar Panel Installation" 
-                    className="w-[85%] h-auto object-contain max-h-[75%]"
+                    className="w-full h-full object-cover"
                   />
                   {/* Annotations */}
-                  <div className="absolute top-4 left-4 bg-[#0f172a] p-2.5 rounded-lg border border-purple-500/20 shadow-lg">
+                  <div className="absolute top-4 left-4 bg-[#0f172a]/80 backdrop-blur-lg p-3 rounded-lg border border-purple-500/30 shadow-lg">
                     <div className="text-purple-400 text-sm font-medium">Average Energy Cost</div>
                     <div className="text-white text-lg font-bold">$12,500/mo</div>
                   </div>
-                  <div className="absolute top-4 right-4 bg-[#0f172a] p-2.5 rounded-lg border border-purple-500/20 shadow-lg">
+                  <div className="absolute top-4 right-4 bg-[#0f172a]/80 backdrop-blur-lg p-3 rounded-lg border border-purple-500/30 shadow-lg">
                     <div className="text-purple-400 text-sm font-medium">Solar Savings</div>
                     <div className="text-white text-lg font-bold">-65%</div>
                   </div>
-                  <div className="absolute bottom-4 left-4 bg-[#0f172a] p-2.5 rounded-lg border border-purple-500/20 shadow-lg">
+                  <div className="absolute bottom-4 left-4 bg-[#0f172a]/80 backdrop-blur-lg p-3 rounded-lg border border-purple-500/30 shadow-lg">
                     <div className="text-purple-400 text-sm font-medium">ROI Period</div>
                     <div className="text-white text-lg font-bold">4.2 Years</div>
                   </div>
-                  <div className="absolute bottom-4 right-4 bg-[#0f172a] p-2.5 rounded-lg border border-purple-500/20 shadow-lg">
+                  <div className="absolute bottom-4 right-4 bg-[#0f172a]/80 backdrop-blur-lg p-3 rounded-lg border border-purple-500/30 shadow-lg">
                     <div className="text-purple-400 text-sm font-medium">Carbon Reduction</div>
                     <div className="text-white text-lg font-bold">840 tons/yr</div>
                   </div>
@@ -726,23 +725,23 @@ const Home = () => {
                 <div className="grid grid-cols-5 gap-3">
                   <div className="text-center">
                     <div className="text-green-400 text-sm mb-1">Sequence started</div>
-                    <div className="text-white text-xl font-bold">636</div>
+                    <div className="text-white text-xl font-bold">3,726</div>
                   </div>
                   <div className="text-center">
                     <div className="text-green-400 text-sm mb-1">Open rate</div>
-                    <div className="text-white text-xl font-bold">48%<span className="text-sm text-slate-400">| 307</span></div>
+                    <div className="text-white text-xl font-bold">48%<span className="text-sm text-slate-400">| 1,788</span></div>
                   </div>
                   <div className="text-center">
                     <div className="text-green-400 text-sm mb-1">Click rate</div>
-                    <div className="text-white text-xl font-bold">12%<span className="text-sm text-slate-400">| 79</span></div>
+                    <div className="text-white text-xl font-bold">24%<span className="text-sm text-slate-400">| 894</span></div>
                   </div>
                   <div className="text-center">
                     <div className="text-green-400 text-sm mb-1">Reply rate</div>
-                    <div className="text-white text-xl font-bold">5%<span className="text-sm text-slate-400">| 32</span></div>
+                    <div className="text-white text-xl font-bold">18%<span className="text-sm text-slate-400">| 671</span></div>
                   </div>
                   <div className="text-center">
                     <div className="text-green-400 text-sm mb-1">Opportunities</div>
-                    <div className="text-white text-xl font-bold">5<span className="text-sm text-slate-400">| $0</span></div>
+                    <div className="text-white text-xl font-bold">85<span className="text-sm text-slate-400">| $245K</span></div>
                   </div>
                 </div>
               </div>
@@ -758,11 +757,11 @@ const Home = () => {
                   <h3 className="text-white text-sm font-medium">Campaign Performance</h3>
                   <div className="flex items-center gap-3">
                     <div className="flex items-center gap-1.5">
-                      <div className="w-2 h-2 rounded-full bg-green-500"></div>
+                      <div className="w-2 h-2 rounded-full bg-blue-500"></div>
                       <span className="text-xs text-slate-300">Sent</span>
                     </div>
                     <div className="flex items-center gap-1.5">
-                      <div className="w-2 h-2 rounded-full bg-green-500"></div>
+                      <div className="w-2 h-2 rounded-full bg-purple-500"></div>
                       <span className="text-xs text-slate-300">Opens</span>
                     </div>
                     <div className="flex items-center gap-1.5">
@@ -770,7 +769,7 @@ const Home = () => {
                       <span className="text-xs text-slate-300">Unique</span>
                     </div>
                     <div className="flex items-center gap-1.5">
-                      <div className="w-2 h-2 rounded-full bg-green-500"></div>
+                      <div className="w-2 h-2 rounded-full bg-orange-500"></div>
                       <span className="text-xs text-slate-300">Replies</span>
                     </div>
                   </div>
@@ -779,22 +778,45 @@ const Home = () => {
                 <div className="flex-1">
                   <ResponsiveContainer width="100%" height="100%">
                     <LineChart data={campaignData}>
+                      <defs>
+                        <linearGradient id="sentGradient" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="5%" stopColor="#3B82F6" stopOpacity={0.3}/>
+                          <stop offset="95%" stopColor="#3B82F6" stopOpacity={0}/>
+                        </linearGradient>
+                        <linearGradient id="opensGradient" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="5%" stopColor="#A855F7" stopOpacity={0.3}/>
+                          <stop offset="95%" stopColor="#A855F7" stopOpacity={0}/>
+                        </linearGradient>
+                        <linearGradient id="uniqueGradient" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="5%" stopColor="#22C55E" stopOpacity={0.3}/>
+                          <stop offset="95%" stopColor="#22C55E" stopOpacity={0}/>
+                        </linearGradient>
+                        <linearGradient id="repliesGradient" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="5%" stopColor="#F97316" stopOpacity={0.3}/>
+                          <stop offset="95%" stopColor="#F97316" stopOpacity={0}/>
+                        </linearGradient>
+                        <filter id="shadow" height="200%">
+                          <feDropShadow dx="0" dy="4" stdDeviation="6" floodColor="rgba(0,0,0,0.3)" />
+                        </filter>
+                      </defs>
+                      <CartesianGrid strokeDasharray="3 3" stroke="#374151" opacity={0.1} />
                       <XAxis 
                         dataKey="date" 
-                        stroke="#64748b"
-                        fontSize={12}
+                        stroke="#6B7280"
+                        tick={{ fill: '#9CA3AF' }}
+                        axisLine={{ stroke: '#374151', strokeWidth: 1 }}
                         tickLine={false}
-                        axisLine={false}
                       />
                       <YAxis 
-                        stroke="#64748b"
-                        fontSize={12}
+                        stroke="#6B7280"
+                        tick={{ fill: '#9CA3AF' }}
+                        axisLine={{ stroke: '#374151', strokeWidth: 1 }}
                         tickLine={false}
-                        axisLine={false}
                       />
                       <Tooltip
                         contentStyle={{
                           backgroundColor: 'rgba(15, 23, 42, 0.9)',
+                          backdropFilter: 'blur(8px)',
                           border: '1px solid rgba(34, 197, 94, 0.2)',
                           borderRadius: '0.5rem',
                           boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
@@ -805,30 +827,38 @@ const Home = () => {
                       <Line 
                         type="monotone" 
                         dataKey="sent" 
-                        stroke="#22c55e" 
+                        stroke="#3B82F6" 
                         strokeWidth={2}
                         dot={false}
+                        activeDot={{ r: 6, stroke: '#3B82F6', strokeWidth: 2, fill: '#111827' }}
+                        filter="url(#shadow)"
                       />
                       <Line 
                         type="monotone" 
                         dataKey="totalOpens" 
-                        stroke="#22c55e" 
+                        stroke="#A855F7" 
                         strokeWidth={2}
                         dot={false}
+                        activeDot={{ r: 6, stroke: '#A855F7', strokeWidth: 2, fill: '#111827' }}
+                        filter="url(#shadow)"
                       />
                       <Line 
                         type="monotone" 
                         dataKey="uniqueOpens" 
-                        stroke="#22c55e" 
+                        stroke="#22C55E" 
                         strokeWidth={2}
                         dot={false}
+                        activeDot={{ r: 6, stroke: '#22C55E', strokeWidth: 2, fill: '#111827' }}
+                        filter="url(#shadow)"
                       />
                       <Line 
                         type="monotone" 
                         dataKey="replies" 
-                        stroke="#22c55e" 
+                        stroke="#F97316" 
                         strokeWidth={2}
                         dot={false}
+                        activeDot={{ r: 6, stroke: '#F97316', strokeWidth: 2, fill: '#111827' }}
+                        filter="url(#shadow)"
                       />
                     </LineChart>
                   </ResponsiveContainer>

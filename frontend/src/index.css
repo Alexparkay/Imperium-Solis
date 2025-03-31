@@ -274,3 +274,14 @@
     @apply text-2xl font-bold text-gray-900 dark:text-white mb-6 flex items-center;
   }
 }
+
+/* Add loading bar animation */
+@keyframes loadingProgress {
+  0% { width: 0%; }
+  50% { width: 70%; }
+  100% { width: 100%; }
+}
+
+.animate-loadingBar {
+  animation: loadingProgress 3s ease-in-out forwards;
+}
