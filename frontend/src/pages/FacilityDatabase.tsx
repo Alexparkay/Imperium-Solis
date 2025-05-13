@@ -48,8 +48,43 @@ import {
   MdInfoOutline,
   MdStorage,
 } from 'react-icons/md';
-import { toast } from 'react-hot-toast';
+import { toast, Toaster } from 'react-hot-toast';
 import { FaLinkedin, FaFilter } from 'react-icons/fa';
+
+// Custom toast configuration for dark theme and bottom-right position
+const darkToast = {
+  success: (message: string) => 
+    toast.success(message, {
+      style: {
+        background: 'rgba(40, 41, 43, 0.9)',
+        color: '#fff',
+        backdropFilter: 'blur(8px)',
+        border: '1px solid rgba(255, 255, 255, 0.1)',
+        boxShadow: '0 8px 32px rgba(0, 0, 0, 0.4)',
+      },
+      position: 'bottom-right',
+      iconTheme: {
+        primary: '#f97316',
+        secondary: '#fff',
+      },
+    }),
+  
+  error: (message: string) => 
+    toast.error(message, {
+      style: {
+        background: 'rgba(40, 41, 43, 0.9)',
+        color: '#fff',
+        backdropFilter: 'blur(8px)',
+        border: '1px solid rgba(255, 255, 255, 0.1)',
+        boxShadow: '0 8px 32px rgba(0, 0, 0, 0.4)',
+      },
+      position: 'bottom-right',
+      iconTheme: {
+        primary: '#ef4444',
+        secondary: '#fff',
+      },
+    })
+};
 
 const FacilityDatabase = () => {
   const navigate = useNavigate();
@@ -190,7 +225,10 @@ const FacilityDatabase = () => {
       phoneNumbers: true,
       location: "Atlanta, GA",
       enriched: true,
-      verified: true
+      verified: true,
+      email: "j.levy@apple.example.com",
+      phone: "(404) 555-1000",
+      facilityType: "Technology"
     },
     {
       id: 2,
@@ -497,64 +535,11 @@ const FacilityDatabase = () => {
         break;
     }
     
-    // Update filtered stats based on selections
-    let newFilteredCount = facilitiesStats.total;
+    // Check if there are any active filters
+    const hasActiveFilters = Object.keys(activeFilters).length > 0 || (typeof value !== 'string' || value !== '');
     
-    // If facility search is active, reduce count significantly
-    if (facilitySearchTerm) {
-      newFilteredCount = Math.round(newFilteredCount * 0.0002); // Very specific search
-    }
-    
-    // If facility type is selected
-    if (facilityTypeFilter) {
-      const facilityTypeProportions: {[key: string]: number} = {
-        'Manufacturing Plant': 0.14,
-        'Distribution Center': 0.08,
-        'Warehouse': 0.15,
-        'Retail Store': 0.24,
-        'Office Building': 0.18,
-        'Data Center': 0.02,
-        'Hospital/Medical': 0.04,
-        'Educational Institution': 0.09,
-        'Hotel/Hospitality': 0.05,
-        'Agricultural': 0.01
-      };
-      
-      newFilteredCount = Math.round(newFilteredCount * (facilityTypeProportions[facilityTypeFilter] || 0.1));
-    }
-    
-    // If employee count is selected
-    if (employeeCountFilter) {
-      const employeeCountProportions: {[key: string]: number} = {
-        '1-20 employees': 0.25,
-        '21-50 employees': 0.18,
-        '51-100 employees': 0.15,
-        '101-500 employees': 0.21,
-        '501-1,000 employees': 0.09,
-        '1,001-5,000 employees': 0.07,
-        '5,001-10,000 employees': 0.03,
-        '10,000+ employees': 0.02
-      };
-      
-      newFilteredCount = Math.round(newFilteredCount * (employeeCountProportions[employeeCountFilter] || 0.1));
-    }
-    
-    // If company name filter is active
-    if (companyNameFilter) {
-      newFilteredCount = Math.round(newFilteredCount * 0.001); // Very specific filter
-    }
-    
-    // If verified email/phone filters are active
-    if (verifiedEmailFilter) {
-      newFilteredCount = Math.round(newFilteredCount * 0.72); // 72% have verified emails
-    }
-    
-    if (verifiedPhoneFilter) {
-      newFilteredCount = Math.round(newFilteredCount * 0.65); // 65% have verified phones
-    }
-    
-    // If other filters are active...
-    // ... existing filter logic ...
+    // Update filtered count - always show 5.6K when filters are applied
+    const newFilteredCount = hasActiveFilters ? 5600 : facilitiesStats.total;
     
     // Update the stats
     setFacilitiesStats(prev => ({
@@ -613,7 +598,7 @@ const FacilityDatabase = () => {
 
   const handleScrape = () => {
     if (!facilityType) {
-      toast.error('Please enter what facilities you are looking for');
+      darkToast.error('Please enter what facilities you are looking for');
       return;
     }
     
@@ -643,7 +628,7 @@ const FacilityDatabase = () => {
         searchDescription += " with verified contacts";
       }
       
-      toast.success(`Facility data for ${searchDescription} scraped successfully`);
+      darkToast.success(`Facility data for ${searchDescription} scraped successfully`);
       
       // Add new facilities
       setFacilities(prev => [
@@ -678,7 +663,7 @@ const FacilityDatabase = () => {
 
   const handleEnrich = () => {
     if (selectedFacilities.length === 0) {
-      toast.error('Please select at least one facility to enrich');
+      darkToast.error('Please select at least one facility to enrich');
       return;
     }
 
@@ -686,7 +671,7 @@ const FacilityDatabase = () => {
     // Simulate API call
     setTimeout(() => {
       setIsLoading(false);
-      toast.success(`${selectedFacilities.length} facilities enriched successfully`);
+      darkToast.success(`${selectedFacilities.length} facilities enriched successfully`);
       
       // Update enriched facilities
       setFacilities(prev => prev.map(facility => {
@@ -705,10 +690,12 @@ const FacilityDatabase = () => {
 
   const handleContinue = () => {
     if (facilities.filter(f => f.enriched).length === 0) {
-      toast.error('Please enrich at least one facility before continuing');
+      darkToast.error('Please enrich at least one facility before continuing');
       return;
     }
-    navigate('/facility-enrichment');
+    
+    // Navigate to the facility enrichment page with the Jeff Levy (id: 1) as default
+    navigate('/facility-enrichment/1');
   };
 
   const handleSelectFacility = (id: number) => {
@@ -819,7 +806,8 @@ const FacilityDatabase = () => {
     change, 
     icon, 
     colorClass,
-    borderColor = 'border-white/10' 
+    borderColor = 'border-white/10',
+    description
   }: { 
     title: string; 
     value: string; 
@@ -827,6 +815,7 @@ const FacilityDatabase = () => {
     icon: React.ReactNode;
     colorClass: string;
     borderColor?: string;
+    description?: string;
   }) => {
     return (
       <div className={`backdrop-blur-2xl bg-gradient-to-br from-[#28292b]/80 via-[#28292b]/40 to-[rgba(40,41,43,0.2)] rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.4)] transition-all duration-300 border border-orange-500/20 hover:-translate-y-1 relative overflow-hidden group`}>
@@ -841,6 +830,9 @@ const FacilityDatabase = () => {
             <div>
               <p className="text-sm font-medium text-white/90 mb-1">{title}</p>
               <h3 className="text-2xl font-bold text-white bg-gradient-to-r from-white via-white/90 to-white/80 bg-clip-text text-transparent">{value}</h3>
+              {description && (
+                <p className="text-xs text-orange-400 mt-1 max-w-[220px] leading-tight">{description}</p>
+              )}
               {change && (
                 <div className="flex items-center text-xs font-medium text-orange-300 mt-2">
                   <MdTrendingUp className="mr-1" /> {change}
@@ -919,6 +911,17 @@ const FacilityDatabase = () => {
     }
   };
 
+  // Function to format large numbers with K, M, etc.
+  const formatLargeNumber = (num: number): string => {
+    if (num >= 1000000) {
+      return `${(num / 1000000).toFixed(1)}M`;
+    } else if (num >= 1000) {
+      return `${(num / 1000).toFixed(1)}K`;
+    } else {
+      return num.toString();
+    }
+  };
+  
   // Function to format large numbers with commas
   const formatNumber = (num: number): string => {
     return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
@@ -951,31 +954,22 @@ const FacilityDatabase = () => {
         console.error('Error saving filters to localStorage', error);
       }
       
+      // Set a fixed filtered count to show the specific 5.6K facilities
+      // This represents Technology companies over 100,000 square feet in the US with above 200 employees
+      setFacilitiesStats(prev => ({
+        ...prev,
+        filtered: 5600
+      }));
+      
+      // Update pagination based on new filtered count
+      setPagination(prev => ({
+        ...prev,
+        currentPage: 1,
+        totalPages: Math.ceil(5600 / prev.itemsPerPage)
+      }));
+      
       // Build a description of what's being searched for based on active filters
-      let searchDescription = "Facilities";
-      
-      if (facilityTypeFilter) {
-        searchDescription = facilityTypeFilter;
-      }
-      
-      // Add filter details to the search description
-      if (stateFilter) {
-        searchDescription += ` in ${stateFilter}`;
-      }
-      if (sectorFilter) {
-        searchDescription += ` (${sectorFilter} sector)`;
-      }
-      if (squareFootageFilter) {
-        searchDescription += ` with ${squareFootageFilter}`;
-      }
-      if (energyUsageFilter) {
-        searchDescription += ` using ${energyUsageFilter}`;
-      }
-      if (showVerifiedOnly) {
-        searchDescription += " with verified contacts";
-      }
-      
-      toast.success(`Searching for ${searchDescription}`);
+      darkToast.success("Searching for Technology companies over 100,000 square feet in the US with above 200 employees");
     }, 1000);
   };
 
@@ -1040,17 +1034,58 @@ const FacilityDatabase = () => {
               break;
           }
         });
+        
+        // If we have saved filters, apply them immediately to update the filtered count
+        if (Object.keys(parsedFilters).length > 0) {
+          // Simulate filter application by calling handleSearch
+          handleSearch();
+        }
       }
     } catch (error) {
       console.error('Error loading saved filters', error);
     }
   }, []);
 
+  // In the table, update the arrow button onClick handler to navigate to the specific facility
+  // Replace:
+  // <button 
+  //   onClick={() => navigate(`/facility-enrichment/${facility.id}`)}
+  //   className="p-1.5 rounded-lg bg-gradient-to-r from-orange-500 to-orange-600 text-white shadow-sm"
+  // >
+  //   <MdArrowForward size={14} />
+  // </button>
+
+  // With this component in the JSX where the table is rendered:
+  const FacilityActionButton = ({ facilityId }: { facilityId: number }) => {
+    return (
+      <button 
+        onClick={() => navigate(`/facility-enrichment/${facilityId}`)}
+        className="p-1.5 rounded-lg bg-gradient-to-r from-orange-500 to-orange-600 text-white shadow-sm hover:from-orange-600 hover:to-orange-700 transition-all"
+      >
+        <MdArrowForward size={14} />
+      </button>
+    );
+  };
+
   return (
     <div className="w-full px-4 py-4 bg-[#020305] min-h-screen relative">
       {/* Background gradient orbs */}
       <div className="fixed top-20 right-40 w-96 h-96 bg-gradient-to-br from-orange-500/5 to-transparent rounded-full blur-3xl transform rotate-12 opacity-70 pointer-events-none"></div>
       <div className="fixed bottom-40 left-20 w-80 h-80 bg-gradient-to-tr from-orange-500/5 to-transparent rounded-full blur-3xl transform -rotate-12 opacity-60 pointer-events-none"></div>
+
+      {/* Toast notifications with dark theme */}
+      <Toaster
+        toastOptions={{
+          style: {
+            background: 'rgba(40, 41, 43, 0.9)',
+            color: '#fff',
+            backdropFilter: 'blur(8px)',
+            border: '1px solid rgba(255, 255, 255, 0.1)',
+            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.4)',
+          },
+        }}
+        position="bottom-right"
+      />
 
       {/* Main content with single scrollbar */}
       <div className="flex flex-col">
@@ -1066,7 +1101,7 @@ const FacilityDatabase = () => {
           {showDashboard && (
             <div className="text-white/70 text-sm flex items-center gap-2">
               <MdInfoOutline className="text-orange-400" />
-              <span>Showing <span className="text-orange-400 font-medium">{formatNumber(facilitiesStats.filtered)}</span> of {formatNumber(facilitiesStats.total)} facilities</span>
+              <span>Showing <span className="text-orange-400 font-medium">{formatLargeNumber(facilitiesStats.filtered)}</span> of {formatLargeNumber(facilitiesStats.total)} facilities</span>
               
               <button 
                 onClick={clearAllFilters}
@@ -1464,15 +1499,20 @@ const FacilityDatabase = () => {
                 <div className="grid grid-cols-3 gap-4 mb-4">
                   <StatsCard
                     title="Total Facilities"
-                    value={`${(facilitiesStats.total / 1000000).toFixed(2)}M`}
-                    change="+2.5% this month"
+                    value={formatLargeNumber(facilitiesStats.filtered)}
+                    description={
+                      facilitiesStats.filtered !== facilitiesStats.total 
+                        ? "Technology companies over 100,000 square feet in the US with above 200 employees"
+                        : undefined
+                    }
+                    change={facilitiesStats.filtered !== facilitiesStats.total ? `${((facilitiesStats.filtered / facilitiesStats.total) * 100).toFixed(1)}% of database` : "+2.5% this month"}
                     icon={<MdFactory className="text-white text-xl" />}
                     colorClass="bg-gradient-to-br from-orange-500 via-orange-600 to-amber-600"
                   />
                   
                   <StatsCard
                     title="High Potential Facilities"
-                    value={formatNumber(facilitiesStats.highPotential)}
+                    value={formatLargeNumber(Math.round(facilitiesStats.filtered * (facilitiesStats.highPotential / facilitiesStats.total)))}
                     change="+3.1% this month"
                     icon={<MdSolarPower className="text-white text-xl" />}
                     colorClass="bg-gradient-to-br from-blue-500 via-blue-600 to-indigo-600"
@@ -1480,7 +1520,7 @@ const FacilityDatabase = () => {
                   
                   <StatsCard
                     title="Enriched Facilities"
-                    value={formatNumber(facilitiesStats.enriched)}
+                    value={formatLargeNumber(Math.round(facilitiesStats.filtered * (facilitiesStats.enriched / facilitiesStats.total)))}
                     change="+5.2% this month"
                     icon={<MdCheck className="text-white text-xl" />}
                     colorClass="bg-gradient-to-br from-green-500 via-green-600 to-teal-600"
@@ -1546,14 +1586,7 @@ const FacilityDatabase = () => {
                               </td>
                               <td className="py-2 px-2 text-sm text-white/80">{facility.location}</td>
                               <td className="py-2 px-2 text-sm">
-                                <div className="flex gap-1">
-                                  <button 
-                                    onClick={() => navigate(`/facility-enrichment/${facility.id}`)}
-                                    className="p-1.5 rounded-lg bg-gradient-to-r from-orange-500 to-orange-600 text-white shadow-sm"
-                                  >
-                                    <MdArrowForward size={14} />
-                                  </button>
-                                </div>
+                                <FacilityActionButton facilityId={facility.id} />
                               </td>
                             </tr>
                           ))
@@ -1574,7 +1607,7 @@ const FacilityDatabase = () => {
                   {/* Pagination controls */}
                   <div className="p-3 border-t border-white/10 flex justify-between items-center">
                     <div className="text-white/70 text-xs">
-                      Showing {(pagination.currentPage - 1) * pagination.itemsPerPage + 1} to {Math.min(pagination.currentPage * pagination.itemsPerPage, facilitiesStats.filtered)} of {formatNumber(facilitiesStats.filtered)}
+                      Showing {(pagination.currentPage - 1) * pagination.itemsPerPage + 1} to {Math.min(pagination.currentPage * pagination.itemsPerPage, facilitiesStats.filtered)} of {formatLargeNumber(facilitiesStats.filtered)}
                     </div>
                     
                     <div className="flex gap-2">
@@ -1587,7 +1620,7 @@ const FacilityDatabase = () => {
                       </button>
                       
                       <div className="px-2 py-1 rounded-lg bg-white/10 text-white/80 text-xs flex items-center">
-                        {pagination.currentPage} / {formatNumber(pagination.totalPages)}
+                        {pagination.currentPage} / {formatLargeNumber(pagination.totalPages)}
                       </div>
                       
                       <button 
@@ -1609,7 +1642,7 @@ const FacilityDatabase = () => {
                     </div>
                     <div>
                       <p className="text-white text-sm font-medium">Commercial Solar Database</p>
-                      <p className="text-white/60 text-xs">{formatNumber(facilitiesStats.total)} facilities across all 50 states</p>
+                      <p className="text-white/60 text-xs">{formatLargeNumber(facilitiesStats.total)} facilities across all 50 states</p>
                     </div>
                   </div>
                   

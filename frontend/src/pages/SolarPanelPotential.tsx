@@ -70,6 +70,10 @@ const SolarPanelPotential = () => {
   const [iframeKey, setIframeKey] = useState(1);
   // Set iframe loaded to true by default
   const [iframeLoaded, setIframeLoaded] = useState(true);
+  const [iframeError, setIframeError] = useState(false);
+  
+  // Define a constant for the Solar Window URL
+  const SOLAR_WINDOW_URL = 'http://localhost:5174'; // No trailing slash
   
   // Available solar panel types
   const panelTypes: SolarPanel[] = [
@@ -525,6 +529,18 @@ const SolarPanelPotential = () => {
     return null;
   };
 
+  // Add this function to handle iframe reload
+  const handleReloadIframe = () => {
+    setIframeKey(prev => prev + 1);
+    setIframeLoaded(false);
+    setIframeError(false);
+    toast('Reloading Solar Window...', { icon: '🔄' });
+    
+    setTimeout(() => {
+      setIframeLoaded(true);
+    }, 1000);
+  };
+
   if (isCalculating) {
     return (
       <div className="min-h-screen bg-[#020305] flex items-center justify-center relative overflow-hidden">
@@ -886,33 +902,69 @@ const SolarPanelPotential = () => {
                 <div className="bg-white dark:bg-[#1e222b]/50 rounded-xl shadow-lg backdrop-blur-lg border border-white/10 overflow-hidden">
                   <div className="relative w-full" style={{ height: '650px' }}>
                     {iframeLoaded ? (
-                      <iframe 
-                        key={iframeKey}
-                        src="http://localhost:5174" 
-                        className="absolute inset-0 w-full h-full"
-                        style={{ border: 'none' }}
-                        title="Solar Window"
-                        sandbox="allow-scripts allow-same-origin allow-forms"
-                        onError={(e) => {
-                          console.error("Solar Window iframe error:", e);
-                          toast.error("Solar Window connection error. Showing fallback content.");
-                          setIframeLoaded(false);
-                        }}
-                        onLoad={(e) => {
-                          console.log("Solar Window iframe loaded successfully");
-                          setIframeLoaded(true);
-                          
-                          // Prevent navigation by intercepting beforeunload events
-                          window.addEventListener('beforeunload', (event) => {
-                            const currentHref = window.location.href;
-                            if (currentHref.includes('#ru')) {
-                              event.preventDefault();
-                              window.history.pushState(null, '', window.location.pathname);
-                              return '';
+                      <>
+                        <iframe 
+                          key={iframeKey}
+                          src={SOLAR_WINDOW_URL} 
+                          className="absolute inset-0 w-full h-full"
+                          style={{ border: 'none' }}
+                          title="Solar Window"
+                          sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-modals allow-downloads"
+                          onError={(e) => {
+                            console.error("Solar Window iframe error:", e);
+                            toast.error("Solar Window connection error. Showing fallback content.");
+                            setIframeLoaded(false);
+                            setIframeError(true);
+                          }}
+                          onLoad={(e) => {
+                            console.log("Solar Window iframe loaded successfully");
+                            setIframeLoaded(true);
+                            
+                            // Attempt to send a ping to check if communication works
+                            try {
+                              const iframe = e.currentTarget as HTMLIFrameElement;
+                              if (iframe.contentWindow) {
+                                iframe.contentWindow.postMessage({
+                                  type: 'PING',
+                                  payload: 'Hello from dashboard'
+                                }, SOLAR_WINDOW_URL);
+                              }
+                            } catch (error) {
+                              console.error("Error communicating with iframe:", error);
                             }
-                          });
-                        }}
-                      />
+                            
+                            // Prevent navigation by intercepting beforeunload events
+                            window.addEventListener('beforeunload', (event) => {
+                              const currentHref = window.location.href;
+                              if (currentHref.includes('#ru')) {
+                                event.preventDefault();
+                                window.history.pushState(null, '', window.location.pathname);
+                                return '';
+                              }
+                            });
+                          }}
+                        />
+                        
+                        {/* Add loader overlay */}
+                        {iframeError && (
+                          <div className="absolute inset-0 bg-black/70 flex flex-col items-center justify-center z-20">
+                            <div className="text-center p-6">
+                              <MdSolarPower size={48} className="text-orange-500 mx-auto mb-4" />
+                              <h3 className="text-xl font-bold text-white mb-3">Solar Window Connection Error</h3>
+                              <p className="text-gray-300 mb-6 max-w-2xl mx-auto">
+                                Unable to connect to the Solar Window application. This could be because the service 
+                                is not running at {SOLAR_WINDOW_URL} or there was a communication error.
+                              </p>
+                              <button 
+                                className="px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-lg transition-colors"
+                                onClick={handleReloadIframe}
+                              >
+                                Try Again
+                              </button>
+                            </div>
+                          </div>
+                        )}
+                      </>
                     ) : (
                       <div className="absolute inset-0 flex flex-col items-center justify-center bg-[#1e222b] p-8">
                         <MdSolarPower size={64} className="text-orange-500 mb-6" />
@@ -940,10 +992,7 @@ const SolarPanelPotential = () => {
                         </div>
                         <button 
                           className="mt-6 px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors"
-                          onClick={() => {
-                            setIframeKey(prev => prev + 1);
-                            setIframeLoaded(true);
-                          }}
+                          onClick={handleReloadIframe}
                         >
                           Try Loading Interactive View
                         </button>
@@ -955,7 +1004,8 @@ const SolarPanelPotential = () => {
                         className="p-2 bg-[#1e222b]/50 backdrop-blur-sm rounded-full hover:bg-[#1e222b]/70 transition-colors"
                         onClick={() => {
                           setIframeLoaded(!iframeLoaded);
-                          if (iframeLoaded) {
+                          setIframeError(false);
+                          if (!iframeLoaded) {
                             setIframeKey(prev => prev + 1);
                           }
                         }}

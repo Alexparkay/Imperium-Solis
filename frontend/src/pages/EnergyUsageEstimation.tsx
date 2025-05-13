@@ -28,7 +28,7 @@ interface DashboardMessage {
 }
 
 interface EngineMessage {
-  type: 'STATE_UPDATE' | 'ENGINE_READY' | 'INTERACTION';
+  type: 'STATE_UPDATE' | 'ENGINE_READY' | 'INTERACTION' | 'ERROR';
   payload: any;
 }
 
@@ -44,9 +44,11 @@ const EnergyUsageEstimation = () => {
   const [activeTooltip, setActiveTooltip] = useState<string | null>(null);
   const [selectedPieSection, setSelectedPieSection] = useState<string | null>(null);
   const [showDetailsModal, setShowDetailsModal] = useState(false);
+  const [iframeError, setIframeError] = useState(false);
+  const [iframeKey, setIframeKey] = useState(1); // Add key for force reloading iframe
   
   // URL for the Solar Window application
-  const SOLAR_WINDOW_URL = 'http://localhost:5174'; // Updated Solar Window local instance
+  const SOLAR_WINDOW_URL = 'http://localhost:5174'; // Updated Solar Window local instance, removed trailing slash
   
   // Enhanced energy data with detailed calculations
   const energyData = {
@@ -501,23 +503,35 @@ const EnergyUsageEstimation = () => {
         // Listen for ready event
         instance.onMessage('ENGINE_READY', () => {
           setEngineReady(true);
+          setIframeError(false);
           // Initialize the app
           instance.sendMessage('COMMAND', 'INITIALIZE');
         });
         
+        // Add a timeout to prevent endless loading
+        const timeoutId = setTimeout(() => {
+          if (!engineReady) {
+            console.warn('Solar Window embed timeout - forcing ready state');
+            setEngineReady(true);
+          }
+        }, 10000);
+        
         return () => {
+          // Clean up the timeout
+          clearTimeout(timeoutId);
           // No direct cleanup method provided in the docs, but we can set state
           setSolarWindowInstance(null);
         };
       } catch (error) {
         console.error('Error initializing SolarWindow embedding:', error);
         setUseEmbedHelper(false);
+        setIframeError(true);
         toast.error('Failed to initialize Solar Window embedding, falling back to iframe');
       }
     } else {
       setUseEmbedHelper(false);
     }
-  }, []);
+  }, [engineReady]);
 
   // Handle state updates from the Solar Window app
   const handleSolarWindowStateUpdate = (state: any) => {
@@ -542,7 +556,12 @@ const EnergyUsageEstimation = () => {
       solarWindowInstance.sendMessage(message.type, message.payload);
     } else if (iframeRef.current?.contentWindow) {
       // Use the iframe postMessage API
-      iframeRef.current.contentWindow.postMessage(message, SOLAR_WINDOW_URL);
+      try {
+        iframeRef.current.contentWindow.postMessage(message, SOLAR_WINDOW_URL);
+      } catch (error) {
+        console.error('Error sending message to iframe:', error);
+        setIframeError(true);
+      }
     }
   };
 
@@ -552,49 +571,112 @@ const EnergyUsageEstimation = () => {
     if (useEmbedHelper) return;
     
     const messageHandler = (event: MessageEvent<EngineMessage>) => {
-      if (event.origin !== SOLAR_WINDOW_URL) return;
+      // More permissive origin check to allow for development environments
+      const targetOrigin = new URL(SOLAR_WINDOW_URL).origin;
+      if (event.origin !== targetOrigin && !event.origin.includes('localhost')) {
+        console.warn(`Message from unexpected origin: ${event.origin}, expected: ${targetOrigin}`);
+        return;
+      }
 
-      switch (event.data.type) {
-        case 'ENGINE_READY':
-          setEngineReady(true);
-          sendToEngine({
-            type: 'COMMAND',
-            payload: 'INITIALIZE'
-          });
-          break;
-          
-        case 'STATE_UPDATE':
-          console.log('Engine state:', event.data.payload);
-          handleSolarWindowStateUpdate(event.data.payload);
-          break;
-          
-        case 'INTERACTION':
-          handleSolarWindowInteraction(event.data.payload);
-          break;
+      try {
+        if (!event.data || !event.data.type) {
+          return; // Ignore messages without proper format
+        }
+
+        switch (event.data.type) {
+          case 'ENGINE_READY':
+            console.log('Received ENGINE_READY message from iframe');
+            setEngineReady(true);
+            setIframeError(false);
+            sendToEngine({
+              type: 'COMMAND',
+              payload: 'INITIALIZE'
+            });
+            break;
+            
+          case 'STATE_UPDATE':
+            console.log('Engine state:', event.data.payload);
+            handleSolarWindowStateUpdate(event.data.payload);
+            break;
+            
+          case 'INTERACTION':
+            handleSolarWindowInteraction(event.data.payload);
+            break;
+
+          case 'ERROR':
+            console.error('Error from Solar Window:', event.data.payload);
+            setIframeError(true);
+            break;
+        }
+      } catch (error) {
+        console.error('Error processing message from iframe:', error);
       }
     };
 
     window.addEventListener('message', messageHandler);
-    return () => window.removeEventListener('message', messageHandler);
-  }, [useEmbedHelper]);
+    
+    // Add a timeout to prevent endless loading
+    const timeoutId = setTimeout(() => {
+      if (!engineReady) {
+        console.warn('Solar Window iframe timeout - forcing ready state');
+        setEngineReady(true);
+      }
+    }, 10000);
+    
+    return () => {
+      window.removeEventListener('message', messageHandler);
+      clearTimeout(timeoutId);
+    };
+  }, [useEmbedHelper, engineReady]);
 
   // Load the embedding script
   useEffect(() => {
     const loadEmbedScript = () => {
+      // First check if the script already exists to avoid duplicates
+      const existingScript = document.querySelector('script[src*="embed.js"]');
+      if (existingScript) {
+        console.log('Solar Window embed script already exists');
+        return;
+      }
+
       const script = document.createElement('script');
+      // Ensure proper path construction with a single slash
       script.src = `${SOLAR_WINDOW_URL}/lib/embed.js`;
       script.async = true;
-      script.onload = () => console.log('Solar Window embed script loaded');
-      script.onerror = () => {
-        console.error('Failed to load Solar Window embed script');
-        setUseEmbedHelper(false);
+      
+      script.onload = () => {
+        console.log('Solar Window embed script loaded');
+        // Try to initialize after script load
+        if (window.SolarWindow) {
+          toast.success('Solar Window script loaded successfully');
+        }
       };
+      
+      script.onerror = (error) => {
+        console.error('Failed to load Solar Window embed script:', error);
+        setUseEmbedHelper(false);
+        setIframeError(true);
+        toast.error(`Failed to load Solar Window script: ${SOLAR_WINDOW_URL}/lib/embed.js not found`);
+      };
+      
       document.body.appendChild(script);
     };
 
     loadEmbedScript();
     
+    // Add a timeout to prevent endless waiting for script
+    const scriptTimeoutId = setTimeout(() => {
+      const script = document.querySelector(`script[src="${SOLAR_WINDOW_URL}/lib/embed.js"]`);
+      if (!script) {
+        console.warn('Script loading timeout - falling back to iframe');
+        setUseEmbedHelper(false);
+      }
+    }, 5000);
+    
     return () => {
+      // Clear timeout
+      clearTimeout(scriptTimeoutId);
+      
       // Remove the script when component unmounts
       const script = document.querySelector(`script[src="${SOLAR_WINDOW_URL}/lib/embed.js"]`);
       if (script) {
@@ -617,19 +699,84 @@ const EnergyUsageEstimation = () => {
     navigate('/solar-panel-potential');
   };
 
+  // Handle manual reload of iframe
+  const handleReloadIframe = () => {
+    setIframeKey(prev => prev + 1);
+    setEngineReady(false);
+    setIframeError(false);
+    toast('Reloading Solar Window...', { icon: '🔄' });
+    
+    // Force ready state after timeout
+    setTimeout(() => {
+      if (!engineReady) {
+        console.warn('Solar Window reload timeout - forcing ready state');
+        setEngineReady(true);
+      }
+    }, 10000);
+  };
+
   // Function to render the image of a facility's floor plan
   const renderFloorPlanImage = () => {
     return (
       <div className="w-full h-72 md:h-96 bg-white dark:bg-gray-800 rounded-xl overflow-hidden relative border-4 border-gray-200 dark:border-gray-700 shadow-md">
         <div id="solar-window-container" className="w-full h-full">
           {!useEmbedHelper && (
-            <iframe
-              ref={iframeRef}
-              src={SOLAR_WINDOW_URL}
-              className="w-full h-full border-0"
-              title="Solar Window"
-              sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
-            />
+            <>
+              <iframe
+                key={iframeKey}
+                ref={iframeRef}
+                src={SOLAR_WINDOW_URL}
+                className="w-full h-full border-0"
+                title="Solar Window"
+                sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-modals allow-downloads"
+                onLoad={() => {
+                  console.log('iframe loaded successfully');
+                  // Attempt to send a ping to check if it's working
+                  setTimeout(() => {
+                    if (iframeRef.current?.contentWindow) {
+                      try {
+                        iframeRef.current.contentWindow.postMessage({ 
+                          type: 'PING', 
+                          payload: 'Hello from dashboard' 
+                        }, SOLAR_WINDOW_URL);
+                      } catch (error) {
+                        console.error('Error sending ping to iframe:', error);
+                      }
+                    }
+                  }, 1000);
+                }}
+                onError={(e) => {
+                  console.error('iframe loading error:', e);
+                  setIframeError(true);
+                }}
+              />
+              
+              {/* Overlay loader or error message */}
+              {(!engineReady || iframeError) && (
+                <div className="absolute inset-0 bg-black/70 flex flex-col items-center justify-center z-10">
+                  {iframeError ? (
+                    <div className="text-center p-6">
+                      <MdElectricBolt size={48} className="text-orange-500 mx-auto mb-4" />
+                      <h3 className="text-xl font-bold text-white mb-3">Solar Window Connection Error</h3>
+                      <p className="text-gray-300 mb-6 max-w-md mx-auto">
+                        Unable to connect to the Solar Window application. This could be because the service is not running at {SOLAR_WINDOW_URL}
+                      </p>
+                      <button 
+                        onClick={handleReloadIframe}
+                        className="px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-lg transition-colors"
+                      >
+                        Try Again
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="text-center">
+                      <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-orange-500 mb-4"></div>
+                      <p className="text-white font-medium">Connecting to Solar Window...</p>
+                    </div>
+                  )}
+                </div>
+              )}
+            </>
           )}
         </div>
       </div>

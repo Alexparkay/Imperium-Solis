@@ -1,8 +1,13 @@
 {
   "dependencies": {
+    "@splinetool/loader": "^1.0.53",
+    "@splinetool/react-spline": "^2.2.6",
+    "@splinetool/runtime": "^1.9.93",
     "apexcharts": "^4.5.0",
     "d3-geo": "^3.1.1",
+    "react": "16.14.0",
     "react-apexcharts": "^1.7.0",
+    "react-dom": "16.14.0",
     "react-simple-maps": "^3.0.0",
     "react-usa-map": "^1.5.0",
     "topojson-client": "^3.1.0"

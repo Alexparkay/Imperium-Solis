@@ -2,13 +2,54 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { MdArrowBack, MdInfo, MdLocationOn, MdOutlineEmail, MdOutlinePhone, MdDownload, MdArrowForward, MdSolarPower, MdFactory, MdElectricBolt, MdAttachMoney, MdContentCopy, MdTableChart, MdCheck, MdWarning, MdOutlineWarning, MdSearch, MdInfoOutline, MdClose } from 'react-icons/md';
 import { FaSolarPanel, FaMoneyBillWave, FaLeaf, FaChartLine, FaRegLightbulb, FaRegSun, FaRegClock, FaBuilding, FaIndustry, FaWarehouse } from 'react-icons/fa';
-import { toast } from 'react-hot-toast';
+import { toast, Toaster } from 'react-hot-toast';
+
+// Custom toast configuration for dark theme and bottom-right position
+const darkToast = {
+  success: (message: string) => 
+    toast.success(message, {
+      style: {
+        background: 'rgba(40, 41, 43, 0.9)',
+        color: '#fff',
+        backdropFilter: 'blur(8px)',
+        border: '1px solid rgba(255, 255, 255, 0.1)',
+        boxShadow: '0 8px 32px rgba(0, 0, 0, 0.4)',
+      },
+      position: 'bottom-right',
+      iconTheme: {
+        primary: '#f97316',
+        secondary: '#fff',
+      },
+    }),
+  
+  error: (message: string) => 
+    toast.error(message, {
+      style: {
+        background: 'rgba(40, 41, 43, 0.9)',
+        color: '#fff',
+        backdropFilter: 'blur(8px)',
+        border: '1px solid rgba(255, 255, 255, 0.1)',
+        boxShadow: '0 8px 32px rgba(0, 0, 0, 0.4)',
+      },
+      position: 'bottom-right',
+      iconTheme: {
+        primary: '#ef4444',
+        secondary: '#fff',
+      },
+    }),
+    
+  custom: (component: JSX.Element) => 
+    toast.custom(component, {
+      position: 'bottom-right',
+      duration: 5000,
+    })
+};
 
 // Add more facility data to make the table more extensive
 const enrichedFacilities = [
   {
     id: 1,
-    name: "Michael Reynolds",
+    name: "Jeff Levy",
     jobTitle: "Facilities Manager",
     company: "Apple",
     emails: true,
@@ -16,9 +57,9 @@ const enrichedFacilities = [
     location: "Atlanta, GA",
     enriched: true,
     verified: true,
-    email: "m.reynolds@example.com",
-    phone: "(404) 555-1234",
-    facilityType: "Office Building",
+    email: "j.levy@apple.example.com",
+    phone: "(404) 555-1000",
+    facilityType: "Technology",
     facilitySize: 125000, // square feet
     yearBuilt: 2008,
     roofArea: 85000, // square feet
@@ -100,7 +141,7 @@ const enrichedFacilities = [
     verified: true,
     email: "r.kuddes@example.com",
     phone: "(303) 555-4321",
-    facilityType: "Data Center",
+    facilityType: "Technology",
     facilitySize: 85000, // square feet
     yearBuilt: 2016,
     roofArea: 75000, // square feet
@@ -632,15 +673,37 @@ const FacilityEnrichment = () => {
         if (foundFacility) {
           setFacility(foundFacility);
           setSelectedFacilities([foundFacility]);
+          
+          // Log that we found the specific facility
+          console.log(`Loaded facility data for ${foundFacility.name}`);
         } else {
-          // If facility not found, use all facilities
-          setSelectedFacilities(enrichedFacilities);
+          // If facility not found, default to Jeff Levy (id: 1)
+          const defaultFacility = enrichedFacilities.find(f => f.id === 1);
+          if (defaultFacility) {
+            setFacility(defaultFacility);
+            setSelectedFacilities([defaultFacility]);
+            console.log(`Facility ID ${facilityId} not found, defaulting to Jeff Levy`);
+          } else {
+            // Fallback to all facilities if even Jeff Levy isn't found
+            setSelectedFacilities(enrichedFacilities);
+            if (enrichedFacilities.length > 0) {
+              setFacility(enrichedFacilities[0]);
+            }
+          }
         }
       } else {
-        // If no facilityId is provided, load all enriched facilities
-        setSelectedFacilities(enrichedFacilities);
-        if (enrichedFacilities.length > 0) {
-          setFacility(enrichedFacilities[0]);
+        // If no facilityId is provided, default to Jeff Levy (id: 1)
+        const defaultFacility = enrichedFacilities.find(f => f.id === 1);
+        if (defaultFacility) {
+          setFacility(defaultFacility);
+          setSelectedFacilities([defaultFacility]);
+          console.log('No facility ID provided, defaulting to Jeff Levy');
+        } else {
+          // Fallback to all enriched facilities
+          setSelectedFacilities(enrichedFacilities);
+          if (enrichedFacilities.length > 0) {
+            setFacility(enrichedFacilities[0]);
+          }
         }
       }
       setIsLoading(false);
@@ -653,7 +716,7 @@ const FacilityEnrichment = () => {
   }, [facilityId]);
 
   const handleDownloadReport = () => {
-    toast.success('Enriched facility data exported successfully');
+    darkToast.success('Enriched facility data exported successfully');
   };
   
   const handleContinueToEnergyUsage = () => {
@@ -674,19 +737,19 @@ const FacilityEnrichment = () => {
         setTimeout(() => {
           setShowEnriched(true);
           
-          toast((t) => (
-            <div className="flex items-start">
+          darkToast.custom(
+            <div className="flex items-start p-4 rounded-lg backdrop-blur-xl bg-[#28292b]/90 border border-orange-500/20 shadow-lg">
               <div className="text-orange-500 mr-2 mt-0.5">
                 <MdInfoOutline size={20} />
               </div>
               <div>
-                <p className="font-medium">See Visualizations</p>
-                <p className="text-sm text-gray-600 dark:text-gray-300">
+                <p className="font-medium text-white">See Visualizations</p>
+                <p className="text-sm text-white/70">
                   Click the <span className="font-bold text-orange-500">View</span> button to see detailed visualizations and interact with facility data.
                 </p>
               </div>
             </div>
-          ), { duration: 5000 });
+          );
         }, 300);
       }, 3500); // Show animation for 3.5 seconds
     } else {
@@ -766,6 +829,20 @@ const FacilityEnrichment = () => {
       {/* Background gradient orbs */}
       <div className="fixed top-20 right-40 w-96 h-96 bg-gradient-to-br from-orange-500/5 to-transparent rounded-full blur-3xl transform rotate-12 opacity-70 pointer-events-none"></div>
       <div className="fixed bottom-40 left-20 w-80 h-80 bg-gradient-to-tr from-orange-500/5 to-transparent rounded-full blur-3xl transform -rotate-12 opacity-60 pointer-events-none"></div>
+
+      {/* Toast notifications with dark theme */}
+      <Toaster
+        toastOptions={{
+          style: {
+            background: 'rgba(40, 41, 43, 0.9)',
+            color: '#fff',
+            backdropFilter: 'blur(8px)',
+            border: '1px solid rgba(255, 255, 255, 0.1)',
+            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.4)',
+          },
+        }}
+        position="bottom-right"
+      />
 
       {/* Loading Animation Modal */}
       {showLoadingAnimation && (
@@ -1151,18 +1228,28 @@ const FacilityEnrichment = () => {
                     <h3 className="text-xl font-bold text-white mb-4">Facility Type Breakdown</h3>
                     
                     <div className="space-y-4">
-                      {['Office Building', 'Manufacturing Plant', 'Data Center', 'Warehouse', 'Retail Store'].map(type => {
+                      {['Technology', 'Office Building', 'Manufacturing Plant', 'Warehouse', 'Data Center'].map(type => {
+                        // Custom percentages for each type
+                        const typePercentages = {
+                          'Technology': 35,
+                          'Office Building': 25,
+                          'Manufacturing Plant': 20,
+                          'Warehouse': 15,
+                          'Data Center': 5
+                        };
+                        
+                        // Count of facilities with this type (or use custom percentages if not enough data)
                         const count = selectedFacilities.filter(f => f.facilityType === type).length;
-                        const percentage = (count / selectedFacilities.length) * 100;
+                        const percentage = count ? (count / selectedFacilities.length) * 100 : typePercentages[type as keyof typeof typePercentages];
                         
                         return (
                           <div key={type}>
                             <div className="flex justify-between mb-1">
                               <span className="text-white">{type}</span>
-                              <span className="text-white">{count} ({percentage.toFixed(0)}%)</span>
+                              <span className="text-white">{count || Math.round(percentage / 100 * selectedFacilities.length)} ({percentage.toFixed(0)}%)</span>
                             </div>
                             <div className="w-full bg-gray-200/20 rounded-full h-2.5">
-                              <div className="bg-gradient-to-r from-orange-500 to-amber-600 h-2.5 rounded-full" style={{ width: `${percentage}%` }}></div>
+                              <div className={`bg-gradient-to-r ${type === 'Technology' ? 'from-blue-500 to-blue-600' : 'from-orange-500 to-amber-600'} h-2.5 rounded-full`} style={{ width: `${percentage}%` }}></div>
                             </div>
                           </div>
                         );
@@ -1242,23 +1329,29 @@ const FacilityEnrichment = () => {
       </div>
 
       {/* Visualization Modal */}
-      <dialog id="visualization-modal" className="modal modal-bottom sm:modal-middle bg-transparent">
-        <div className="backdrop-blur-2xl bg-gradient-to-br from-[#28292b]/90 via-[#28292b]/80 to-[rgba(40,41,43,0.7)] rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.4)] border border-orange-500/15 p-6 max-w-2xl mx-auto">
-          <div className="flex justify-between items-start mb-4">
-            <h3 className="text-xl font-bold text-white">Solar Potential Visualization</h3>
+      <dialog id="visualization-modal" className="modal bg-transparent backdrop-blur-sm">
+        <div className="relative backdrop-blur-2xl bg-gradient-to-br from-[#28292b]/90 via-[#28292b]/80 to-[rgba(40,41,43,0.7)] rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.4)] border border-orange-500/15 p-6 max-w-2xl mx-auto">
+          {/* Decorative elements */}
+          <div className="absolute inset-0 overflow-hidden rounded-2xl pointer-events-none">
+            <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-orange-500/20 to-transparent rounded-full blur-3xl"></div>
+            <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-gradient-to-br from-blue-500/20 to-transparent rounded-full blur-3xl"></div>
+          </div>
+          
+          <div className="flex justify-between items-start mb-4 relative z-10">
+            <h3 className="text-xl font-bold bg-gradient-to-r from-white via-white/90 to-white/80 bg-clip-text text-transparent">Solar Potential Visualization</h3>
             <button 
               onClick={closeModal}
-              className="text-white/70 hover:text-white"
+              className="text-white/70 hover:text-white hover:bg-white/10 transition-all rounded-full p-1.5"
             >
-              ✕
+              <MdClose size={18} />
             </button>
           </div>
           
           {selectedFacilityForModal && (
-            <div className="space-y-4">
+            <div className="space-y-4 relative z-10">
               <div className="flex flex-col md:flex-row gap-6">
                 <div className="flex-1">
-                  <div className="bg-white/5 p-4 rounded-xl">
+                  <div className="bg-white/5 p-4 rounded-xl border border-white/10">
                     <h4 className="text-lg font-medium text-white mb-2">{selectedFacilityForModal.name}</h4>
                     <p className="text-white/70 text-sm mb-1">{selectedFacilityForModal.company}</p>
                     <p className="text-white/70 text-sm mb-3">
@@ -1290,7 +1383,7 @@ const FacilityEnrichment = () => {
                 </div>
                 
                 <div className="flex-1">
-                  <div className="bg-white/5 p-4 rounded-xl h-full flex flex-col">
+                  <div className="bg-white/5 p-4 rounded-xl h-full flex flex-col border border-white/10">
                     <h4 className="text-lg font-medium text-white mb-2">Available Visualizations</h4>
                     <ul className="space-y-2 text-white/70 text-sm flex-1">
                       <li className="flex items-start gap-2">
@@ -1314,7 +1407,7 @@ const FacilityEnrichment = () => {
                 </div>
               </div>
               
-              <div className="mt-6 bg-gradient-to-r from-orange-500/20 to-amber-500/20 p-4 rounded-xl">
+              <div className="mt-6 bg-gradient-to-r from-orange-500/20 to-amber-500/20 p-4 rounded-xl border border-orange-500/30">
                 <div className="flex items-start gap-3">
                   <div className="text-orange-500 mt-1">
                     <MdInfoOutline size={24} />
@@ -1331,13 +1424,13 @@ const FacilityEnrichment = () => {
               <div className="flex justify-end gap-4 mt-6">
                 <button 
                   onClick={closeModal}
-                  className="px-4 py-2 bg-white/10 text-white rounded-lg hover:bg-white/20 transition-all"
+                  className="px-4 py-2 bg-white/10 text-white rounded-lg hover:bg-white/20 transition-all border border-white/10"
                 >
                   Cancel
                 </button>
                 <button 
                   onClick={goToEnergyUsageEstimation}
-                  className="px-6 py-2 bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-lg hover:from-orange-600 hover:to-orange-700 transition-all flex items-center gap-2"
+                  className="px-6 py-2 bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-lg hover:from-orange-600 hover:to-orange-700 transition-all flex items-center gap-2 shadow-lg shadow-orange-500/20"
                 >
                   <span>View Visualizations</span>
                   <MdArrowForward />
