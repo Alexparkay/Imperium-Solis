@@ -5,51 +5,20 @@ import { FaSolarPanel, FaBuilding, FaChartLine, FaLightbulb, FaBolt, FaCalculato
 import { toast } from 'react-hot-toast';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend, LineChart, Line, XAxis, YAxis, CartesianGrid, ReferenceLine, Area, AreaChart } from 'recharts';
 
-// Define the SolarWindow interface for TypeScript
-declare global {
-  interface Window {
-    SolarWindow?: {
-      embed: (options: {
-        containerId: string;
-        height: string;
-        width: string;
-      }) => {
-        onMessage: (type: string, callback: (data: any) => void) => void;
-        sendMessage: (type: string, payload: any) => void;
-      };
-    };
-  }
-}
-
-// Dashboard-Engine communication interfaces
-interface DashboardMessage {
-  type: 'COMMAND' | 'STATE_REQUEST';
-  payload: string;
-}
-
-interface EngineMessage {
-  type: 'STATE_UPDATE' | 'ENGINE_READY' | 'INTERACTION' | 'ERROR';
-  payload: any;
-}
+// Define a constant for the Solar Window URL
+const SOLAR_WINDOW_URL = 'http://localhost:5173'; // Map application URL
 
 const EnergyUsageEstimation = () => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
   const [isCalculating, setIsCalculating] = useState(true);
-  const iframeRef = useRef<HTMLIFrameElement>(null);
-  const [engineReady, setEngineReady] = useState(false);
-  const [useEmbedHelper, setUseEmbedHelper] = useState(false);
-  const [solarWindowInstance, setSolarWindowInstance] = useState<any>(null);
+  const [iframeKey, setIframeKey] = useState(1);
+  const [iframeError, setIframeError] = useState(false);
   const [activeInfoModal, setActiveInfoModal] = useState<string | null>(null);
   const [activeTooltip, setActiveTooltip] = useState<string | null>(null);
   const [selectedPieSection, setSelectedPieSection] = useState<string | null>(null);
   const [showDetailsModal, setShowDetailsModal] = useState(false);
-  const [iframeError, setIframeError] = useState(false);
-  const [iframeKey, setIframeKey] = useState(1); // Add key for force reloading iframe
-  
-  // URL for the Solar Window application
-  const SOLAR_WINDOW_URL = 'http://localhost:5174'; // Updated Solar Window local instance, removed trailing slash
-  
+
   // Enhanced energy data with detailed calculations
   const energyData = {
     totalAnnualUsage: '249,087.3 kWh',
@@ -474,245 +443,11 @@ const EnergyUsageEstimation = () => {
     );
   };
 
-  // Initialize the embedding helper
-  useEffect(() => {
-    // Check if the SolarWindow embedding helper is available
-    if (window.SolarWindow && document.getElementById('solar-window-container')) {
-      try {
-        const instance = window.SolarWindow.embed({
-          containerId: 'solar-window-container',
-          height: '85vh', // Increased height to maximize space
-          width: '100%'
-        });
-        
-        setSolarWindowInstance(instance);
-        setUseEmbedHelper(true);
-        
-        // Listen for state updates
-        instance.onMessage('STATE_UPDATE', (state) => {
-          console.log('Solar analysis state:', state);
-          handleSolarWindowStateUpdate(state);
-        });
-        
-        // Listen for user interactions
-        instance.onMessage('INTERACTION', (data) => {
-          console.log('User interaction:', data);
-          handleSolarWindowInteraction(data);
-        });
-        
-        // Listen for ready event
-        instance.onMessage('ENGINE_READY', () => {
-          setEngineReady(true);
-          setIframeError(false);
-          // Initialize the app
-          instance.sendMessage('COMMAND', 'INITIALIZE');
-        });
-        
-        // Add a timeout to prevent endless loading
-        const timeoutId = setTimeout(() => {
-          if (!engineReady) {
-            console.warn('Solar Window embed timeout - forcing ready state');
-            setEngineReady(true);
-          }
-        }, 10000);
-        
-        return () => {
-          // Clean up the timeout
-          clearTimeout(timeoutId);
-          // No direct cleanup method provided in the docs, but we can set state
-          setSolarWindowInstance(null);
-        };
-      } catch (error) {
-        console.error('Error initializing SolarWindow embedding:', error);
-        setUseEmbedHelper(false);
-        setIframeError(true);
-        toast.error('Failed to initialize Solar Window embedding, falling back to iframe');
-      }
-    } else {
-      setUseEmbedHelper(false);
-    }
-  }, [engineReady]);
-
-  // Handle state updates from the Solar Window app
-  const handleSolarWindowStateUpdate = (state: any) => {
-    console.log('Received state update from Solar Window:', state);
-    if (state.energyData) {
-      toast.success('Energy data updated from Solar Window');
-    }
-  };
-
-  // Handle interactions from the Solar Window app
-  const handleSolarWindowInteraction = (data: any) => {
-    console.log('User interacted with Solar Window:', data);
-    if (data.action === 'update_energy_usage') {
-      toast.success('Energy usage updated from Solar Window');
-    }
-  };
-
-  // Send commands to engine (iframe approach)
-  const sendToEngine = (message: DashboardMessage) => {
-    if (useEmbedHelper && solarWindowInstance) {
-      // Use the embed helper API
-      solarWindowInstance.sendMessage(message.type, message.payload);
-    } else if (iframeRef.current?.contentWindow) {
-      // Use the iframe postMessage API
-      try {
-        iframeRef.current.contentWindow.postMessage(message, SOLAR_WINDOW_URL);
-      } catch (error) {
-        console.error('Error sending message to iframe:', error);
-        setIframeError(true);
-      }
-    }
-  };
-
-  // Handle engine messages (iframe approach)
-  useEffect(() => {
-    // Only set up message listener if we're using the iframe approach
-    if (useEmbedHelper) return;
-    
-    const messageHandler = (event: MessageEvent<EngineMessage>) => {
-      // More permissive origin check to allow for development environments
-      const targetOrigin = new URL(SOLAR_WINDOW_URL).origin;
-      if (event.origin !== targetOrigin && !event.origin.includes('localhost')) {
-        console.warn(`Message from unexpected origin: ${event.origin}, expected: ${targetOrigin}`);
-        return;
-      }
-
-      try {
-        if (!event.data || !event.data.type) {
-          return; // Ignore messages without proper format
-        }
-
-        switch (event.data.type) {
-          case 'ENGINE_READY':
-            console.log('Received ENGINE_READY message from iframe');
-            setEngineReady(true);
-            setIframeError(false);
-            sendToEngine({
-              type: 'COMMAND',
-              payload: 'INITIALIZE'
-            });
-            break;
-            
-          case 'STATE_UPDATE':
-            console.log('Engine state:', event.data.payload);
-            handleSolarWindowStateUpdate(event.data.payload);
-            break;
-            
-          case 'INTERACTION':
-            handleSolarWindowInteraction(event.data.payload);
-            break;
-
-          case 'ERROR':
-            console.error('Error from Solar Window:', event.data.payload);
-            setIframeError(true);
-            break;
-        }
-      } catch (error) {
-        console.error('Error processing message from iframe:', error);
-      }
-    };
-
-    window.addEventListener('message', messageHandler);
-    
-    // Add a timeout to prevent endless loading
-    const timeoutId = setTimeout(() => {
-      if (!engineReady) {
-        console.warn('Solar Window iframe timeout - forcing ready state');
-        setEngineReady(true);
-      }
-    }, 10000);
-    
-    return () => {
-      window.removeEventListener('message', messageHandler);
-      clearTimeout(timeoutId);
-    };
-  }, [useEmbedHelper, engineReady]);
-
-  // Load the embedding script
-  useEffect(() => {
-    const loadEmbedScript = () => {
-      // First check if the script already exists to avoid duplicates
-      const existingScript = document.querySelector('script[src*="embed.js"]');
-      if (existingScript) {
-        console.log('Solar Window embed script already exists');
-        return;
-      }
-
-      const script = document.createElement('script');
-      // Ensure proper path construction with a single slash
-      script.src = `${SOLAR_WINDOW_URL}/lib/embed.js`;
-      script.async = true;
-      
-      script.onload = () => {
-        console.log('Solar Window embed script loaded');
-        // Try to initialize after script load
-        if (window.SolarWindow) {
-          toast.success('Solar Window script loaded successfully');
-        }
-      };
-      
-      script.onerror = (error) => {
-        console.error('Failed to load Solar Window embed script:', error);
-        setUseEmbedHelper(false);
-        setIframeError(true);
-        toast.error(`Failed to load Solar Window script: ${SOLAR_WINDOW_URL}/lib/embed.js not found`);
-      };
-      
-      document.body.appendChild(script);
-    };
-
-    loadEmbedScript();
-    
-    // Add a timeout to prevent endless waiting for script
-    const scriptTimeoutId = setTimeout(() => {
-      const script = document.querySelector(`script[src="${SOLAR_WINDOW_URL}/lib/embed.js"]`);
-      if (!script) {
-        console.warn('Script loading timeout - falling back to iframe');
-        setUseEmbedHelper(false);
-      }
-    }, 5000);
-    
-    return () => {
-      // Clear timeout
-      clearTimeout(scriptTimeoutId);
-      
-      // Remove the script when component unmounts
-      const script = document.querySelector(`script[src="${SOLAR_WINDOW_URL}/lib/embed.js"]`);
-      if (script) {
-        document.body.removeChild(script);
-      }
-    };
-  }, []);
-
-  useEffect(() => {
-    setIsLoading(true);
-    setTimeout(() => {
-      setIsLoading(false);
-      setTimeout(() => {
-        setIsCalculating(false);
-      }, 5000);
-    }, 5000);
-  }, []);
-
-  const handleContinueToSolarPotential = () => {
-    navigate('/solar-panel-potential');
-  };
-
   // Handle manual reload of iframe
   const handleReloadIframe = () => {
     setIframeKey(prev => prev + 1);
-    setEngineReady(false);
     setIframeError(false);
     toast('Reloading Solar Window...', { icon: '🔄' });
-    
-    // Force ready state after timeout
-    setTimeout(() => {
-      if (!engineReady) {
-        console.warn('Solar Window reload timeout - forcing ready state');
-        setEngineReady(true);
-      }
-    }, 10000);
   };
 
   // Function to render the image of a facility's floor plan
@@ -834,6 +569,20 @@ const EnergyUsageEstimation = () => {
     </button>
   );
 
+  useEffect(() => {
+    setIsLoading(true);
+    setTimeout(() => {
+      setIsLoading(false);
+      setTimeout(() => {
+        setIsCalculating(false);
+      }, 5000);
+    }, 5000);
+  }, []);
+
+  const handleContinueToSolarPotential = () => {
+    navigate('/solar-panel-potential');
+  };
+
   if (isLoading) {
     return (
       <div className="min-h-screen bg-[#020305] flex items-center justify-center relative overflow-hidden">
@@ -950,34 +699,36 @@ const EnergyUsageEstimation = () => {
             <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-bl from-amber-500/10 to-transparent rounded-bl-full"></div>
             <div className="absolute bottom-0 left-0 w-64 h-64 bg-gradient-to-tr from-blue-500/10 to-transparent rounded-tr-full"></div>
             
-            {/* Solar Window Container - Simplified, no header */}
+            {/* Solar Window Container - Simplified */}
             <div className="relative z-10 p-2 h-full">
-              {/* External App container */}
               <div className="w-full h-full relative backdrop-blur-md rounded-xl overflow-hidden border border-amber-500/20 shadow-xl">
-                {!engineReady && (
+                <iframe 
+                  key={iframeKey}
+                  src={SOLAR_WINDOW_URL}
+                  className="w-full h-full min-h-[85vh]"
+                  style={{ border: 'none' }}
+                  title="Solar Window"
+                  sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-modals"
+                  onError={() => setIframeError(true)}
+                />
+                
+                {/* Error overlay */}
+                {iframeError && (
                   <div className="absolute inset-0 flex items-center justify-center bg-gray-900/70 z-10">
                     <div className="text-center">
-                      <div className="loading loading-spinner loading-lg text-amber-500 mb-4"></div>
-                      <p className="text-white text-lg">Connecting to Solar Window...</p>
+                      <MdElectricBolt size={48} className="text-amber-500 mx-auto mb-4" />
+                      <h3 className="text-xl font-bold text-white mb-3">Solar Window Connection Error</h3>
+                      <p className="text-gray-300 mb-6 max-w-md mx-auto">
+                        Unable to connect to the Solar Window application at {SOLAR_WINDOW_URL}
+                      </p>
+                      <button 
+                        onClick={handleReloadIframe}
+                        className="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-lg transition-colors"
+                      >
+                        Try Again
+                      </button>
                     </div>
                   </div>
-                )}
-                
-                {/* Embed Helper Container */}
-                <div 
-                  id="solar-window-container" 
-                  className={`w-full h-full min-h-[85vh] ${useEmbedHelper ? 'block' : 'hidden'}`}
-                ></div>
-                
-                {/* Fallback iframe for manual integration */}
-                {!useEmbedHelper && (
-                  <iframe
-                    ref={iframeRef}
-                    src={SOLAR_WINDOW_URL}
-                    sandbox="allow-scripts allow-same-origin allow-forms"
-                    className="w-full h-full min-h-[85vh] bg-transparent"
-                    title="Solar Window Analysis Engine"
-                  />
                 )}
               </div>
             </div>

@@ -939,40 +939,6 @@ const FacilityDatabase = () => {
     }
   };
 
-  // Modify the handleSearch function to ensure filters are preserved after search
-  const handleSearch = () => {
-    setShowDashboard(true);
-    // Simulate loading state
-    setIsLoading(true);
-    setTimeout(() => {
-      setIsLoading(false);
-      
-      // Store current filters to localStorage for persistence
-      try {
-        localStorage.setItem('facilityFilters', JSON.stringify(activeFilters));
-      } catch (error) {
-        console.error('Error saving filters to localStorage', error);
-      }
-      
-      // Set a fixed filtered count to show the specific 5.6K facilities
-      // This represents Technology companies over 100,000 square feet in the US with above 200 employees
-      setFacilitiesStats(prev => ({
-        ...prev,
-        filtered: 5600
-      }));
-      
-      // Update pagination based on new filtered count
-      setPagination(prev => ({
-        ...prev,
-        currentPage: 1,
-        totalPages: Math.ceil(5600 / prev.itemsPerPage)
-      }));
-      
-      // Build a description of what's being searched for based on active filters
-      darkToast.success("Searching for Technology companies over 100,000 square feet in the US with above 200 employees");
-    }, 1000);
-  };
-
   // Load saved filters on component mount
   useEffect(() => {
     try {
@@ -1034,17 +1000,49 @@ const FacilityDatabase = () => {
               break;
           }
         });
-        
-        // If we have saved filters, apply them immediately to update the filtered count
-        if (Object.keys(parsedFilters).length > 0) {
-          // Simulate filter application by calling handleSearch
-          handleSearch();
-        }
       }
     } catch (error) {
       console.error('Error loading saved filters', error);
     }
   }, []);
+
+  // Modify the handleSearch function to ensure filters are preserved after search
+  const handleSearch = () => {
+    // Show loading state
+    setIsLoading(true);
+    
+    // Simulate API call
+    setTimeout(() => {
+      setIsLoading(false);
+      
+      // Store current filters to localStorage for persistence
+      try {
+        localStorage.setItem('facilityFilters', JSON.stringify(activeFilters));
+      } catch (error) {
+        console.error('Error saving filters to localStorage', error);
+      }
+      
+      // Set a fixed filtered count to show the specific 5.6K facilities
+      // This represents Technology companies over 100,000 square feet in the US with above 200 employees
+      setFacilitiesStats(prev => ({
+        ...prev,
+        filtered: 5600
+      }));
+      
+      // Update pagination based on new filtered count
+      setPagination(prev => ({
+        ...prev,
+        currentPage: 1,
+        totalPages: Math.ceil(5600 / prev.itemsPerPage)
+      }));
+      
+      // Show the dashboard with results
+      setShowDashboard(true);
+      
+      // Build a description of what's being searched for based on active filters
+      darkToast.success("Searching for Technology companies over 100,000 square feet in the US with above 200 employees");
+    }, 1000);
+  };
 
   // In the table, update the arrow button onClick handler to navigate to the specific facility
   // Replace:
@@ -1467,7 +1465,7 @@ const FacilityDatabase = () => {
                     Discover Commercial Solar Opportunities
                   </h2>
                   <p className="text-xl text-white/80 mb-8">
-                    Our database contains over 4.13 million commercial facilities across the United States. 
+                    Our database contains over {formatLargeNumber(facilitiesStats.total)} commercial facilities across the United States. 
                     Use our advanced filters to find the perfect solar installation opportunities.
                   </p>
                   <div className="flex flex-col gap-2 items-center">

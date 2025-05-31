@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { MdSolarPower, MdWarning } from 'react-icons/md';
+import { MdWarning } from 'react-icons/md';
 
 interface Panel {
   id: string;
@@ -47,7 +47,6 @@ const SolarPanelLayout: React.FC<SolarPanelLayoutProps> = ({
       const newPanels: Panel[] = [];
       let currentX = SETBACK_DISTANCE;
       let currentY = SETBACK_DISTANCE;
-      let rowHeight = 0;
       let panelId = 1;
 
       // Sort obstructions by y-coordinate to optimize row placement

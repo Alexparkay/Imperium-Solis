@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import toast from 'react-hot-toast';
-import { HiOutlinePencil, HiOutlineTrash, HiPlus, HiXMark } from 'react-icons/hi2';
+import { HiPlus, HiXMark } from 'react-icons/hi2';
 import { useNavigate } from 'react-router-dom';
-import { MdSolarPower, MdElectricBolt, MdOutlineSettings, MdBolt, MdPower, MdBusiness, MdLocationOn, MdOutlineEmail, MdOutlinePhone, MdSave, MdConstruction, MdBarChart } from 'react-icons/md';
+import { MdSolarPower, MdElectricBolt, MdOutlineSettings, MdBolt, MdPower, MdBusiness, MdLocationOn, MdOutlineEmail, MdOutlinePhone, MdSave } from 'react-icons/md';
 
 const EditProfile = () => {
   const navigate = useNavigate();

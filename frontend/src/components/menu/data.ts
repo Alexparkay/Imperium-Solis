@@ -8,10 +8,8 @@ import {
   MdFactory, 
   MdLocationOn, 
   MdElectricBolt, 
-  MdOutlineAnalytics,
   MdOutlineEmail,
   MdOutlineTrackChanges,
-  MdAttachMoney
 } from 'react-icons/md';
 
 export const menu = [

@@ -1,45 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { MdArrowBack, MdArrowForward, MdOutlineEmail, MdScheduleSend, MdSend, MdOutlinePersonAdd, MdOutlineSettings, MdOutlineRule } from 'react-icons/md';
-import { FaRegCopy, FaRegEdit, FaRegSave, FaRegTrashAlt, FaRegLightbulb, FaDatabase, FaRegChartBar } from 'react-icons/fa';
+import { MdOutlineEmail, MdScheduleSend, MdSend, MdOutlineSettings, MdOutlineRule } from 'react-icons/md';
+import { FaRegCopy, FaRegEdit, FaRegSave, FaRegLightbulb, FaDatabase, FaRegChartBar } from 'react-icons/fa';
 import { toast } from 'react-hot-toast';
-import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
-import { RiFlowChart, RiMailSendLine, RiMailCheckLine, RiMailCloseLine, RiArrowRightLine, RiSplitCellsHorizontal } from 'react-icons/ri';
-
-interface Facility {
-  id: number;
-  name: string;
-  industry: string;
-  location: string;
-  manager: string;
-  email: string;
-  phone: string;
-  analysis: {
-    facilityType: string;
-    squareFootage: number;
-    energyRate: number;
-    roofArea: number;
-  };
-  energyEstimation: {
-    annualUsage: number;
-    annualCost: number;
-  };
-  solarPotential: {
-    calculated: boolean;
-    maxPanels: number;
-    annualProduction: number;
-    installationCost: number;
-    annualSavings: number;
-    paybackPeriod: number;
-    roi: number;
-  };
-  emailStatus: {
-    drafted: boolean;
-    sent: boolean;
-    scheduled: boolean;
-    scheduledDate?: Date;
-  };
-}
+import { RiFlowChart, RiMailSendLine, RiMailCheckLine, RiMailCloseLine, RiSplitCellsHorizontal } from 'react-icons/ri';
 
 const EmailAutomation = () => {
   const navigate = useNavigate();
@@ -238,10 +202,6 @@ Solar Energy Consultant`
     setTimeout(() => {
       navigate('/outreach-tracking');
     }, 1500);
-  };
-
-  const handleContinueToOutreachTracking = () => {
-    navigate('/outreach-tracking');
   };
 
   const personalize = (text: string, contact: any) => {

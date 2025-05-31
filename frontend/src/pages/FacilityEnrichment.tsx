@@ -677,34 +677,20 @@ const FacilityEnrichment = () => {
           // Log that we found the specific facility
           console.log(`Loaded facility data for ${foundFacility.name}`);
         } else {
-          // If facility not found, default to Jeff Levy (id: 1)
-          const defaultFacility = enrichedFacilities.find(f => f.id === 1);
-          if (defaultFacility) {
-            setFacility(defaultFacility);
-            setSelectedFacilities([defaultFacility]);
-            console.log(`Facility ID ${facilityId} not found, defaulting to Jeff Levy`);
-          } else {
-            // Fallback to all facilities if even Jeff Levy isn't found
-            setSelectedFacilities(enrichedFacilities);
-            if (enrichedFacilities.length > 0) {
-              setFacility(enrichedFacilities[0]);
-            }
-          }
-        }
-      } else {
-        // If no facilityId is provided, default to Jeff Levy (id: 1)
-        const defaultFacility = enrichedFacilities.find(f => f.id === 1);
-        if (defaultFacility) {
-          setFacility(defaultFacility);
-          setSelectedFacilities([defaultFacility]);
-          console.log('No facility ID provided, defaulting to Jeff Levy');
-        } else {
-          // Fallback to all enriched facilities
+          // If facility not found, show all facilities
           setSelectedFacilities(enrichedFacilities);
           if (enrichedFacilities.length > 0) {
             setFacility(enrichedFacilities[0]);
           }
+          console.log(`Facility ID ${facilityId} not found, showing all facilities`);
         }
+      } else {
+        // If no facilityId is provided, show all facilities
+        setSelectedFacilities(enrichedFacilities);
+        if (enrichedFacilities.length > 0) {
+          setFacility(enrichedFacilities[0]);
+        }
+        console.log('No facility ID provided, showing all facilities');
       }
       setIsLoading(false);
       

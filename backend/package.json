@@ -1,7 +1,7 @@
 {
-  "name": "react_admin_ui_v1_api",
+  "name": "imperium_solis_api",
   "version": "1.2.0",
-  "description": "React Admin Dashboard API",
+  "description": "Imperium Solis Dashboard API",
   "main": "src/index.ts",
   "scripts": {
     "start": "ts-node src/index.ts",
@@ -13,10 +13,10 @@
     "vercel-build": "echo hello"
   },
   "keywords": [],
-  "author": "Frans",
+  "author": "Alexparkay",
   "repository": {
     "type": "git",
-    "url": "https://github.com/fransachmadhw/react_admin_ui_v1.git"
+    "url": "https://github.com/Alexparkay/Imperium-Solis.git"
   },
   "license": "MIT",
   "dependencies": {

@@ -73,7 +73,7 @@ const SolarPanelPotential = () => {
   const [iframeError, setIframeError] = useState(false);
   
   // Define a constant for the Solar Window URL
-  const SOLAR_WINDOW_URL = 'http://localhost:5174'; // No trailing slash
+  const SOLAR_WINDOW_URL = 'http://localhost:5173'; // Map application URL
   
   // Available solar panel types
   const panelTypes: SolarPanel[] = [

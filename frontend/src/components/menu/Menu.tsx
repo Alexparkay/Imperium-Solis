@@ -2,7 +2,6 @@ import React from 'react';
 import { menu } from './data';
 import MenuItem from './MenuItem';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { MdSolarPower } from 'react-icons/md';
 import { RxEnterFullScreen, RxExitFullScreen } from 'react-icons/rx';
 import ChangeThemes from '../ChangesThemes';
 
