@@ -10,10 +10,13 @@ const SOLAR_WINDOW_URL = 'http://localhost:5173'; // Map application URL
 
 const EnergyUsageEstimation = () => {
   const navigate = useNavigate();
+  const iframeRef = useRef<HTMLIFrameElement>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isCalculating, setIsCalculating] = useState(true);
   const [iframeKey, setIframeKey] = useState(1);
   const [iframeError, setIframeError] = useState(false);
+  const [engineReady, setEngineReady] = useState(false);
+  const [useEmbedHelper, setUseEmbedHelper] = useState(false);
   const [activeInfoModal, setActiveInfoModal] = useState<string | null>(null);
   const [activeTooltip, setActiveTooltip] = useState<string | null>(null);
   const [selectedPieSection, setSelectedPieSection] = useState<string | null>(null);
@@ -448,74 +451,6 @@ const EnergyUsageEstimation = () => {
     setIframeKey(prev => prev + 1);
     setIframeError(false);
     toast('Reloading Solar Window...', { icon: '🔄' });
-  };
-
-  // Function to render the image of a facility's floor plan
-  const renderFloorPlanImage = () => {
-    return (
-      <div className="w-full h-72 md:h-96 bg-white dark:bg-gray-800 rounded-xl overflow-hidden relative border-4 border-gray-200 dark:border-gray-700 shadow-md">
-        <div id="solar-window-container" className="w-full h-full">
-          {!useEmbedHelper && (
-            <>
-              <iframe
-                key={iframeKey}
-                ref={iframeRef}
-                src={SOLAR_WINDOW_URL}
-                className="w-full h-full border-0"
-                title="Solar Window"
-                sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-modals allow-downloads"
-                onLoad={() => {
-                  console.log('iframe loaded successfully');
-                  // Attempt to send a ping to check if it's working
-                  setTimeout(() => {
-                    if (iframeRef.current?.contentWindow) {
-                      try {
-                        iframeRef.current.contentWindow.postMessage({ 
-                          type: 'PING', 
-                          payload: 'Hello from dashboard' 
-                        }, SOLAR_WINDOW_URL);
-                      } catch (error) {
-                        console.error('Error sending ping to iframe:', error);
-                      }
-                    }
-                  }, 1000);
-                }}
-                onError={(e) => {
-                  console.error('iframe loading error:', e);
-                  setIframeError(true);
-                }}
-              />
-              
-              {/* Overlay loader or error message */}
-              {(!engineReady || iframeError) && (
-                <div className="absolute inset-0 bg-black/70 flex flex-col items-center justify-center z-10">
-                  {iframeError ? (
-                    <div className="text-center p-6">
-                      <MdElectricBolt size={48} className="text-orange-500 mx-auto mb-4" />
-                      <h3 className="text-xl font-bold text-white mb-3">Solar Window Connection Error</h3>
-                      <p className="text-gray-300 mb-6 max-w-md mx-auto">
-                        Unable to connect to the Solar Window application. This could be because the service is not running at {SOLAR_WINDOW_URL}
-                      </p>
-                      <button 
-                        onClick={handleReloadIframe}
-                        className="px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-lg transition-colors"
-                      >
-                        Try Again
-                      </button>
-                    </div>
-                  ) : (
-                    <div className="text-center">
-                      <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-orange-500 mb-4"></div>
-                      <p className="text-white font-medium">Connecting to Solar Window...</p>
-                    </div>
-                  )}
-                </div>
-              )}
-            </>
-          )}
-        </div>
-      </div>
-    );
   };
 
   // Information Modal Component
