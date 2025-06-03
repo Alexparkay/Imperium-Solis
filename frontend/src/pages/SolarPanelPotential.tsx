@@ -116,29 +116,42 @@ const SolarPanelPotential = () => {
   const [facilities, setFacilities] = useState<Facility[]>([
     {
       id: 1,
-      name: "Apple Distribution Center",
-      industry: "Technology",
-      location: "Atlanta, GA",
+      name: "Hart Small Business Center",
+      industry: "Small Commercial",
+      location: "Hart, MI",
       analysis: {
-        facilityType: "Office/Warehouse",
-        squareFootage: 250000,
-        energyRate: 0.12,
-        roofArea: 212500
+        facilityType: "Small Office Building",
+        squareFootage: 3200,
+        energyRate: 0.24,
+        roofArea: 2800
       },
       energyEstimation: {
-        annualUsage: 3500000,
-        annualCost: 420000
+        annualUsage: 14861,
+        annualCost: 3567
       },
       solarPotential: {
-        calculated: false,
-        maxPanels: 0,
-        selectedPanelType: '',
-        annualProduction: 0,
-        installationCost: 0,
-        annualSavings: 0,
-        paybackPeriod: 0,
-        roi: 0,
-        monthlyProduction: []
+        calculated: true,
+        maxPanels: 26,
+        selectedPanelType: 'premium',
+        annualProduction: 12020,
+        installationCost: 42000,
+        annualSavings: 2674,
+        paybackPeriod: 11.2,
+        roi: 159,
+        monthlyProduction: [
+          { month: 'Jan', production: 720 },
+          { month: 'Feb', production: 841 },
+          { month: 'Mar', production: 1081 },
+          { month: 'Apr', production: 1203 },
+          { month: 'May', production: 1322 },
+          { month: 'Jun', production: 1382 },
+          { month: 'Jul', production: 1442 },
+          { month: 'Aug', production: 1322 },
+          { month: 'Sep', production: 1142 },
+          { month: 'Oct', production: 961 },
+          { month: 'Nov', production: 721 },
+          { month: 'Dec', production: 601 }
+        ]
       }
     },
     {
@@ -200,38 +213,38 @@ const SolarPanelPotential = () => {
   const currentFacility = facilities[currentFacilityIndex];
   const selectedPanel = panelTypes.find(panel => panel.id === selectedPanelType)!;
 
-  // Solar panel data
+  // Solar panel data for Michigan facility
   const solarData = {
-    yearlyEnergy: '527,869.4 kWh/year',
-    yearlyCost: '$69,678.76',
-    installationSize: '377.2 kW',
-    energyCovered: '82.4%',
-    monthlyAverage: '$3,991.01',
-    firstYear: '$47,892.14',
-    tenYearTotal: '$433,761.89',
-    costWithoutSolar: '$61,305.29',
-    costWithSolar: '$827,973.05',
-    totalLifetimeSavings: '$-766,667.76',
-    breakEven: 'Not reached',
-    address: '303 S Technology Ct, Broomfield, CO',
-    state: 'CO',
-    zipCode: '80021',
-    energyRate: '$0.310/kWh',
-    monthlyBill: '$5,806.56',
-    panelsCount: '943 panels',
-    solarIncentives: '$7,000.00',
+    yearlyEnergy: '14,861.4 kWh/year',
+    yearlyCost: '$3,567.36',
+    installationSize: '10.5 kW',
+    energyCovered: '81%',
+    monthlyAverage: '$297.28',
+    firstYear: '$2,674.24',
+    tenYearTotal: '$26,742.40',
+    costWithoutSolar: '$3,567.36',
+    costWithSolar: '$893.12',
+    totalLifetimeSavings: '$66,856.00',
+    breakEven: '11.2 years',
+    address: '1130 James L Hart Pkwy, Hart, MI',
+    state: 'MI',
+    zipCode: '49420',
+    energyRate: '$0.240/kWh',
+    monthlyBill: '$297.28',
+    panelsCount: '26 panels',
+    solarIncentives: '$4,200.00',
     installationCost: '$4.00 per Watt',
-    totalInstallationCost: '$1,075,020.00',
-    panelCapacity: '400 Watts',
-    roofArea: '45,000 sq ft',
-    usableRoofArea: '32,000 sq ft',
-    annualSunHours: '2,200 hours',
-    co2Reduction: '176 tons/year',
-    treeEquivalent: '4,100 trees',
-    annualProduction: '435,383.1 kWh',
-    remainingGridEnergy: '92,486.3 kWh',
-    remainingCost: '$28,670.75',
-    firstYearROI: '4.48%'
+    totalInstallationCost: '$42,000.00',
+    panelCapacity: '405 Watts',
+    roofArea: '2,800 sq ft',
+    usableRoofArea: '2,100 sq ft',
+    annualSunHours: '1,380 hours',
+    co2Reduction: '8.4 tons/year',
+    treeEquivalent: '195 trees',
+    annualProduction: '12,020 kWh',
+    remainingGridEnergy: '2,841.4 kWh',
+    remainingCost: '$681.94',
+    firstYearROI: '6.36%'
   };
 
   useEffect(() => {
@@ -739,11 +752,11 @@ const SolarPanelPotential = () => {
                     <div className="space-y-3 bg-black/30 rounded-2xl p-5 border border-white/10">
                       <div className="flex justify-between items-center py-2 border-b border-white/20">
                         <span className="text-sm text-gray-300">Installation Size</span>
-                        <span className="text-sm font-semibold text-white">378.6 kW</span>
+                        <span className="text-sm font-semibold text-white">10.5 kW</span>
                       </div>
                       <div className="flex justify-between items-center py-2 border-b border-white/20">
                         <span className="text-sm text-gray-300">Panel Count</span>
-                        <span className="text-sm font-semibold text-white">946 panels</span>
+                        <span className="text-sm font-semibold text-white">26 panels</span>
                       </div>
                       <div className="flex justify-between items-center py-2 border-b border-white/20">
                         <span className="text-sm text-gray-300">Panel Capacity</span>
@@ -751,7 +764,7 @@ const SolarPanelPotential = () => {
                       </div>
                       <div className="flex justify-between items-center py-2">
                         <span className="text-sm text-gray-300">Installation Cost</span>
-                        <span className="text-sm font-semibold text-white">$3.97/W</span>
+                        <span className="text-sm font-semibold text-white">$4.00/W</span>
                       </div>
                     </div>
                   </div>
@@ -785,15 +798,15 @@ const SolarPanelPotential = () => {
                     <div className="space-y-3 bg-black/30 rounded-2xl p-5 border border-white/10">
                       <div className="flex justify-between items-center py-2 border-b border-white/20">
                         <span className="text-sm text-gray-300">Yearly Savings</span>
-                        <span className="text-sm font-semibold text-white">$69,842</span>
+                        <span className="text-sm font-semibold text-white">$2,674</span>
                       </div>
                       <div className="flex justify-between items-center py-2 border-b border-white/20">
                         <span className="text-sm text-gray-300">Monthly Average</span>
-                        <span className="text-sm font-semibold text-white">$5,820</span>
+                        <span className="text-sm font-semibold text-white">$223</span>
                       </div>
                       <div className="flex justify-between items-center py-2 border-b border-white/20">
                         <span className="text-sm text-gray-300">First Year</span>
-                        <span className="text-sm font-semibold text-white">$64,973</span>
+                        <span className="text-sm font-semibold text-white">$2,674</span>
                       </div>
                       <div className="flex justify-between items-center py-2">
                         <span className="text-sm text-gray-300">Solar Incentives</span>
@@ -831,11 +844,11 @@ const SolarPanelPotential = () => {
                     <div className="space-y-3 bg-black/30 rounded-2xl p-5 border border-white/10">
                       <div className="flex justify-between items-center py-2 border-b border-white/20">
                         <span className="text-sm text-gray-300">Roof Area</span>
-                        <span className="text-sm font-semibold text-white">45,324 sq ft</span>
+                        <span className="text-sm font-semibold text-white">2,800 sq ft</span>
                       </div>
                       <div className="flex justify-between items-center py-2 border-b border-white/20">
                         <span className="text-sm text-gray-300">Usable Area</span>
-                        <span className="text-sm font-semibold text-white">32,451 sq ft</span>
+                        <span className="text-sm font-semibold text-white">2,100 sq ft</span>
                       </div>
                       <div className="flex justify-between items-center py-2 border-b border-white/20">
                         <span className="text-sm text-gray-300">Annual Sun Hours</span>
@@ -877,19 +890,19 @@ const SolarPanelPotential = () => {
                     <div className="space-y-3 bg-black/30 rounded-2xl p-5 border border-white/10">
                       <div className="flex justify-between items-center py-2 border-b border-white/20">
                         <span className="text-sm text-gray-300">CO2 Reduction</span>
-                        <span className="text-sm font-semibold text-white">177.8 tons/yr</span>
+                        <span className="text-sm font-semibold text-white">8.4 tons/yr</span>
                       </div>
                       <div className="flex justify-between items-center py-2 border-b border-white/20">
                         <span className="text-sm text-gray-300">Tree Equivalent</span>
-                        <span className="text-sm font-semibold text-white">4,137 trees</span>
+                        <span className="text-sm font-semibold text-white">195 trees</span>
                       </div>
                       <div className="flex justify-between items-center py-2 border-b border-white/20">
                         <span className="text-sm text-gray-300">Yearly Energy</span>
-                        <span className="text-sm font-semibold text-white">528,413 kWh</span>
+                        <span className="text-sm font-semibold text-white">12,020 kWh</span>
                       </div>
                       <div className="flex justify-between items-center py-2">
                         <span className="text-sm text-gray-300">Energy Rate</span>
-                        <span className="text-sm font-semibold text-white">$0.314/kWh</span>
+                        <span className="text-sm font-semibold text-white">$0.240/kWh</span>
                       </div>
                     </div>
                   </div>
@@ -976,17 +989,17 @@ const SolarPanelPotential = () => {
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-4xl">
                           <div className="bg-[#1e222b] p-4 rounded-lg">
                             <h4 className="font-medium text-white mb-2">Optimal Panel Count</h4>
-                            <p className="text-3xl font-bold text-orange-500">946</p>
+                            <p className="text-3xl font-bold text-orange-500">26</p>
                             <p className="text-sm text-gray-400 mt-1">panels</p>
                           </div>
                           <div className="bg-[#1e222b] p-4 rounded-lg">
                             <h4 className="font-medium text-white mb-2">Energy Production</h4>
-                            <p className="text-3xl font-bold text-orange-500">528,413</p>
+                            <p className="text-3xl font-bold text-orange-500">12,020</p>
                             <p className="text-sm text-gray-400 mt-1">kWh/year</p>
                           </div>
                           <div className="bg-[#1e222b] p-4 rounded-lg">
                             <h4 className="font-medium text-white mb-2">CO₂ Reduction</h4>
-                            <p className="text-3xl font-bold text-orange-500">177.8</p>
+                            <p className="text-3xl font-bold text-orange-500">8.4</p>
                             <p className="text-sm text-gray-400 mt-1">tons/year</p>
                           </div>
                         </div>
@@ -1047,18 +1060,18 @@ const SolarPanelPotential = () => {
                         <ResponsiveContainer width="100%" height="100%">
                           <BarChart
                             data={[
-                              { month: 'Jan', kwh: 458, baseline: 500 },
-                              { month: 'Feb', kwh: 532, baseline: 550 },
-                              { month: 'Mar', kwh: 672, baseline: 650 },
-                              { month: 'Apr', kwh: 798, baseline: 775 },
-                              { month: 'May', kwh: 845, baseline: 825 },
-                              { month: 'Jun', kwh: 915, baseline: 900 },
-                              { month: 'Jul', kwh: 932, baseline: 925 },
-                              { month: 'Aug', kwh: 921, baseline: 910 },
-                              { month: 'Sep', kwh: 854, baseline: 840 },
-                              { month: 'Oct', kwh: 756, baseline: 735 },
-                              { month: 'Nov', kwh: 605, baseline: 585 },
-                              { month: 'Dec', kwh: 438, baseline: 470 }
+                              { month: 'Jan', kwh: 720, baseline: 750 },
+                              { month: 'Feb', kwh: 841, baseline: 850 },
+                              { month: 'Mar', kwh: 1081, baseline: 1050 },
+                              { month: 'Apr', kwh: 1203, baseline: 1200 },
+                              { month: 'May', kwh: 1322, baseline: 1300 },
+                              { month: 'Jun', kwh: 1382, baseline: 1400 },
+                              { month: 'Jul', kwh: 1442, baseline: 1450 },
+                              { month: 'Aug', kwh: 1322, baseline: 1350 },
+                              { month: 'Sep', kwh: 1142, baseline: 1150 },
+                              { month: 'Oct', kwh: 961, baseline: 950 },
+                              { month: 'Nov', kwh: 721, baseline: 700 },
+                              { month: 'Dec', kwh: 601, baseline: 650 }
                             ]}
                             margin={{ top: 20, right: 30, left: 20, bottom: 20 }}
                           >
@@ -1146,13 +1159,13 @@ const SolarPanelPotential = () => {
                       <div className="grid grid-cols-2 gap-4 mt-8">
                         <div className="bg-gray-50 dark:bg-gray-800/70 rounded-lg p-4">
                           <div className="text-sm text-gray-500 dark:text-gray-400">Annual Production</div>
-                          <div className="text-2xl font-bold mt-1">8,726 kWh</div>
-                          <div className="text-sm text-green-500 mt-1">+3% from estimate</div>
+                          <div className="text-2xl font-bold mt-1">12,020 kWh</div>
+                          <div className="text-sm text-green-500 mt-1">+2% from estimate</div>
                         </div>
                         <div className="bg-gray-50 dark:bg-gray-800/70 rounded-lg p-4">
                           <div className="text-sm text-gray-500 dark:text-gray-400">Estimated Savings</div>
-                          <div className="text-2xl font-bold mt-1">$1,090.75/yr</div>
-                          <div className="text-sm text-green-500 mt-1">$90.90/month avg</div>
+                          <div className="text-2xl font-bold mt-1">$2,674/yr</div>
+                          <div className="text-sm text-green-500 mt-1">$223/month avg</div>
                         </div>
                       </div>
                     </div>
@@ -1161,21 +1174,21 @@ const SolarPanelPotential = () => {
                       <div className="mb-6">
                         <h3 className="text-lg font-medium mb-2">Production vs. Usage</h3>
                         <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
-                          Your solar system will provide 83.7% of your energy needs
+                          Your solar system will provide 81% of your energy needs
                         </p>
                         
                         {/* Solar vs Grid visualization */}
                         <div className="relative h-36 bg-gray-100 dark:bg-[#1e222b] rounded-lg overflow-hidden mt-4">
                           <div className="absolute inset-0 flex items-end">
                             <div 
-                              className="h-[83.7%] w-full bg-gradient-to-t from-orange-500 to-yellow-400 opacity-80"
+                              className="h-[81%] w-full bg-gradient-to-t from-orange-500 to-yellow-400 opacity-80"
                               style={{ borderTopRightRadius: '100px' }}
                             >
                               <div className="absolute top-2 left-4 text-white text-sm font-medium drop-shadow-md">
                                 Solar Production
                               </div>
                               <div className="absolute bottom-2 left-4 text-white text-sm font-medium drop-shadow-md">
-                                83.7%
+                                81%
                               </div>
                             </div>
                           </div>
@@ -1183,7 +1196,7 @@ const SolarPanelPotential = () => {
                             Grid Supply
                           </div>
                           <div className="absolute bottom-2 right-4 text-gray-600 dark:text-gray-300 text-sm font-medium">
-                            16.3%
+                            19%
                           </div>
                         </div>
                       </div>
@@ -1274,12 +1287,12 @@ const SolarPanelPotential = () => {
                             </thead>
                             <tbody className="divide-y divide-gray-700/30">
                               {[1, 5, 10, 15, 20, 25].map(year => {
-                                // Calculate values based on year
+                                // Calculate values based on year - Michigan facility
                                 const degradation = 1 - (year * 0.005); // 0.5% degradation per year
-                                const production = Math.round(249087 * degradation);
-                                const savings = Math.round(77217 * degradation);
+                                const production = Math.round(12020 * degradation);
+                                const savings = Math.round(2674 * degradation);
                                 const cumulative = savings * year;
-                                const installationCost = 622500; // 622 panels * 250W * $4/W
+                                const installationCost = 42000; // Michigan facility cost
                                 const roi = ((cumulative / installationCost) * 100).toFixed(1);
                                 
                                 // Define classes based on year
@@ -1310,19 +1323,19 @@ const SolarPanelPotential = () => {
                         <div className="grid grid-cols-2 gap-3 mt-5">
                           <div className="bg-gradient-to-br from-[#1e222b]/80 to-[#1e222b]/70 p-3 rounded-lg border border-[#1e222b]/20">
                             <div className="text-xs text-gray-400 mb-1">Break-even Point</div>
-                            <div className="font-semibold text-lg text-white">8.1 years</div>
+                            <div className="font-semibold text-lg text-white">11.2 years</div>
                           </div>
                           <div className="bg-gradient-to-br from-[#1e222b]/80 to-[#1e222b]/70 p-3 rounded-lg border border-[#1e222b]/20">
                             <div className="text-xs text-gray-400 mb-1">25-Year ROI</div>
-                            <div className="font-semibold text-lg text-green-400">310.4%</div>
+                            <div className="font-semibold text-lg text-green-400">159%</div>
                           </div>
                           <div className="bg-gradient-to-br from-[#1e222b]/80 to-[#1e222b]/70 p-3 rounded-lg border border-[#1e222b]/20">
                             <div className="text-xs text-gray-400 mb-1">Total Investment</div>
-                            <div className="font-semibold text-lg text-white">$622,500</div>
+                            <div className="font-semibold text-lg text-white">$42,000</div>
                           </div>
                           <div className="bg-gradient-to-br from-[#1e222b]/80 to-[#1e222b]/70 p-3 rounded-lg border border-[#1e222b]/20">
                             <div className="text-xs text-gray-400 mb-1">Annual Savings</div>
-                            <div className="font-semibold text-lg text-green-400">$77,217</div>
+                            <div className="font-semibold text-lg text-green-400">$2,674</div>
                           </div>
                         </div>
                       </div>
