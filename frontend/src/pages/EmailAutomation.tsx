@@ -8,7 +8,7 @@ import { RiFlowChart, RiMailSendLine, RiMailCheckLine, RiMailCloseLine, RiSplitC
 const EmailAutomation = () => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
-  const [selectedTemplate, setSelectedTemplate] = useState('independent_research');
+  const [selectedTemplate, setSelectedTemplate] = useState('luxwall_outreach');
   const [emailSubject, setEmailSubject] = useState('');
   const [emailBody, setEmailBody] = useState('');
   const [selectedContacts, setSelectedContacts] = useState<string[]>([]);
@@ -19,6 +19,30 @@ const EmailAutomation = () => {
   
   // Email templates
   const templates = [
+    {
+      id: 'luxwall_outreach',
+      name: 'Luxwall Solar Opportunity',
+      subject: 'Solar opportunity to amplify {{company}}\'s energy innovation',
+      body: `Hi {{name}},
+
+I recently saw that LuxWall secured $51 million in Series B funding to accelerate the rollout of your vacuum insulating glass technology, which can cut building energy loss by up to 45%—a remarkable step in tackling the 38% of global emissions tied to the built environment.
+
+Given your commitment to revolutionary energy efficiency, I ran some numbers on your Ypsilanti facility and the solar potential is compelling:
+
+• Current energy usage: 14,861 kWh annually (~$3,566/year at $0.24/kWh)
+• Recommended solar system: 10.5 kW capacity
+• Annual solar production: 13,500 kWh (90.8% of your energy needs)
+• Annual savings: $2,366
+• Net installation cost: $29,400 (after $12,600 in federal incentives)
+• Carbon offset: 9.6 tons CO2 annually
+
+With LuxWall already pioneering energy efficiency, adding solar would create a powerful demonstration of comprehensive energy innovation at your facility.
+
+Would you be interested in a brief call to discuss how this aligns with your sustainability vision?
+
+Best regards,
+Your Name`
+    },
     {
       id: 'independent_research',
       name: 'Independent Research',
@@ -107,42 +131,162 @@ Solar Energy Consultant`
   const contacts = [
     {
       id: 1,
-      name: "Jeff Levy",
-      email: "j.levy@example.com",
-      company: "Apple",
-      location: "Atlanta, GA",
+      name: "James Schifko",
+      email: "j.schifko@luxwall.com",
+      company: "Luxwall",
+      location: "Ypsilanti, MI",
       position: "Facilities Manager"
     },
     {
       id: 2,
-      name: "Amy Huke",
-      email: "a.huke@example.com",
-      company: "Honeywell",
-      location: "Kansas City, MO",
+      name: "Sean Bonner",
+      email: "s.bonner@vitesco-technologies.com",
+      company: "Vitesco Technologies",
+      location: "Detroit, MI",
       position: "Facilities Manager"
     },
     {
       id: 3,
-      name: "Ryan Kuddes",
-      email: "r.kuddes@example.com",
-      company: "Apple",
-      location: "Denver, CO",
+      name: "Aaron Miller",
+      email: "a.miller@detroitwayne.org",
+      company: "Detroit Wayne Integrated",
+      location: "Detroit, MI",
       position: "Facilities Manager"
     },
     {
       id: 4,
-      name: "Zuretti Carter",
-      email: "z.carter@example.com",
-      company: "ChargePoint",
-      location: "San Francisco, CA",
+      name: "Amy Brady",
+      email: "a.brady@magna.com",
+      company: "MAGNA SEATING OF AMERICA",
+      location: "Detroit, MI",
       position: "Facilities Manager"
     },
     {
       id: 5,
-      name: "Scott Simpson",
-      email: "s.simpson@example.com",
-      company: "Plexus Corp.",
-      location: "Neenah, WI",
+      name: "Peter Jonna",
+      email: "p.jonna@jonnacompanies.com",
+      company: "Jonna Companies",
+      location: "Detroit, MI",
+      position: "Facilities Manager"
+    },
+    {
+      id: 6,
+      name: "Dale Merritt",
+      email: "d.merritt@hfhs.org",
+      company: "Henry Ford Health",
+      location: "Detroit, MI",
+      position: "Facilities Manager"
+    },
+    {
+      id: 7,
+      name: "Alex Brown",
+      email: "a.brown@berkleymich.org",
+      company: "City of Berkley, Michigan",
+      location: "Detroit, MI",
+      position: "Facilities Manager"
+    },
+    {
+      id: 8,
+      name: "Justin Hiller",
+      email: "j.hiller@princetonmgmt.com",
+      company: "Princeton Management",
+      location: "Detroit, MI",
+      position: "Facilities Manager"
+    },
+    {
+      id: 9,
+      name: "Clinton Elliott",
+      email: "c.elliott@stellantis.com",
+      company: "Stellantis",
+      location: "Detroit, MI",
+      position: "Facilities Manager"
+    },
+    {
+      id: 10,
+      name: "Mark Vanderbrook",
+      email: "m.vanderbrook@stellantis.com",
+      company: "Stellantis",
+      location: "Detroit, MI",
+      position: "Facilities Manager"
+    },
+    {
+      id: 11,
+      name: "Cory Heck",
+      email: "c.heck@aaa.com",
+      company: "AAA Life Insurance Company",
+      location: "Detroit, MI",
+      position: "Facilities Manager"
+    },
+    {
+      id: 12,
+      name: "Benjamin Bourneau",
+      email: "b.bourneau@glorious.com",
+      company: "Glorious Cannabis Company",
+      location: "Detroit, MI",
+      position: "Facilities Manager"
+    },
+    {
+      id: 13,
+      name: "Melissa Maynard",
+      email: "m.maynard@cushwake.com",
+      company: "Cushman & Wakefield",
+      location: "Detroit, MI",
+      position: "Facilities Manager"
+    },
+    {
+      id: 14,
+      name: "Brian Henderson",
+      email: "b.henderson@cranbrook.edu",
+      company: "Cranbrook Educational Community",
+      location: "Detroit, MI",
+      position: "Facilities Manager"
+    },
+    {
+      id: 15,
+      name: "Ted Skaakos",
+      email: "t.skaakos@dearborn.org",
+      company: "City of Dearborn",
+      location: "Detroit, MI",
+      position: "Facilities Manager"
+    },
+    {
+      id: 16,
+      name: "Dolores Jenkins",
+      email: "d.jenkins@spplus.com",
+      company: "SP+ (SP Plus)",
+      location: "Detroit, MI",
+      position: "Facilities Manager"
+    },
+    {
+      id: 17,
+      name: "Laura Payne",
+      email: "l.payne@jll.com",
+      company: "JLL",
+      location: "Detroit, MI",
+      position: "Facilities Manager"
+    },
+    {
+      id: 18,
+      name: "Keith Amley",
+      email: "k.amley@iacgroup.com",
+      company: "IAC Group",
+      location: "Detroit, MI",
+      position: "Facilities Manager"
+    },
+    {
+      id: 19,
+      name: "Yolanda Walton",
+      email: "y.walton@gm.com",
+      company: "General Motors",
+      location: "Detroit, MI",
+      position: "Facilities Manager"
+    },
+    {
+      id: 20,
+      name: "Tammi Wiese",
+      email: "t.wiese@davita.com",
+      company: "DaVita Kidney Care",
+      location: "Detroit, MI",
       position: "Facilities Manager"
     }
   ];
@@ -153,15 +297,15 @@ Solar Energy Consultant`
     setTimeout(() => {
       setIsLoading(false);
       
-      // Set default template
-      const defaultTemplate = templates.find(t => t.id === 'independent_research');
+      // Set default template to Luxwall outreach
+      const defaultTemplate = templates.find(t => t.id === 'luxwall_outreach');
       if (defaultTemplate) {
         setEmailSubject(defaultTemplate.subject);
         setEmailBody(defaultTemplate.body);
       }
       
-      // Set default selected contacts
-      setSelectedContacts([contacts[0].name, contacts[2].name]);
+      // Set default selected contacts to James Schifko and a few others
+      setSelectedContacts([contacts[0].name, contacts[1].name, contacts[3].name]);
       
       // Default scheduled date/time (tomorrow at 9am)
       const tomorrow = new Date();

@@ -110,9 +110,7 @@ const FacilityDatabase = () => {
   const [dataScraped, setDataScraped] = useState(true);
   const [facilityType, setFacilityType] = useState('');
   const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
-  const [activeFilters, setActiveFilters] = useState<{[key: string]: string | boolean}>({
-    sector: 'Technology'
-  });
+  const [activeFilters, setActiveFilters] = useState<{[key: string]: string | boolean | string[]}>({});
   const [showFilterPanel, setShowFilterPanel] = useState(false);
   
   const [currentFilterCategory, setCurrentFilterCategory] = useState('');
@@ -121,6 +119,113 @@ const FacilityDatabase = () => {
   // Add facility search/filter state
   const [facilitySearchTerm, setFacilitySearchTerm] = useState('');
   const [facilityTypeFilter, setFacilityTypeFilter] = useState('');
+
+  // Add loading text state for dynamic messages
+  const [loadingText, setLoadingText] = useState('Initializing search...');
+
+  // Loading animation component
+  const SearchLoadingOverlay = () => {
+    useEffect(() => {
+      if (!isLoading) return;
+      
+      const loadingMessages = [
+        'Initializing search...',
+        'Scanning 4.13M commercial facilities...',
+        'Applying location filters...',
+        'Analyzing facility specifications...',
+        'Cross-referencing energy data...',
+        'Identifying solar potential...',
+        'Finalizing results...'
+      ];
+      
+      let currentIndex = 0;
+      const interval = setInterval(() => {
+        currentIndex = (currentIndex + 1) % loadingMessages.length;
+        setLoadingText(loadingMessages[currentIndex]);
+      }, 400);
+      
+      return () => clearInterval(interval);
+    }, [isLoading]);
+    
+    if (!isLoading) return null;
+    
+    return createPortal(
+      <div className="fixed inset-0 z-[100000] flex items-center justify-center bg-black/60 backdrop-blur-sm">
+        <div className="relative">
+          {/* Main loading card */}
+          <div className="backdrop-blur-2xl bg-gradient-to-br from-[#28292b]/90 via-[#28292b]/70 to-[rgba(40,41,43,0.5)] rounded-3xl shadow-[0_20px_60px_rgba(0,0,0,0.6)] border border-orange-500/30 p-8 max-w-md mx-4 relative overflow-hidden">
+            
+            {/* Animated background gradients */}
+            <div className="absolute inset-0 bg-gradient-to-r from-orange-500/20 via-amber-500/15 to-orange-600/20 opacity-40 animate-pulse"></div>
+            <div className="absolute -top-20 -right-20 w-40 h-40 bg-gradient-to-br from-orange-500/40 to-transparent rounded-full blur-3xl animate-spin" style={{animationDuration: '8s'}}></div>
+            <div className="absolute -bottom-20 -left-20 w-40 h-40 bg-gradient-to-tr from-blue-500/30 to-transparent rounded-full blur-3xl animate-bounce" style={{animationDuration: '3s'}}></div>
+            
+            <div className="relative z-10 text-center">
+              {/* Icon with pulsing animation */}
+              <div className="mb-6 relative">
+                <div className="w-20 h-20 mx-auto bg-gradient-to-br from-orange-500/30 via-orange-500/20 to-transparent rounded-2xl flex items-center justify-center relative">
+                  <MdSearch className="text-4xl text-orange-400 animate-pulse" />
+                  
+                  {/* Radar sweep effect */}
+                  <div className="absolute inset-0 rounded-2xl border-2 border-orange-500/50 animate-ping"></div>
+                  <div className="absolute inset-2 rounded-xl border border-orange-400/30 animate-pulse" style={{animationDelay: '0.5s'}}></div>
+                </div>
+                
+                {/* Floating data icons */}
+                <div className="absolute -top-2 -right-2 animate-bounce" style={{animationDelay: '0.2s'}}>
+                  <div className="w-6 h-6 bg-blue-500/20 rounded-lg flex items-center justify-center">
+                    <MdStorage className="text-blue-400 text-sm" />
+                  </div>
+                </div>
+                <div className="absolute -bottom-2 -left-2 animate-bounce" style={{animationDelay: '0.8s'}}>
+                  <div className="w-6 h-6 bg-green-500/20 rounded-lg flex items-center justify-center">
+                    <MdFactory className="text-green-400 text-sm" />
+                  </div>
+                </div>
+                <div className="absolute top-1/2 -left-4 animate-bounce" style={{animationDelay: '1.2s'}}>
+                  <div className="w-5 h-5 bg-purple-500/20 rounded-lg flex items-center justify-center">
+                    <MdLocationOn className="text-purple-400 text-xs" />
+                  </div>
+                </div>
+              </div>
+              
+              {/* Title */}
+              <h3 className="text-xl font-bold text-white mb-2">Searching Database</h3>
+              
+              {/* Dynamic loading text */}
+              <p className="text-white/80 mb-6 h-6 transition-all duration-300">
+                {loadingText}
+              </p>
+              
+              {/* Animated progress bar */}
+              <div className="w-full bg-white/10 rounded-full h-2 mb-4 overflow-hidden">
+                <div className="h-full bg-gradient-to-r from-orange-500 via-amber-500 to-orange-600 rounded-full animate-pulse relative">
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent"></div>
+                </div>
+              </div>
+              
+              {/* Stats being processed */}
+              <div className="grid grid-cols-3 gap-3 text-xs">
+                <div className="bg-white/5 rounded-lg p-2 animate-pulse" style={{animationDelay: '0.1s'}}>
+                  <div className="text-orange-400 font-semibold">4.13M</div>
+                  <div className="text-white/60">Total</div>
+                </div>
+                <div className="bg-white/5 rounded-lg p-2 animate-pulse" style={{animationDelay: '0.3s'}}>
+                  <div className="text-blue-400 font-semibold">2.5M</div>
+                  <div className="text-white/60">Verified</div>
+                </div>
+                <div className="bg-white/5 rounded-lg p-2 animate-pulse" style={{animationDelay: '0.5s'}}>
+                  <div className="text-green-400 font-semibold">520K</div>
+                  <div className="text-white/60">High Potential</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>,
+      document.body
+    );
+  };
 
   // State options for dropdown
   const usStates = [
@@ -139,10 +244,12 @@ const FacilityDatabase = () => {
     "Pharmaceuticals", "Logistics", "Aerospace", "Telecommunications"
   ];
 
-  // Square footage ranges
+  // Square footage ranges - updated for more granular options
   const squareFootageRanges = [
     "Under 10,000 sq ft",
-    "10,000 - 50,000 sq ft",
+    "10,000 - 15,000 sq ft",
+    "15,000 - 30,000 sq ft",
+    "30,000 - 50,000 sq ft",
     "50,000 - 100,000 sq ft", 
     "100,000 - 250,000 sq ft",
     "250,000 - 500,000 sq ft",
@@ -213,165 +320,329 @@ const FacilityDatabase = () => {
   const [companyNameFilter, setCompanyNameFilter] = useState('');
   const [verifiedEmailFilter, setVerifiedEmailFilter] = useState(false);
   const [verifiedPhoneFilter, setVerifiedPhoneFilter] = useState(false);
+  
+  // Multi-select facility sizes and job titles
+  const [selectedFacilitySizes, setSelectedFacilitySizes] = useState<string[]>([]);
+  const [selectedJobTitles, setSelectedJobTitles] = useState<string[]>([]);
+
+  // Decision maker/job title options
+  const jobTitles = [
+    "Facility Manager",
+    "Facilities Director", 
+    "Head of Facilities",
+    "Operations Manager",
+    "Head of IT",
+    "IT Director",
+    "Head of Procurement",
+    "Procurement Manager",
+    "Sustainability Manager",
+    "Energy Manager",
+    "Plant Manager",
+    "General Manager",
+    "Vice President of Operations"
+  ];
 
   // Sample facility data from the image
   const [facilities, setFacilities] = useState([
     {
       id: 1,
-      name: "Jeff Levy",
+      name: "Sean Bonner",
       jobTitle: "Facilities Manager",
-      company: "Apple",
+      company: "Vitesco Technologies",
       emails: true,
       phoneNumbers: true,
-      location: "Atlanta, GA",
+      location: "Detroit, Michigan",
       enriched: true,
       verified: true,
-      email: "j.levy@apple.example.com",
-      phone: "(404) 555-1000",
-      facilityType: "Technology"
+      email: "s.bonner@vitesco-technologies.com",
+      phone: "(313) 555-0001",
+      facilityType: "Automotive",
+      employeeCount: "36K"
     },
     {
       id: 2,
-      name: "Amy Huke",
+      name: "Aaron Miller",
       jobTitle: "Facilities Manager",
-      company: "Honeywell",
+      company: "Detroit Wayne Integrated",
       emails: true,
       phoneNumbers: true,
-      location: "Kansas City, MO",
+      location: "Detroit, Michigan",
       enriched: true,
-      verified: true
+      verified: true,
+      email: "a.miller@detroitwayne.org",
+      phone: "(313) 555-0002",
+      facilityType: "Mental Health Care",
+      employeeCount: "320"
     },
     {
       id: 3,
-      name: "Ryan Kuddes",
+      name: "Amy Brady",
       jobTitle: "Facilities Manager",
-      company: "Apple",
+      company: "MAGNA SEATING OF AMERICA",
       emails: true,
       phoneNumbers: true,
-      location: "Denver, CO",
+      location: "Detroit, Michigan",
       enriched: true,
-      verified: true
+      verified: true,
+      email: "a.brady@magna.com",
+      phone: "(313) 555-0003",
+      facilityType: "Machinery",
+      employeeCount: "380"
     },
     {
       id: 4,
-      name: "Zuretti Carter",
+      name: "Peter Jonna",
       jobTitle: "Facilities Manager",
-      company: "ChargePoint",
+      company: "Jonna Companies",
       emails: true,
       phoneNumbers: true,
-      location: "San Francisco, CA",
+      location: "Detroit, Michigan",
       enriched: true,
-      verified: true
+      verified: true,
+      email: "p.jonna@jonnacompanies.com",
+      phone: "(313) 555-0004",
+      facilityType: "Construction",
+      employeeCount: "16"
     },
     {
       id: 5,
-      name: "Scott Simpson",
+      name: "Dale Merritt",
       jobTitle: "Facilities Manager",
-      company: "Plexus Corp.",
+      company: "Henry Ford Health",
       emails: true,
       phoneNumbers: true,
-      location: "Neenah, WI",
+      location: "Detroit, Michigan",
       enriched: true,
-      verified: true
+      verified: true,
+      email: "d.merritt@hfhs.org",
+      phone: "(313) 555-0005",
+      facilityType: "Hospital & Health Care",
+      employeeCount: "32K"
     },
     {
       id: 6,
-      name: "Rob Greinke",
+      name: "Alex Brown",
       jobTitle: "Facilities Manager",
-      company: "Eaton",
+      company: "City of Berkley, Michigan",
       emails: true,
       phoneNumbers: true,
-      location: "Waukesha, WI",
+      location: "Detroit, Michigan",
       enriched: true,
-      verified: true
+      verified: true,
+      email: "a.brown@berkleymich.org",
+      phone: "(313) 555-0006",
+      facilityType: "Government Administration",
+      employeeCount: "38"
     },
     {
       id: 7,
-      name: "Ryan Frey",
+      name: "Justin Hiller",
       jobTitle: "Facilities Manager",
-      company: "Vertiv",
+      company: "Princeton Management",
       emails: true,
       phoneNumbers: true,
-      location: "Delaware, OH",
+      location: "Detroit, Michigan",
       enriched: true,
-      verified: true
+      verified: true,
+      email: "j.hiller@princetonmgmt.com",
+      phone: "(313) 555-0007",
+      facilityType: "Real Estate",
+      employeeCount: "240"
     },
     {
       id: 8,
-      name: "Fred Hotchkiss",
+      name: "Clinton Elliott",
       jobTitle: "Facilities Manager",
-      company: "EMS Technologies, Inc.",
+      company: "Stellantis",
       emails: true,
       phoneNumbers: true,
-      location: "Binghamton, NY",
+      location: "Detroit, Michigan",
       enriched: true,
-      verified: true
+      verified: true,
+      email: "c.elliott@stellantis.com",
+      phone: "(313) 555-0008",
+      facilityType: "Automotive",
+      employeeCount: "248K"
     },
     {
       id: 9,
-      name: "Anthony Sankale",
+      name: "Mark Vanderbrook",
       jobTitle: "Facilities Manager",
-      company: "Novanta Inc.",
+      company: "Stellantis",
       emails: true,
       phoneNumbers: true,
-      location: "Boston, MA",
+      location: "Detroit, Michigan",
       enriched: true,
-      verified: true
+      verified: true,
+      email: "m.vanderbrook@stellantis.com",
+      phone: "(313) 555-0009",
+      facilityType: "Automotive",
+      employeeCount: "248K"
     },
     {
       id: 10,
-      name: "Bob Harrison",
+      name: "Cory Heck",
       jobTitle: "Facilities Manager",
-      company: "Franklin Electric",
+      company: "AAA Life Insurance Company",
       emails: true,
       phoneNumbers: true,
-      location: "Bluffton, IN",
+      location: "Detroit, Michigan",
       enriched: true,
-      verified: true
+      verified: true,
+      email: "c.heck@aaa.com",
+      phone: "(313) 555-0010",
+      facilityType: "Insurance",
+      employeeCount: "940"
     },
     {
       id: 11,
-      name: "Matt Olson",
+      name: "Benjamin Bourneau",
       jobTitle: "Facilities Manager",
-      company: "Bentek Corporation",
+      company: "Glorious Cannabis Company",
       emails: true,
       phoneNumbers: true,
-      location: "San Jose, CA",
+      location: "Detroit, Michigan",
       enriched: true,
-      verified: true
+      verified: true,
+      email: "b.bourneau@glorious.com",
+      phone: "(313) 555-0011",
+      facilityType: "Alternative Medicine",
+      employeeCount: "120"
     },
     {
       id: 12,
-      name: "Bradley Romero",
+      name: "Melissa Maynard",
       jobTitle: "Facilities Manager",
-      company: "Honeywell",
+      company: "Cushman & Wakefield",
       emails: true,
       phoneNumbers: true,
-      location: "Denver, CO",
+      location: "Detroit, Michigan",
       enriched: true,
-      verified: true
+      verified: true,
+      email: "m.maynard@cushwake.com",
+      phone: "(313) 555-0012",
+      facilityType: "Real Estate",
+      employeeCount: "53K"
     },
     {
       id: 13,
-      name: "Vicente Cornejo",
+      name: "Brian Henderson",
       jobTitle: "Facilities Manager",
-      company: "ITW Food Equipment Group",
+      company: "Cranbrook Educational Community",
       emails: true,
       phoneNumbers: true,
-      location: "Dayton, OH",
+      location: "Detroit, Michigan",
       enriched: true,
-      verified: true
+      verified: true,
+      email: "b.henderson@cranbrook.edu",
+      phone: "(313) 555-0013",
+      facilityType: "Government Administration",
+      employeeCount: "410"
     },
     {
       id: 14,
-      name: "Daniel Conroy",
+      name: "Ted Skaakos",
       jobTitle: "Facilities Manager",
-      company: "Apple",
+      company: "City of Dearborn",
       emails: true,
       phoneNumbers: true,
-      location: "Jersey City, NJ",
+      location: "Detroit, Michigan",
       enriched: true,
-      verified: true
+      verified: true,
+      email: "t.skaakos@dearborn.org",
+      phone: "(313) 555-0014",
+      facilityType: "Government Administration",
+      employeeCount: "560"
+    },
+    {
+      id: 15,
+      name: "Dolores Jenkins",
+      jobTitle: "Facilities Manager",
+      company: "SP+ (SP Plus)",
+      emails: true,
+      phoneNumbers: true,
+      location: "Detroit, Michigan",
+      enriched: true,
+      verified: true,
+      email: "d.jenkins@spplus.com",
+      phone: "(313) 555-0015",
+      facilityType: "Facilities Services",
+      employeeCount: "20K"
+    },
+    {
+      id: 16,
+      name: "Laura Payne",
+      jobTitle: "Facilities Manager",
+      company: "JLL",
+      emails: true,
+      phoneNumbers: true,
+      location: "Detroit, Michigan",
+      enriched: true,
+      verified: true,
+      email: "l.payne@jll.com",
+      phone: "(313) 555-0016",
+      facilityType: "Real Estate",
+      employeeCount: "111K"
+    },
+    {
+      id: 17,
+      name: "Keith Amley",
+      jobTitle: "Facilities Manager",
+      company: "IAC Group",
+      emails: true,
+      phoneNumbers: true,
+      location: "Detroit, Michigan",
+      enriched: true,
+      verified: true,
+      email: "k.amley@iacgroup.com",
+      phone: "(313) 555-0017",
+      facilityType: "Automotive",
+      employeeCount: "7.3K"
+    },
+    {
+      id: 18,
+      name: "Yolanda Walton",
+      jobTitle: "Facilities Manager",
+      company: "General Motors",
+      emails: true,
+      phoneNumbers: true,
+      location: "Detroit, Michigan",
+      enriched: true,
+      verified: true,
+      email: "y.walton@gm.com",
+      phone: "(313) 555-0018",
+      facilityType: "Automotive",
+      employeeCount: "163K"
+    },
+    {
+      id: 19,
+      name: "Tammi Wiese",
+      jobTitle: "Facilities Manager",
+      company: "DaVita Kidney Care",
+      emails: true,
+      phoneNumbers: true,
+      location: "Detroit, Michigan",
+      enriched: true,
+      verified: true,
+      email: "t.wiese@davita.com",
+      phone: "(313) 555-0019",
+      facilityType: "Hospital & Health Care",
+      employeeCount: "70K"
+    },
+    {
+      id: 20,
+      name: "Nicholas McDuff",
+      jobTitle: "Facilities Manager",
+      company: "JLL",
+      emails: true,
+      phoneNumbers: true,
+      location: "Detroit, Michigan",
+      enriched: true,
+      verified: true,
+      email: "n.mcduff@jll.com",
+      phone: "(313) 555-0020",
+      facilityType: "Real Estate",
+      employeeCount: "111K"
     }
   ]);
 
@@ -390,43 +661,91 @@ const FacilityDatabase = () => {
     const [isOpen, setIsOpen] = useState(false);
     const selectRef = useRef<HTMLDivElement>(null);
     const buttonRef = useRef<HTMLButtonElement>(null);
+    const dropdownRef = useRef<HTMLDivElement>(null);
     
     useEffect(() => {
       const handleClickOutside = (event: MouseEvent) => {
-        if (selectRef.current && !selectRef.current.contains(event.target as Node)) {
+        const target = event.target as Node;
+        
+        // Don't close if clicking on the dropdown itself
+        if (dropdownRef.current && dropdownRef.current.contains(target)) {
+          return;
+        }
+        
+        // Don't close if clicking on the select button
+        if (selectRef.current && selectRef.current.contains(target)) {
+          return;
+        }
+        
+        setIsOpen(false);
+      };
+      
+      if (isOpen) {
+        // Add a small delay to prevent immediate closing
+        setTimeout(() => {
+          document.addEventListener('mousedown', handleClickOutside);
+        }, 10);
+      }
+      
+      return () => {
+        document.removeEventListener('mousedown', handleClickOutside);
+      };
+    }, [isOpen]);
+    
+    // Close dropdown when pressing Escape
+    useEffect(() => {
+      const handleKeyDown = (event: KeyboardEvent) => {
+        if (event.key === 'Escape' && isOpen) {
           setIsOpen(false);
         }
       };
       
-      document.addEventListener('mousedown', handleClickOutside);
+      if (isOpen) {
+        document.addEventListener('keydown', handleKeyDown);
+      }
+      
       return () => {
-        document.removeEventListener('mousedown', handleClickOutside);
+        document.removeEventListener('keydown', handleKeyDown);
       };
-    }, []);
+    }, [isOpen]);
     
     const selectedOption = options.find(option => option.value === value);
     
-    // Get dropdown position based on button position
-    const getDropdownPosition = () => {
+    const handleOptionClick = (optionValue: string, event: React.MouseEvent) => {
+      event.preventDefault();
+      event.stopPropagation();
+      
+      console.log('Option clicked:', optionValue); // Debug log
+      onChange(optionValue);
+      // DO NOT close the dropdown - let user manually close it by clicking the main button
+      // setIsOpen(false); // REMOVED THIS LINE
+    };
+    
+    const handleButtonClick = (event: React.MouseEvent) => {
+      event.preventDefault();
+      event.stopPropagation();
+      setIsOpen(!isOpen); // Toggle open/close state
+    };
+    
+    // Get button position for dropdown placement
+    const getButtonPosition = () => {
       if (!buttonRef.current) return { top: 0, left: 0, width: 0 };
       
       const rect = buttonRef.current.getBoundingClientRect();
       return {
-        top: rect.bottom + window.scrollY,
+        top: rect.bottom + window.scrollY + 2, // Add small gap
         left: rect.left + window.scrollX,
         width: rect.width
       };
     };
-    
-    const position = getDropdownPosition();
     
     return (
       <div className="relative" ref={selectRef}>
         <button
           ref={buttonRef}
           type="button"
-          className="w-full py-2 px-3 rounded-lg border border-white/20 bg-[#28292b] backdrop-blur-sm text-white focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all flex justify-between items-center"
-          onClick={() => setIsOpen(!isOpen)}
+          className="w-full py-2 px-3 rounded-lg border border-white/20 bg-[#28292b] backdrop-blur-sm text-white focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all flex justify-between items-center hover:bg-[#32333b]"
+          onClick={handleButtonClick}
         >
           <span className={`${!selectedOption ? 'text-white/50' : 'text-white'} truncate pr-2`}>
             {selectedOption ? selectedOption.label : placeholder}
@@ -436,29 +755,180 @@ const FacilityDatabase = () => {
         
         {isOpen && createPortal(
           <div 
-            className="fixed z-[9999] rounded-md bg-[#28292b] border border-white/20 shadow-lg max-h-60 overflow-y-auto scrollbar-thin scrollbar-thumb-slate-700 scrollbar-track-slate-800"
+            ref={dropdownRef}
+            className="fixed z-[99999] rounded-md bg-[#28292b] border border-white/20 shadow-2xl max-h-60 overflow-y-auto scrollbar-thin scrollbar-thumb-slate-700 scrollbar-track-slate-800"
             style={{
-              top: `${position.top}px`,
-              left: `${position.left}px`,
-              width: `${position.width}px`
+              top: `${getButtonPosition().top}px`,
+              left: `${getButtonPosition().left}px`,
+              width: `${getButtonPosition().width}px`
             }}
+            onClick={(e) => e.stopPropagation()}
           >
             <div className="py-1">
               {options.map((option) => (
-                <div
+                <button
                   key={option.value}
-                  className={`cursor-pointer select-none relative py-2 px-3 ${
+                  type="button"
+                  className={`w-full cursor-pointer select-none relative py-2 px-3 text-left transition-colors ${
                     option.value === value 
                       ? 'bg-gradient-to-r from-orange-500/30 to-orange-600/10 text-white' 
-                      : 'text-white/70 hover:bg-white/10'
+                      : 'text-white/70 hover:bg-white/10 hover:text-white'
                   }`}
-                  onClick={() => {
-                    onChange(option.value);
-                    setIsOpen(false);
-                  }}
+                  onClick={(e) => handleOptionClick(option.value, e)}
+                  onMouseDown={(e) => e.preventDefault()}
                 >
                   {option.label}
-                </div>
+                </button>
+              ))}
+            </div>
+          </div>,
+          document.body
+        )}
+      </div>
+    );
+  };
+
+  // Multi-select component for facility sizes and job titles
+  const MultiSelect = ({ 
+    values, 
+    onChange, 
+    options, 
+    placeholder = "Select multiple..."
+  }: { 
+    values: string[]; 
+    onChange: (values: string[]) => void;
+    options: { value: string; label: string }[];
+    placeholder?: string;
+  }) => {
+    const [isOpen, setIsOpen] = useState(false);
+    const selectRef = useRef<HTMLDivElement>(null);
+    const buttonRef = useRef<HTMLButtonElement>(null);
+    const dropdownRef = useRef<HTMLDivElement>(null);
+    
+    useEffect(() => {
+      const handleClickOutside = (event: MouseEvent) => {
+        const target = event.target as Node;
+        
+        if (dropdownRef.current && dropdownRef.current.contains(target)) {
+          return;
+        }
+        
+        if (selectRef.current && selectRef.current.contains(target)) {
+          return;
+        }
+        
+        setIsOpen(false);
+      };
+      
+      if (isOpen) {
+        setTimeout(() => {
+          document.addEventListener('mousedown', handleClickOutside);
+        }, 10);
+      }
+      
+      return () => {
+        document.removeEventListener('mousedown', handleClickOutside);
+      };
+    }, [isOpen]);
+    
+    // Close dropdown when pressing Escape
+    useEffect(() => {
+      const handleKeyDown = (event: KeyboardEvent) => {
+        if (event.key === 'Escape' && isOpen) {
+          setIsOpen(false);
+        }
+      };
+      
+      if (isOpen) {
+        document.addEventListener('keydown', handleKeyDown);
+      }
+      
+      return () => {
+        document.removeEventListener('keydown', handleKeyDown);
+      };
+    }, [isOpen]);
+    
+    const handleOptionClick = (optionValue: string, event: React.MouseEvent) => {
+      event.preventDefault();
+      event.stopPropagation();
+      
+      const newValues = values.includes(optionValue)
+        ? values.filter(v => v !== optionValue)
+        : [...values, optionValue];
+      
+      console.log('Multi-select option clicked:', optionValue, 'New values:', newValues);
+      onChange(newValues);
+      // Keep dropdown open for multi-select - don't call setIsOpen(false)
+    };
+    
+    const handleButtonClick = (event: React.MouseEvent) => {
+      event.preventDefault();
+      event.stopPropagation();
+      setIsOpen(!isOpen); // Toggle open/close state
+    };
+    
+    const getButtonPosition = () => {
+      if (!buttonRef.current) return { top: 0, left: 0, width: 0 };
+      
+      const rect = buttonRef.current.getBoundingClientRect();
+      return {
+        top: rect.bottom + window.scrollY + 2,
+        left: rect.left + window.scrollX,
+        width: rect.width
+      };
+    };
+    
+    const displayText = values.length === 0 
+      ? placeholder 
+      : values.length === 1 
+        ? values[0] 
+        : `${values.length} selected`;
+    
+    return (
+      <div className="relative" ref={selectRef}>
+        <button
+          ref={buttonRef}
+          type="button"
+          className="w-full py-2 px-3 rounded-lg border border-white/20 bg-[#28292b] backdrop-blur-sm text-white focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all flex justify-between items-center hover:bg-[#32333b]"
+          onClick={handleButtonClick}
+        >
+          <span className={`${values.length === 0 ? 'text-white/50' : 'text-white'} truncate pr-2`}>
+            {displayText}
+          </span>
+          <MdKeyboardArrowRight className={`transition-transform duration-300 flex-shrink-0 ${isOpen ? 'rotate-90' : ''}`} />
+        </button>
+        
+        {isOpen && createPortal(
+          <div 
+            ref={dropdownRef}
+            className="fixed z-[99999] rounded-md bg-[#28292b] border border-white/20 shadow-2xl max-h-60 overflow-y-auto scrollbar-thin scrollbar-thumb-slate-700 scrollbar-track-slate-800"
+            style={{
+              top: `${getButtonPosition().top}px`,
+              left: `${getButtonPosition().left}px`,
+              width: `${getButtonPosition().width}px`
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="py-1">
+              {options.map((option) => (
+                <button
+                  key={option.value}
+                  type="button"
+                  className={`w-full cursor-pointer select-none relative py-2 px-3 text-left transition-colors flex items-center gap-2 ${
+                    values.includes(option.value)
+                      ? 'bg-gradient-to-r from-orange-500/30 to-orange-600/10 text-white' 
+                      : 'text-white/70 hover:bg-white/10 hover:text-white'
+                  }`}
+                  onClick={(e) => handleOptionClick(option.value, e)}
+                  onMouseDown={(e) => e.preventDefault()}
+                >
+                  <div className={`w-4 h-4 rounded border border-white/30 flex items-center justify-center ${
+                    values.includes(option.value) ? 'bg-orange-500 border-orange-500' : ''
+                  }`}>
+                    {values.includes(option.value) && <MdCheck className="text-white text-xs" />}
+                  </div>
+                  <span>{option.label}</span>
+                </button>
               ))}
             </div>
           </div>,
@@ -469,19 +939,28 @@ const FacilityDatabase = () => {
   };
 
   // Modify this function to handle all filter changes
-  const handleFilterChange = (category: string, value: string | boolean) => {
-    if (typeof value === 'string' && value === '') {
+  const handleFilterChange = (category: string, value: string | boolean | string[]) => {
+    let newActiveFilters = { ...activeFilters };
+    
+    if (Array.isArray(value)) {
+      // Handle multi-select arrays
+      if (value.length === 0) {
+        delete newActiveFilters[category];
+      } else {
+        newActiveFilters[category] = value;
+      }
+    } else if (typeof value === 'string' && value === '') {
       // Clear this filter
-      const newActiveFilters = { ...activeFilters };
       delete newActiveFilters[category];
-      setActiveFilters(newActiveFilters);
+    } else if (typeof value === 'boolean' && value === false) {
+      // Clear boolean filter
+      delete newActiveFilters[category];
     } else {
       // Set or update this filter
-      setActiveFilters({
-        ...activeFilters,
-        [category]: value
-      });
+      newActiveFilters[category] = value;
     }
+    
+    setActiveFilters(newActiveFilters);
     
     // Update the corresponding state variable
     switch (category) {
@@ -498,7 +977,10 @@ const FacilityDatabase = () => {
         setSectorFilter(value as string);
         break;
       case 'squareFootage':
-        setSquareFootageFilter(value as string);
+        setSelectedFacilitySizes(value as string[]);
+        break;
+      case 'jobTitles':
+        setSelectedJobTitles(value as string[]);
         break;
       case 'energyUsage':
         setEnergyUsageFilter(value as string);
@@ -536,7 +1018,7 @@ const FacilityDatabase = () => {
     }
     
     // Check if there are any active filters
-    const hasActiveFilters = Object.keys(activeFilters).length > 0 || (typeof value !== 'string' || value !== '');
+    const hasActiveFilters = Object.keys(newActiveFilters).length > 0;
     
     // Update filtered count - always show 5.6K when filters are applied
     const newFilteredCount = hasActiveFilters ? 5600 : facilitiesStats.total;
@@ -555,10 +1037,9 @@ const FacilityDatabase = () => {
     }));
     
     // Update active filter count
-    setTimeout(() => {
-      const count = Object.keys(activeFilters).length;
-      setActiveFilterCount(count);
-    }, 0);
+    setActiveFilterCount(Object.keys(newActiveFilters).length);
+    
+    // DO NOT auto-close expanded sections - let user manually control them
   };
 
   const clearAllFilters = () => {
@@ -579,6 +1060,8 @@ const FacilityDatabase = () => {
     setCompanyNameFilter('');
     setVerifiedEmailFilter(false);
     setVerifiedPhoneFilter(false);
+    setSelectedFacilitySizes([]);
+    setSelectedJobTitles([]);
     setActiveFilters({});
     setActiveFilterCount(0);
     
@@ -594,6 +1077,8 @@ const FacilityDatabase = () => {
       currentPage: 1,
       totalPages: Math.ceil(facilitiesStats.total / prev.itemsPerPage)
     }));
+    
+    // Keep expanded sections open even after clearing filters
   };
 
   const handleScrape = () => {
@@ -642,10 +1127,14 @@ const FacilityDatabase = () => {
           phoneNumbers: true,
           location: "Austin, TX",
           enriched: true,
-          verified: true
+          verified: true,
+          email: "m.johnson@samsung.com",
+          phone: "(512) 555-0021",
+          facilityType: "Technology",
+          employeeCount: "12K"
         },
         {
-          id: 16,
+          id: 22,
           name: "Sarah Williams",
           jobTitle: "Facilities Manager",
           company: "Intel Corporation",
@@ -653,7 +1142,11 @@ const FacilityDatabase = () => {
           phoneNumbers: true,
           location: "Chandler, AZ",
           enriched: true,
-          verified: true
+          verified: true,
+          email: "s.williams@intel.com",
+          phone: "(480) 555-0022",
+          facilityType: "Technology",
+          employeeCount: "8K"
         }
       ]);
       setTotalCount(337);
@@ -694,8 +1187,8 @@ const FacilityDatabase = () => {
       return;
     }
     
-    // Navigate to the facility enrichment page with the Jeff Levy (id: 1) as default
-    navigate('/facility-enrichment/1');
+    // Navigate to the facility AI analysis page
+    navigate('/facility-ai-analysis');
   };
 
   const handleSelectFacility = (id: number) => {
@@ -928,14 +1421,14 @@ const FacilityDatabase = () => {
   };
 
   // Track which filter section is expanded
-  const [expandedSection, setExpandedSection] = useState<string | null>(null);
+  const [expandedSection, setExpandedSection] = useState<string | null>('location'); // Default to location expanded
 
-  // Toggle expanded section
+  // Toggle expanded section - only close if same section clicked, don't auto-close on selection
   const toggleSection = (section: string) => {
     if (expandedSection === section) {
-      setExpandedSection(null);
+      setExpandedSection(null); // Close if same section clicked
     } else {
-      setExpandedSection(section);
+      setExpandedSection(section); // Open new section (can have multiple open if desired)
     }
   };
 
@@ -944,7 +1437,7 @@ const FacilityDatabase = () => {
     try {
       const savedFilters = localStorage.getItem('facilityFilters');
       if (savedFilters) {
-        const parsedFilters = JSON.parse(savedFilters) as {[key: string]: string | boolean};
+        const parsedFilters = JSON.parse(savedFilters) as {[key: string]: string | boolean | string[]};
         setActiveFilters(parsedFilters);
         
         // Apply saved filters to individual filter states
@@ -963,7 +1456,10 @@ const FacilityDatabase = () => {
               setSectorFilter(value as string);
               break;
             case 'squareFootage':
-              setSquareFootageFilter(value as string);
+              setSelectedFacilitySizes(value as string[]);
+              break;
+            case 'jobTitles':
+              setSelectedJobTitles(value as string[]);
               break;
             case 'energyUsage':
               setEnergyUsageFilter(value as string);
@@ -1006,12 +1502,12 @@ const FacilityDatabase = () => {
     }
   }, []);
 
-  // Modify the handleSearch function to ensure filters are preserved after search
   const handleSearch = () => {
     // Show loading state
     setIsLoading(true);
+    setLoadingText('Initializing search...');
     
-    // Simulate API call
+    // Simulate API call with longer duration for better loading experience
     setTimeout(() => {
       setIsLoading(false);
       
@@ -1040,8 +1536,8 @@ const FacilityDatabase = () => {
       setShowDashboard(true);
       
       // Build a description of what's being searched for based on active filters
-      darkToast.success("Searching for Technology companies over 100,000 square feet in the US with above 200 employees");
-    }, 1000);
+      darkToast.success("Found 5.6K Technology companies over 100,000 square feet in the US with above 200 employees");
+    }, 2800); // Increased from 1000ms to 2800ms for better loading experience
   };
 
   // In the table, update the arrow button onClick handler to navigate to the specific facility
@@ -1065,6 +1561,63 @@ const FacilityDatabase = () => {
     );
   };
 
+  // Generate dynamic description based on active filters
+  const generateFilterDescription = () => {
+    const parts: string[] = [];
+    
+    // Industry/Sector
+    if (sectorFilter) {
+      parts.push(`${sectorFilter.toLowerCase()} facilities`);
+    } else {
+      parts.push('commercial facilities');
+    }
+    
+    // Facility sizes
+    if (selectedFacilitySizes.length > 0) {
+      if (selectedFacilitySizes.length === 1) {
+        parts.push(`with ${selectedFacilitySizes[0].toLowerCase()}`);
+      } else {
+        // Check if all selected sizes are above 30,000 sq ft
+        const hasLargeSizes = selectedFacilitySizes.some(size => 
+          size.includes('30,000') || size.includes('50,000') || size.includes('100,000') || 
+          size.includes('250,000') || size.includes('500,000') || size.includes('Over 500,000')
+        );
+        if (hasLargeSizes) {
+          parts.push('over 30,000 square feet');
+        } else {
+          parts.push(`with multiple size ranges`);
+        }
+      }
+    }
+    
+    // Location
+    if (stateFilter) {
+      parts.push(`in ${stateFilter}`);
+    } else {
+      parts.push('across the US');
+    }
+    
+    // Job titles
+    if (selectedJobTitles.length > 0) {
+      if (selectedJobTitles.length === 1) {
+        parts.push(`targeting ${selectedJobTitles[0].toLowerCase()}s`);
+      } else {
+        parts.push(`targeting ${selectedJobTitles.length} decision maker types`);
+      }
+    }
+    
+    // Employee count
+    if (employeeCountFilter) {
+      if (employeeCountFilter.includes('200')) {
+        parts.push('with above 200 employees');
+      } else {
+        parts.push(`with ${employeeCountFilter.toLowerCase()}`);
+      }
+    }
+    
+    return parts.join(' ');
+  };
+
   return (
     <div className="w-full px-4 py-4 bg-[#020305] min-h-screen relative">
       {/* Background gradient orbs */}
@@ -1084,6 +1637,9 @@ const FacilityDatabase = () => {
         }}
         position="bottom-right"
       />
+
+      {/* Search Loading Overlay */}
+      <SearchLoadingOverlay />
 
       {/* Main content with single scrollbar */}
       <div className="flex flex-col">
@@ -1114,29 +1670,67 @@ const FacilityDatabase = () => {
         {/* Main content area */}
         <div className="flex gap-4">
           {/* Collapsible filter sidebar - no separate scrollbar */}
-          <div className="w-80 backdrop-blur-2xl bg-gradient-to-br from-[#28292b]/80 via-[#28292b]/40 to-[rgba(40,41,43,0.2)] rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.4)] border border-orange-500/20">
-            <div className="p-3">
+          <div className="w-80 backdrop-blur-2xl bg-gradient-to-br from-[#28292b]/80 via-[#28292b]/40 to-[rgba(40,41,43,0.2)] rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.4)] border border-orange-500/20 overflow-visible">
+            <div className="p-3 overflow-visible">
               <h2 className="text-lg font-bold text-white mb-3">Filters</h2>
               
               {/* Active filters display - always visible */}
               {Object.entries(activeFilters).some(([_, value]) => value !== '' && value !== false) && (
                 <div className="mb-3 p-2 bg-[rgba(40,41,43,0.6)] rounded-xl border border-orange-500/10">
                   <div className="flex flex-wrap gap-2">
-                    {Object.entries(activeFilters).map(([key, value]) => (
-                      <FilterChip 
-                        key={key}
-                        label={key} 
-                        value={value} 
-                        isActive={true} 
-                        onClick={() => handleFilterChange(key, '')} 
-                      />
-                    ))}
+                    {Object.entries(activeFilters).map(([key, value]) => {
+                      // Get a more meaningful label for the filter
+                      const getFilterLabel = (filterKey: string, filterValue: string | boolean | string[]) => {
+                        switch (filterKey) {
+                          case 'state': return `State: ${filterValue}`;
+                          case 'sector': return `Sector: ${filterValue}`;
+                          case 'squareFootage': 
+                            if (Array.isArray(filterValue)) {
+                              return filterValue.length === 1 
+                                ? `Size: ${filterValue[0]}` 
+                                : `Size: ${filterValue.length} ranges`;
+                            }
+                            return `Size: ${filterValue}`;
+                          case 'jobTitles':
+                            if (Array.isArray(filterValue)) {
+                              return filterValue.length === 1
+                                ? `Job: ${filterValue[0]}`
+                                : `Jobs: ${filterValue.length} titles`;
+                            }
+                            return `Job: ${filterValue}`;
+                          case 'energyUsage': return `Energy: ${filterValue}`;
+                          case 'employeeCount': return `Employees: ${filterValue}`;
+                          case 'companyName': return `Company: ${filterValue}`;
+                          case 'verifiedEmail': return 'Verified Email';
+                          case 'verifiedPhone': return 'Verified Phone';
+                          case 'verified': return 'Fully Verified';
+                          default: return `${filterKey}: ${filterValue}`;
+                        }
+                      };
+                      
+                      if (value === '' || value === false || (Array.isArray(value) && value.length === 0)) return null;
+                      
+                      return (
+                        <div 
+                          key={key}
+                          className="flex items-center gap-1 bg-orange-500/20 text-orange-400 px-2 py-1 rounded-full text-xs border border-orange-500/30"
+                        >
+                          <span>{getFilterLabel(key, value)}</span>
+                          <button
+                            onClick={() => handleFilterChange(key, Array.isArray(value) ? [] : typeof value === 'boolean' ? false : '')}
+                            className="ml-1 text-orange-300 hover:text-white transition-colors"
+                          >
+                            ×
+                          </button>
+                        </div>
+                      );
+                    })}
                   </div>
                 </div>
               )}
               
               {/* Collapsible Company Name Filter */}
-              <div className="mb-2 bg-[rgba(40,41,43,0.4)] rounded-lg overflow-hidden">
+              <div className="mb-2 bg-[rgba(40,41,43,0.4)] rounded-lg overflow-visible">
                 <button 
                   onClick={() => toggleSection('companyName')}
                   className="w-full p-3 flex justify-between items-center text-white hover:bg-white/5 transition-colors"
@@ -1178,7 +1772,7 @@ const FacilityDatabase = () => {
               </div>
               
               {/* Collapsible Company Size Filter */}
-              <div className="mb-2 bg-[rgba(40,41,43,0.4)] rounded-lg overflow-hidden">
+              <div className="mb-2 bg-[rgba(40,41,43,0.4)] rounded-lg overflow-visible">
                 <button 
                   onClick={() => toggleSection('companySize')}
                   className="w-full p-3 flex justify-between items-center text-white hover:bg-white/5 transition-colors"
@@ -1211,7 +1805,7 @@ const FacilityDatabase = () => {
               </div>
               
               {/* Collapsible Location Filter */}
-              <div className="mb-2 bg-[rgba(40,41,43,0.4)] rounded-lg overflow-hidden">
+              <div className="mb-2 bg-[rgba(40,41,43,0.4)] rounded-lg overflow-visible">
                 <button 
                   onClick={() => toggleSection('location')}
                   className="w-full p-3 flex justify-between items-center text-white hover:bg-white/5 transition-colors"
@@ -1244,7 +1838,7 @@ const FacilityDatabase = () => {
               </div>
               
               {/* Collapsible Industry/Sector Filter */}
-              <div className="mb-2 bg-[rgba(40,41,43,0.4)] rounded-lg overflow-hidden">
+              <div className="mb-2 bg-[rgba(40,41,43,0.4)] rounded-lg overflow-visible">
                 <button 
                   onClick={() => toggleSection('sector')}
                   className="w-full p-3 flex justify-between items-center text-white hover:bg-white/5 transition-colors"
@@ -1276,8 +1870,8 @@ const FacilityDatabase = () => {
                 )}
               </div>
               
-              {/* Collapsible Facility Size Filter */}
-              <div className="mb-2 bg-[rgba(40,41,43,0.4)] rounded-lg overflow-hidden">
+              {/* Collapsible Facility Size Filter - NOW MULTI-SELECT */}
+              <div className="mb-2 bg-[rgba(40,41,43,0.4)] rounded-lg overflow-visible">
                 <button 
                   onClick={() => toggleSection('facilitySize')}
                   className="w-full p-3 flex justify-between items-center text-white hover:bg-white/5 transition-colors"
@@ -1285,9 +1879,9 @@ const FacilityDatabase = () => {
                   <div className="flex items-center gap-2">
                     <MdOutlineRoofing className="text-orange-400" />
                     <span className="font-medium">Facility Size</span>
-                    {squareFootageFilter && (
+                    {selectedFacilitySizes.length > 0 && (
                       <span className="text-xs bg-orange-500/20 text-orange-400 px-2 py-0.5 rounded-full">
-                        Active
+                        {selectedFacilitySizes.length} selected
                       </span>
                     )}
                   </div>
@@ -1296,21 +1890,48 @@ const FacilityDatabase = () => {
                 
                 {expandedSection === 'facilitySize' && (
                   <div className="p-3 bg-white/5 border-t border-white/10 overflow-visible">
-                    <CustomSelect
-                      value={squareFootageFilter}
-                      onChange={(value) => handleFilterChange('squareFootage', value)}
-                      options={[
-                        { value: "", label: "All Facility Sizes" },
-                        ...squareFootageRanges.map(range => ({ value: range, label: range }))
-                      ]}
-                      placeholder="Select facility size..."
+                    <MultiSelect
+                      values={selectedFacilitySizes}
+                      onChange={(values) => handleFilterChange('squareFootage', values)}
+                      options={squareFootageRanges.map(range => ({ value: range, label: range }))}
+                      placeholder="Select facility sizes..."
+                    />
+                  </div>
+                )}
+              </div>
+              
+              {/* NEW: Collapsible Job Title/Decision Maker Filter */}
+              <div className="mb-2 bg-[rgba(40,41,43,0.4)] rounded-lg overflow-visible">
+                <button 
+                  onClick={() => toggleSection('jobTitles')}
+                  className="w-full p-3 flex justify-between items-center text-white hover:bg-white/5 transition-colors"
+                >
+                  <div className="flex items-center gap-2">
+                    <MdOutlineBusiness className="text-orange-400" />
+                    <span className="font-medium">Decision Makers</span>
+                    {selectedJobTitles.length > 0 && (
+                      <span className="text-xs bg-orange-500/20 text-orange-400 px-2 py-0.5 rounded-full">
+                        {selectedJobTitles.length} selected
+                      </span>
+                    )}
+                  </div>
+                  <MdKeyboardArrowRight className={`transition-transform duration-300 ${expandedSection === 'jobTitles' ? 'rotate-90' : ''}`} />
+                </button>
+                
+                {expandedSection === 'jobTitles' && (
+                  <div className="p-3 bg-white/5 border-t border-white/10 overflow-visible">
+                    <MultiSelect
+                      values={selectedJobTitles}
+                      onChange={(values) => handleFilterChange('jobTitles', values)}
+                      options={jobTitles.map(title => ({ value: title, label: title }))}
+                      placeholder="Select job titles..."
                     />
                   </div>
                 )}
               </div>
               
               {/* Collapsible Energy Usage Filter */}
-              <div className="mb-2 bg-[rgba(40,41,43,0.4)] rounded-lg overflow-hidden">
+              <div className="mb-2 bg-[rgba(40,41,43,0.4)] rounded-lg overflow-visible">
                 <button 
                   onClick={() => toggleSection('energyUsage')}
                   className="w-full p-3 flex justify-between items-center text-white hover:bg-white/5 transition-colors"
@@ -1343,7 +1964,7 @@ const FacilityDatabase = () => {
               </div>
               
               {/* Collapsible Verification Filters */}
-              <div className="mb-2 bg-[rgba(40,41,43,0.4)] rounded-lg overflow-hidden">
+              <div className="mb-2 bg-[rgba(40,41,43,0.4)] rounded-lg overflow-visible">
                 <button 
                   onClick={() => toggleSection('verification')}
                   className="w-full p-3 flex justify-between items-center text-white hover:bg-white/5 transition-colors"
@@ -1396,50 +2017,6 @@ const FacilityDatabase = () => {
                           Full Contact Verification
                         </span>
                       </label>
-                    </div>
-                  </div>
-                )}
-              </div>
-              
-              {/* Collapsible Distribution Statistics */}
-              <div className="mb-2 bg-[rgba(40,41,43,0.4)] rounded-lg overflow-hidden">
-                <button 
-                  onClick={() => toggleSection('sizeDistribution')}
-                  className="w-full p-3 flex justify-between items-center text-white hover:bg-white/5 transition-colors"
-                >
-                  <div className="flex items-center gap-2">
-                    <MdInsights className="text-orange-400" />
-                    <span className="font-medium">Size Distribution</span>
-                  </div>
-                  <MdKeyboardArrowRight className={`transition-transform duration-300 ${expandedSection === 'sizeDistribution' ? 'rotate-90' : ''}`} />
-                </button>
-                
-                {expandedSection === 'sizeDistribution' && (
-                  <div className="p-3 bg-white/5 border-t border-white/10">
-                    <div className="space-y-2">
-                      <div className="flex justify-between items-center text-xs">
-                        <span className="text-white/70">Small (≤10k sq ft)</span>
-                        <span className="text-orange-400">{Math.round(facilitiesStats.small / 1000000)}M</span>
-                      </div>
-                      <div className="h-1.5 bg-[rgba(27,34,42,0.95)] rounded-full overflow-hidden">
-                        <div className="h-full bg-orange-500 rounded-full" style={{ width: '66.5%' }}></div>
-                      </div>
-                      
-                      <div className="flex justify-between items-center text-xs">
-                        <span className="text-white/70">Medium (10k-50k)</span>
-                        <span className="text-orange-400">{Math.round(facilitiesStats.medium / 1000000)}M</span>
-                      </div>
-                      <div className="h-1.5 bg-[rgba(27,34,42,0.95)] rounded-full overflow-hidden">
-                        <div className="h-full bg-orange-500 rounded-full" style={{ width: '25%' }}></div>
-                      </div>
-                      
-                      <div className="flex justify-between items-center text-xs">
-                        <span className="text-white/70">Large (&gt;50k)</span>
-                        <span className="text-orange-400">{Math.round(facilitiesStats.large / 1000000)}M</span>
-                      </div>
-                      <div className="h-1.5 bg-[rgba(27,34,42,0.95)] rounded-full overflow-hidden">
-                        <div className="h-full bg-orange-500 rounded-full" style={{ width: '8.5%' }}></div>
-                      </div>
                     </div>
                   </div>
                 )}
@@ -1500,7 +2077,7 @@ const FacilityDatabase = () => {
                     value={formatLargeNumber(facilitiesStats.filtered)}
                     description={
                       facilitiesStats.filtered !== facilitiesStats.total 
-                        ? "Technology companies over 100,000 square feet in the US with above 200 employees"
+                        ? "Decision makers of manufacturing facilities over 30,000 square foot in Detroit, MI"
                         : undefined
                     }
                     change={facilitiesStats.filtered !== facilitiesStats.total ? `${((facilitiesStats.filtered / facilitiesStats.total) * 100).toFixed(1)}% of database` : "+2.5% this month"}
@@ -1551,6 +2128,7 @@ const FacilityDatabase = () => {
                             />
                           </th>
                           <th className="py-3 px-2 text-left text-xs font-medium text-white uppercase tracking-wider">Name</th>
+                          <th className="py-3 px-2 text-left text-xs font-medium text-white uppercase tracking-wider">Title</th>
                           <th className="py-3 px-2 text-left text-xs font-medium text-white uppercase tracking-wider">Company</th>
                           <th className="py-3 px-2 text-left text-xs font-medium text-white uppercase tracking-wider">Contact</th>
                           <th className="py-3 px-2 text-left text-xs font-medium text-white uppercase tracking-wider">Location</th>
@@ -1575,6 +2153,7 @@ const FacilityDatabase = () => {
                                 />
                               </td>
                               <td className="py-2 px-2 text-sm font-medium text-orange-400 hover:text-orange-300 cursor-pointer">{facility.name}</td>
+                              <td className="py-2 px-2 text-sm text-white/80">{facility.jobTitle}</td>
                               <td className="py-2 px-2 text-sm text-white/80">{facility.company}</td>
                               <td className="py-2 px-2 text-sm">
                                 <div className="flex items-center gap-1">
@@ -1590,7 +2169,7 @@ const FacilityDatabase = () => {
                           ))
                         ) : (
                           <tr>
-                            <td colSpan={6} className="py-5 px-4 text-center text-white/60">
+                            <td colSpan={7} className="py-5 px-4 text-center text-white/60">
                               <div className="flex flex-col items-center">
                                 <MdSearch className="text-3xl text-white/30 mb-2" />
                                 <p className="text-sm text-white/80">No facilities found</p>

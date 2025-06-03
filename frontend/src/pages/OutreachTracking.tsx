@@ -116,83 +116,82 @@ const OutreachTracking = () => {
   
   // Extended sample data for contacts to make it look more like a big database
   const expandedContacts = [
-    { id: 1, name: "Jeff Levy", email: "j.levy@example.com", company: "Apple", location: "Atlanta, GA", position: "Facilities Manager", status: "Engaged", lastContact: "2023-06-17", tags: ["Solar", "Decision Maker"], leadScore: 87, outreachHistory: [
-      { id: 1, date: "2023-06-17", type: "email", subject: "Solar Energy Proposal", status: "sent", response: "interested", notes: "Interested in learning more about the ROI" },
-      { id: 2, date: "2023-06-10", type: "email", subject: "Introduction to Solar Solutions", status: "sent", response: "positive", notes: "Requested more information" }
+    { id: 1, name: "James Schifko", email: "j.schifko@luxwall.com", company: "Luxwall", location: "Ypsilanti, MI", position: "Facilities Manager", status: "Engaged", lastContact: "2023-06-22", tags: ["Manufacturing", "Hot Lead"], leadScore: 95, outreachHistory: [
+      { id: 1, date: "2023-06-22", type: "email", subject: "Solar opportunity to amplify Luxwall's energy innovation", status: "sent", response: "interested", notes: "Very interested in the solar calculations and wants to discuss further" },
+      { id: 2, date: "2023-06-15", type: "email", subject: "Introduction to Solar Solutions", status: "sent", response: "positive", notes: "Requested detailed analysis for their Ypsilanti facility" }
     ] },
-    { id: 2, name: "Amy Huke", email: "a.huke@example.com", company: "Honeywell", location: "Kansas City, MO", position: "Facilities Manager", status: "New", lastContact: "2023-06-15", tags: ["Manufacturing", "Prospect"], leadScore: 62, outreachHistory: [
-      { id: 1, date: "2023-06-15", type: "email", subject: "Energy Efficiency Solutions", status: "sent", response: "none", notes: "" }
+    { id: 2, name: "Sean Bonner", email: "s.bonner@vitesco-technologies.com", company: "Vitesco Technologies", location: "Detroit, MI", position: "Facilities Manager", status: "Evaluating", lastContact: "2023-06-20", tags: ["Automotive", "Manufacturing"], leadScore: 78, outreachHistory: [
+      { id: 1, date: "2023-06-20", type: "email", subject: "Solar Energy Proposal for Manufacturing Facility", status: "sent", response: "neutral", notes: "Reviewing the 2.2MW system proposal with leadership team" }
     ] },
-    { id: 3, name: "Ryan Kuddes", email: "r.kuddes@example.com", company: "Apple", location: "Denver, CO", position: "Facilities Manager", status: "Engaged", lastContact: "2023-06-22", tags: ["Solar", "Prospect"], leadScore: 73, outreachHistory: [
-      { id: 1, date: "2023-06-22", type: "email", subject: "Solar Panel Implementation", status: "sent", response: "positive", notes: "Scheduled a follow-up call" },
-      { id: 2, date: "2023-06-15", type: "call", subject: "Initial Introduction", status: "completed", response: "interested", notes: "Showed interest in our solutions" }
+    { id: 3, name: "Aaron Miller", email: "a.miller@detroitwayne.org", company: "Detroit Wayne Integrated", location: "Detroit, MI", position: "Facilities Manager", status: "New", lastContact: "2023-06-15", tags: ["Healthcare", "Prospect"], leadScore: 65, outreachHistory: [
+      { id: 1, date: "2023-06-15", type: "email", subject: "Healthcare Facility Solar Solutions", status: "sent", response: "none", notes: "" }
     ] },
-    { id: 4, name: "Zuretti Carter", email: "z.carter@example.com", company: "ChargePoint", location: "San Francisco, CA", position: "Facilities Manager", status: "Not Interested", lastContact: "2023-06-15", tags: ["EV", "NeedNurturing"], leadScore: 45, outreachHistory: [
-      { id: 1, date: "2023-06-15", type: "email", subject: "Solar Energy Benefits", status: "sent", response: "not_interested", notes: "Not looking to invest at this time" }
+    { id: 4, name: "Amy Brady", email: "a.brady@magna.com", company: "MAGNA SEATING OF AMERICA", location: "Detroit, MI", position: "Facilities Manager", status: "Engaged", lastContact: "2023-06-19", tags: ["Automotive", "Manufacturing"], leadScore: 84, outreachHistory: [
+      { id: 1, date: "2023-06-19", type: "email", subject: "1.65MW Solar System for Manufacturing Plant", status: "sent", response: "interested", notes: "Interested in the $252K annual savings projection" },
+      { id: 2, date: "2023-06-12", type: "call", subject: "Initial Introduction", status: "completed", response: "positive", notes: "Scheduled follow-up to discuss installation timeline" }
     ] },
-    { id: 5, name: "Scott Simpson", email: "s.simpson@example.com", company: "Plexus Corp.", location: "Neenah, WI", position: "Facilities Manager", status: "Evaluating", lastContact: "2023-06-20", tags: ["Manufacturing", "Evaluating"], leadScore: 58, outreachHistory: [
-      { id: 1, date: "2023-06-20", type: "email", subject: "Solar ROI Analysis", status: "sent", response: "neutral", notes: "Reviewing the proposal" },
-      { id: 2, date: "2023-06-12", type: "email", subject: "Introduction to Solar Solutions", status: "sent", response: "positive", notes: "Requested a detailed analysis" }
+    { id: 5, name: "Peter Jonna", email: "p.jonna@jonnacompanies.com", company: "Jonna Companies", location: "Detroit, MI", position: "Facilities Manager", status: "Engaged", lastContact: "2023-06-18", tags: ["Real Estate", "Office"], leadScore: 81, outreachHistory: [
+      { id: 1, date: "2023-06-18", type: "email", subject: "Office Building Solar Installation", status: "sent", response: "interested", notes: "Likes the 52.3% energy coverage for their office building" }
     ] },
-    { id: 6, name: "Jennifer Morris", email: "j.morris@example.com", company: "Microsoft", location: "Redmond, WA", position: "Energy Director", status: "Engaged", lastContact: "2023-06-18", tags: ["Tech", "Decision Maker"], leadScore: 92, outreachHistory: [
+    { id: 6, name: "Dale Merritt", email: "d.merritt@hfhs.org", company: "Henry Ford Health", location: "Detroit, MI", position: "Facilities Manager", status: "Engaged", lastContact: "2023-06-21", tags: ["Healthcare", "Hot Lead"], leadScore: 92, outreachHistory: [
+      { id: 1, date: "2023-06-21", type: "call", subject: "Hospital Complex Solar Implementation", status: "completed", response: "positive", notes: "Very interested in the 4.85MW system and $832K annual savings" }
+    ] },
+    { id: 7, name: "Alex Brown", email: "a.brown@berkleymich.org", company: "City of Berkley, Michigan", location: "Detroit, MI", position: "Facilities Manager", status: "Evaluating", lastContact: "2023-06-17", tags: ["Municipal", "Government"], leadScore: 72, outreachHistory: [
+      { id: 1, date: "2023-06-17", type: "email", subject: "Municipal Building Solar Solutions", status: "sent", response: "neutral", notes: "Need approval from city council for the $441K investment" }
+    ] },
+    { id: 8, name: "Justin Hiller", email: "j.hiller@princetonmgmt.com", company: "Princeton Management", location: "Detroit, MI", position: "Facilities Manager", status: "Engaged", lastContact: "2023-06-20", tags: ["Real Estate", "Office Complex"], leadScore: 79, outreachHistory: [
+      { id: 1, date: "2023-06-20", type: "email", subject: "Office Complex Solar Installation", status: "sent", response: "interested", notes: "Interested in 47% energy coverage and $146K annual savings" }
+    ] },
+    { id: 9, name: "Clinton Elliott", email: "c.elliott@stellantis.com", company: "Stellantis", location: "Detroit, MI", position: "Facilities Manager", status: "Evaluating", lastContact: "2023-06-19", tags: ["Automotive", "Manufacturing"], leadScore: 87, outreachHistory: [
+      { id: 1, date: "2023-06-19", type: "call", subject: "Large Scale Manufacturing Solar", status: "completed", response: "neutral", notes: "Reviewing 3.95MW system proposal with corporate sustainability team" }
+    ] },
+    { id: 10, name: "Mark Vanderbrook", email: "m.vanderbrook@stellantis.com", company: "Stellantis", location: "Detroit, MI", position: "Facilities Manager", status: "Engaged", lastContact: "2023-06-18", tags: ["Automotive", "Manufacturing"], leadScore: 85, outreachHistory: [
+      { id: 1, date: "2023-06-18", type: "email", subject: "3.5MW Solar System Proposal", status: "sent", response: "interested", notes: "Wants to coordinate with Clinton Elliott on corporate solar strategy" }
+    ] },
+    { id: 11, name: "Cory Heck", email: "c.heck@aaa.com", company: "AAA Life Insurance Company", location: "Detroit, MI", position: "Facilities Manager", status: "Evaluating", lastContact: "2023-06-16", tags: ["Insurance", "Office"], leadScore: 76, outreachHistory: [
+      { id: 1, date: "2023-06-16", type: "email", subject: "Insurance Office Solar Solutions", status: "sent", response: "neutral", notes: "Comparing our proposal with two other vendors" }
+    ] },
+    { id: 12, name: "Benjamin Bourneau", email: "b.bourneau@glorious.com", company: "Glorious Cannabis Company", location: "Detroit, MI", position: "Facilities Manager", status: "New", lastContact: "2023-06-14", tags: ["Manufacturing", "Cannabis"], leadScore: 68, outreachHistory: [
+      { id: 1, date: "2023-06-14", type: "email", subject: "Cannabis Facility Solar Installation", status: "sent", response: "none", notes: "" }
+    ] },
+    { id: 13, name: "Melissa Maynard", email: "m.maynard@cushwake.com", company: "Cushman & Wakefield", location: "Detroit, MI", position: "Facilities Manager", status: "Engaged", lastContact: "2023-06-21", tags: ["Real Estate", "Property Management"], leadScore: 83, outreachHistory: [
+      { id: 1, date: "2023-06-21", type: "email", subject: "Commercial Property Solar Solutions", status: "sent", response: "positive", notes: "Managing multiple properties, interested in bulk solar installation" }
+    ] },
+    { id: 14, name: "Brian Henderson", email: "b.henderson@cranbrook.edu", company: "Cranbrook Educational Community", location: "Detroit, MI", position: "Facilities Manager", status: "Engaged", lastContact: "2023-06-20", tags: ["Education", "Campus"], leadScore: 88, outreachHistory: [
+      { id: 1, date: "2023-06-20", type: "call", subject: "Educational Campus Solar Implementation", status: "completed", response: "positive", notes: "Excited about 54% energy coverage and educational opportunities" }
+    ] },
+    { id: 15, name: "Ted Skaakos", email: "t.skaakos@dearborn.org", company: "City of Dearborn", location: "Detroit, MI", position: "Facilities Manager", status: "Evaluating", lastContact: "2023-06-17", tags: ["Municipal", "Government"], leadScore: 74, outreachHistory: [
+      { id: 1, date: "2023-06-17", type: "email", subject: "Municipal Complex Solar Proposal", status: "sent", response: "neutral", notes: "Working through municipal procurement process" }
+    ] },
+    { id: 16, name: "Dolores Jenkins", email: "d.jenkins@spplus.com", company: "SP+ (SP Plus)", location: "Detroit, MI", position: "Facilities Manager", status: "New", lastContact: "2023-06-15", tags: ["Parking", "Services"], leadScore: 62, outreachHistory: [
+      { id: 1, date: "2023-06-15", type: "email", subject: "Parking Facility Solar Solutions", status: "sent", response: "none", notes: "" }
+    ] },
+    { id: 17, name: "Laura Payne", email: "l.payne@jll.com", company: "JLL", location: "Detroit, MI", position: "Facilities Manager", status: "Engaged", lastContact: "2023-06-19", tags: ["Real Estate", "Property Management"], leadScore: 86, outreachHistory: [
+      { id: 1, date: "2023-06-19", type: "email", subject: "Multi-Property Solar Implementation", status: "sent", response: "interested", notes: "Managing portfolio of properties, wants comprehensive solar strategy" }
+    ] },
+    { id: 18, name: "Keith Amley", email: "k.amley@iacgroup.com", company: "IAC Group", location: "Detroit, MI", position: "Facilities Manager", status: "Evaluating", lastContact: "2023-06-18", tags: ["Automotive", "Manufacturing"], leadScore: 77, outreachHistory: [
+      { id: 1, date: "2023-06-18", type: "email", subject: "Automotive Manufacturing Solar", status: "sent", response: "neutral", notes: "Reviewing 1.85MW system proposal with engineering team" }
+    ] },
+    { id: 19, name: "Yolanda Walton", email: "y.walton@gm.com", company: "General Motors", location: "Detroit, MI", position: "Facilities Manager", status: "Engaged", lastContact: "2023-06-22", tags: ["Automotive", "Manufacturing", "Hot Lead"], leadScore: 94, outreachHistory: [
+      { id: 1, date: "2023-06-22", type: "call", subject: "GM Manufacturing Solar Initiative", status: "completed", response: "positive", notes: "Corporate sustainability team very interested in 4.65MW installation" }
+    ] },
+    { id: 20, name: "Tammi Wiese", email: "t.wiese@davita.com", company: "DaVita Kidney Care", location: "Detroit, MI", position: "Facilities Manager", status: "Engaged", lastContact: "2023-06-20", tags: ["Healthcare", "Dialysis"], leadScore: 82, outreachHistory: [
+      { id: 1, date: "2023-06-20", type: "email", subject: "Healthcare Facility Solar Solutions", status: "sent", response: "interested", notes: "Interested in 43.6% energy coverage and environmental benefits" }
+    ] },
+    { id: 21, name: "Nicholas McDuff", email: "n.mcduff@jll.com", company: "JLL", location: "Detroit, MI", position: "Facilities Manager", status: "New", lastContact: "2023-06-15", tags: ["Real Estate", "Office"], leadScore: 69, outreachHistory: [
+      { id: 1, date: "2023-06-15", type: "email", subject: "Office Complex Solar Installation", status: "sent", response: "none", notes: "" }
+    ] },
+    { id: 22, name: "Jennifer Morris", email: "j.morris@microsoft.com", company: "Microsoft", location: "Redmond, WA", position: "Energy Director", status: "Engaged", lastContact: "2023-06-18", tags: ["Tech", "Decision Maker"], leadScore: 92, outreachHistory: [
       { id: 1, date: "2023-06-18", type: "email", subject: "Customized Solar Proposal", status: "sent", response: "interested", notes: "Very interested in moving forward" }
     ] },
-    { id: 7, name: "David Chen", email: "d.chen@example.com", company: "Tesla", location: "Fremont, CA", position: "Sustainability Lead", status: "Engaged", lastContact: "2023-06-19", tags: ["EV", "Solar", "Hot Lead"], leadScore: 95, outreachHistory: [
+    { id: 23, name: "David Chen", email: "d.chen@tesla.com", company: "Tesla", location: "Fremont, CA", position: "Sustainability Lead", status: "Engaged", lastContact: "2023-06-19", tags: ["EV", "Solar", "Hot Lead"], leadScore: 95, outreachHistory: [
       { id: 1, date: "2023-06-19", type: "call", subject: "Solar Implementation Discussion", status: "completed", response: "positive", notes: "Ready to proceed with installation" }
     ] },
-    { id: 8, name: "Sarah Johnson", email: "s.johnson@example.com", company: "General Electric", location: "Boston, MA", position: "Operations Manager", status: "New", lastContact: "2023-06-14", tags: ["Manufacturing", "Prospect"], leadScore: 67, outreachHistory: [
+    { id: 24, name: "Sarah Johnson", email: "s.johnson@ge.com", company: "General Electric", location: "Boston, MA", position: "Operations Manager", status: "New", lastContact: "2023-06-14", tags: ["Manufacturing", "Prospect"], leadScore: 67, outreachHistory: [
       { id: 1, date: "2023-06-14", type: "email", subject: "Introduction to Solar Solutions", status: "sent", response: "none", notes: "" }
     ] },
-    { id: 9, name: "Michael Rodriguez", email: "m.rodriguez@example.com", company: "Ford", location: "Dearborn, MI", position: "Facilities Director", status: "Engaged", lastContact: "2023-06-16", tags: ["Manufacturing", "Evaluating"], leadScore: 78, outreachHistory: [
+    { id: 25, name: "Michael Rodriguez", email: "m.rodriguez@ford.com", company: "Ford", location: "Dearborn, MI", position: "Facilities Director", status: "Engaged", lastContact: "2023-06-16", tags: ["Manufacturing", "Evaluating"], leadScore: 78, outreachHistory: [
       { id: 1, date: "2023-06-16", type: "email", subject: "Solar Energy Savings", status: "sent", response: "interested", notes: "Requested follow-up call" }
-    ] },
-    { id: 10, name: "Lisa Thompson", email: "l.thompson@example.com", company: "Amazon", location: "Seattle, WA", position: "Sustainability Manager", status: "Evaluating", lastContact: "2023-06-21", tags: ["Tech", "Prospect"], leadScore: 82, outreachHistory: [
-      { id: 1, date: "2023-06-21", type: "call", subject: "ROI Discussion", status: "completed", response: "neutral", notes: "Still comparing options" }
-    ] },
-    { id: 11, name: "Robert Williams", email: "r.williams@example.com", company: "IBM", location: "Armonk, NY", position: "Facilities Manager", status: "New", lastContact: "2023-06-15", tags: ["Tech", "NeedNurturing"], leadScore: 55, outreachHistory: [
-      { id: 1, date: "2023-06-15", type: "email", subject: "Introduction to Solar Solutions", status: "sent", response: "none", notes: "" }
-    ] },
-    { id: 12, name: "Emily Davis", email: "e.davis@example.com", company: "Google", location: "Mountain View, CA", position: "Energy Procurement", status: "Engaged", lastContact: "2023-06-20", tags: ["Tech", "Hot Lead"], leadScore: 88, outreachHistory: [
-      { id: 1, date: "2023-06-20", type: "email", subject: "Solar Panel Installation", status: "sent", response: "positive", notes: "Ready to proceed" }
-    ] },
-    { id: 13, name: "James Wilson", email: "j.wilson@example.com", company: "Walmart", location: "Bentonville, AR", position: "Sustainability Director", status: "Evaluating", lastContact: "2023-06-17", tags: ["Retail", "Decision Maker"], leadScore: 76, outreachHistory: [
-      { id: 1, date: "2023-06-17", type: "email", subject: "Solar Energy Proposal", status: "sent", response: "neutral", notes: "Reviewing with team" }
-    ] },
-    { id: 14, name: "Ashley Martinez", email: "a.martinez@example.com", company: "Target", location: "Minneapolis, MN", position: "Operations Manager", status: "New", lastContact: "2023-06-14", tags: ["Retail", "Prospect"], leadScore: 63, outreachHistory: [
-      { id: 1, date: "2023-06-14", type: "email", subject: "Introduction to Solar Solutions", status: "sent", response: "none", notes: "" }
-    ] },
-    { id: 15, name: "Kevin Lee", email: "k.lee@example.com", company: "Samsung", location: "San Jose, CA", position: "Facilities Manager", status: "Engaged", lastContact: "2023-06-19", tags: ["Tech", "Manufacturing", "Evaluating"], leadScore: 81, outreachHistory: [
-      { id: 1, date: "2023-06-19", type: "call", subject: "Solar Implementation Discussion", status: "completed", response: "interested", notes: "Very enthusiastic about potential" }
-    ] },
-    { id: 16, name: "Rachel Brown", email: "r.brown@example.com", company: "CVS Health", location: "Woonsocket, RI", position: "Energy Manager", status: "New", lastContact: "2023-06-15", tags: ["Healthcare", "Prospect"], leadScore: 60, outreachHistory: [
-      { id: 1, date: "2023-06-15", type: "email", subject: "Introduction to Solar Solutions", status: "sent", response: "none", notes: "" }
-    ] },
-    { id: 17, name: "Daniel Miller", email: "d.miller@example.com", company: "Intel", location: "Santa Clara, CA", position: "Facilities Director", status: "Engaged", lastContact: "2023-06-18", tags: ["Tech", "Manufacturing", "Hot Lead"], leadScore: 89, outreachHistory: [
-      { id: 1, date: "2023-06-18", type: "email", subject: "Solar Panel Installation", status: "sent", response: "positive", notes: "Ready to schedule installation" }
-    ] },
-    { id: 18, name: "Olivia Garcia", email: "o.garcia@example.com", company: "PepsiCo", location: "Purchase, NY", position: "Sustainability Lead", status: "Evaluating", lastContact: "2023-06-20", tags: ["Food & Beverage", "Decision Maker"], leadScore: 74, outreachHistory: [
-      { id: 1, date: "2023-06-20", type: "email", subject: "Solar Energy Proposal", status: "sent", response: "neutral", notes: "Comparing with other vendors" }
-    ] },
-    { id: 19, name: "Steven Wright", email: "s.wright@example.com", company: "Coca-Cola", location: "Atlanta, GA", position: "Operations Manager", status: "Engaged", lastContact: "2023-06-16", tags: ["Food & Beverage", "Evaluating"], leadScore: 79, outreachHistory: [
-      { id: 1, date: "2023-06-16", type: "call", subject: "Solar ROI Discussion", status: "completed", response: "interested", notes: "Excited about the ROI numbers" }
-    ] },
-    { id: 20, name: "Isabella Lopez", email: "i.lopez@example.com", company: "Johnson & Johnson", location: "New Brunswick, NJ", position: "Facilities Manager", status: "New", lastContact: "2023-06-15", tags: ["Healthcare", "Prospect"], leadScore: 65, outreachHistory: [
-      { id: 1, date: "2023-06-15", type: "email", subject: "Introduction to Solar Solutions", status: "sent", response: "none", notes: "" }
-    ] },
-    { id: 21, name: "Andrew Taylor", email: "a.taylor@example.com", company: "Nike", location: "Beaverton, OR", position: "Sustainability Director", status: "Engaged", lastContact: "2023-06-19", tags: ["Retail", "Hot Lead"], leadScore: 86, outreachHistory: [
-      { id: 1, date: "2023-06-19", type: "email", subject: "Solar Panel Implementation", status: "sent", response: "positive", notes: "Ready to move forward" }
-    ] },
-    { id: 22, name: "Natalie Adams", email: "n.adams@example.com", company: "Pfizer", location: "New York, NY", position: "Energy Manager", status: "Evaluating", lastContact: "2023-06-17", tags: ["Healthcare", "Decision Maker"], leadScore: 77, outreachHistory: [
-      { id: 1, date: "2023-06-17", type: "email", subject: "Solar Energy Proposal", status: "sent", response: "neutral", notes: "Still in review process" }
-    ] },
-    { id: 23, name: "Eric Perez", email: "e.perez@example.com", company: "FedEx", location: "Memphis, TN", position: "Facilities Manager", status: "New", lastContact: "2023-06-14", tags: ["Logistics", "Prospect"], leadScore: 61, outreachHistory: [
-      { id: 1, date: "2023-06-14", type: "email", subject: "Introduction to Solar Solutions", status: "sent", response: "none", notes: "" }
-    ] },
-    { id: 24, name: "Sophia Scott", email: "s.scott@example.com", company: "UPS", location: "Atlanta, GA", position: "Operations Director", status: "Engaged", lastContact: "2023-06-20", tags: ["Logistics", "Evaluating"], leadScore: 83, outreachHistory: [
-      { id: 1, date: "2023-06-20", type: "call", subject: "Solar Implementation", status: "completed", response: "interested", notes: "Scheduled follow-up meeting" }
-    ] },
-    { id: 25, name: "Christopher Allen", email: "c.allen@example.com", company: "Cisco", location: "San Jose, CA", position: "Facilities Manager", status: "Evaluating", lastContact: "2023-06-18", tags: ["Tech", "Decision Maker"], leadScore: 75, outreachHistory: [
-      { id: 1, date: "2023-06-18", type: "email", subject: "Solar Energy Proposal", status: "sent", response: "neutral", notes: "Reviewing proposal details" }
     ] }
   ];
 
@@ -666,27 +665,39 @@ const OutreachTracking = () => {
   const masterInboxData = [
     {
       id: 1,
-      from: "Jeff Levy",
-      email: "j.levy@example.com",
-      company: "Apple",
-      subject: "Re: Solar Energy Proposal",
-      message: "Thank you for the detailed proposal. We're very interested in exploring this further. Could you provide more information about the installation timeline?",
+      from: "James Schifko",
+      email: "j.schifko@luxwall.com",
+      company: "Luxwall",
+      subject: "Re: Solar opportunity to amplify Luxwall's energy innovation",
+      message: "This is exactly what we've been looking for! The numbers are compelling and align perfectly with our energy innovation goals. Can we schedule a call to discuss the installation timeline and financing options?",
       receivedAt: "2024-03-15T10:30:00",
       status: "unread",
-      aiSuggestion: "I recommend responding with a detailed timeline breakdown and offering to schedule a site visit. This shows proactive engagement and addresses their specific concern.",
-      aiResponse: "Hi Jeff,\n\nThank you for your interest! I'd be happy to walk you through our typical installation timeline:\n\n1. Site Assessment: 1-2 weeks\n2. Design & Permitting: 2-3 weeks\n3. Installation: 4-6 weeks\n4. Inspection & Activation: 1-2 weeks\n\nWould you like to schedule a site visit to discuss this in more detail?\n\nBest regards,\n[Your Name]"
+      aiSuggestion: "This is a highly qualified lead! James is expressing strong interest and asking for next steps. I recommend responding quickly with available time slots and mentioning financing options to maintain momentum.",
+      aiResponse: "Hi James,\n\nFantastic! I'm thrilled that the solar analysis aligns with LuxWall's vision. I have availability this Thursday or Friday for a call to discuss:\n\n• Installation timeline (typically 8-12 weeks)\n• Financing options including $0-down programs\n• Integration with your existing energy systems\n\nWhich day works better for you?\n\nBest regards,\n[Your Name]"
     },
     {
       id: 2,
-      from: "Amy Huke",
-      email: "a.huke@example.com",
-      company: "Honeywell",
-      subject: "Re: Independent Research",
-      message: "The energy savings projections look promising. What's your experience with similar facilities in our industry?",
+      from: "Dale Merritt",
+      email: "d.merritt@hfhs.org",
+      company: "Henry Ford Health",
+      subject: "Re: Hospital Complex Solar Implementation",
+      message: "The 4.85MW system and $832K annual savings projections are impressive. We're particularly interested in the environmental impact. Can you provide more details about the carbon offset and any healthcare-specific incentives?",
       receivedAt: "2024-03-15T09:15:00",
       status: "read",
-      aiSuggestion: "Share specific case studies from similar facilities in their industry to build credibility and address their concern about industry-specific experience.",
-      aiResponse: "Hi Amy,\n\nWe've successfully implemented solar solutions for several manufacturing facilities in your industry. For example, we recently completed a 2.5MW installation for a similar facility that's projected to save them $450,000 annually.\n\nWould you be interested in speaking with their facilities manager about their experience?\n\nBest regards,\n[Your Name]"
+      aiSuggestion: "Healthcare facilities often have specific sustainability goals and may qualify for additional incentives. Focus on environmental benefits and mention any healthcare industry programs.",
+      aiResponse: "Hi Dale,\n\nThe environmental impact is substantial:\n\n• 4,477 tons CO2 offset annually (equivalent to removing 972 cars from roads)\n• Healthcare facilities often qualify for accelerated depreciation\n• Many health systems use solar installations for community education\n\nI'd love to share case studies from other healthcare facilities. Are you available for a site visit next week?\n\nBest regards,\n[Your Name]"
+    },
+    {
+      id: 3,
+      from: "Yolanda Walton",
+      email: "y.walton@gm.com",
+      company: "General Motors",
+      subject: "Re: GM Manufacturing Solar Initiative",
+      message: "Our corporate sustainability team reviewed the proposal for the 4.65MW installation. We're moving forward with the feasibility study. What's the next step in your process?",
+      receivedAt: "2024-03-15T08:45:00",
+      status: "unread",
+      aiSuggestion: "GM is a major opportunity and they're ready to move to the next phase. Provide a clear process overview and timeline to maintain professional momentum.",
+      aiResponse: "Hi Yolanda,\n\nExcellent news! Here's our next steps process:\n\n1. Site assessment and engineering review (2 weeks)\n2. Detailed system design and permitting (3-4 weeks)\n3. Final proposal with financing options\n4. Installation scheduling\n\nI'll coordinate with your sustainability team to schedule the site assessment. Are there any specific dates that work best?\n\nBest regards,\n[Your Name]"
     }
   ];
 

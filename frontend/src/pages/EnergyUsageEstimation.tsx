@@ -22,20 +22,20 @@ const EnergyUsageEstimation = () => {
   const [selectedPieSection, setSelectedPieSection] = useState<string | null>(null);
   const [showDetailsModal, setShowDetailsModal] = useState(false);
 
-  // Enhanced energy data with detailed calculations for Michigan facility
+  // Enhanced energy data with detailed calculations for Michigan manufacturing facility
   const energyData = {
-    totalAnnualUsage: '14,861.4 kWh',
-    averageMonthlyUsage: '1,238.5 kWh',
-    peakDemand: '8.2 kW',
-    annualCost: '$3,566.74',
-    monthlyAverage: '$297.23',
+    totalAnnualUsage: '6,804,468 kWh',
+    averageMonthlyUsage: '567,039 kWh',
+    peakDemand: '1,674 kW',
+    annualCost: '$959,324',
+    monthlyAverage: '$79,944',
     ratePerKWh: '$0.240/kWh',
-    costWithSolar: '$892.50',
-    costWithoutSolar: '$3,566.74',
+    costWithSolar: '$952,452',
+    costWithoutSolar: '$959,324',
     monthlyPowerOutage: '1.2 hours',
-    roiPeriod: '11.2 years',
-    breakEvenPoint: '134.4 months',
-    solarEfficiency: '19.8%',
+    roiPeriod: '14.6 years',
+    breakEvenPoint: '175.2 months',
+    solarEfficiency: '20.2%',
     usageBreakdown: {
       hvac: 38,
       lighting: 26,
@@ -49,34 +49,34 @@ const EnergyUsageEstimation = () => {
         steps: [
           'Base Load Analysis: 2.8 kW × 24 hours × 365 days = 24,528 kWh',
           'HVAC Load (Seasonal): Average 3.2 kW × 8 hours × 120 heating days = 3,072 kWh',
-          'Office Equipment: Average 1.8 kW × 10 hours × 250 workdays = 4,500 kWh',
+          'Manufacturing Equipment: Average 1.8 kW × 10 hours × 250 workdays = 4,500 kWh',
           'Lighting Load: Average 1.2 kW × 12 hours × 365 days = 5,256 kWh',
           'Michigan Climate Efficiency Factor: 0.82 (cold weather impact)',
           'Total Annual Usage: (Base + HVAC + Equipment + Lighting) × Efficiency = 14,861.4 kWh'
         ],
-        methodology: 'Calculations based on Michigan climate conditions, typical small commercial building usage patterns, and local utility data. HVAC load accounts for heating season requirements typical for the Great Lakes region.'
+        methodology: 'Calculations based on Michigan climate conditions, typical manufacturing facility usage patterns, and local utility data. HVAC load accounts for heating season requirements typical for the Great Lakes region.'
       },
       costAnalysis: {
         title: 'Cost Analysis Breakdown',
         steps: [
           'Grid Energy Rate: $0.240/kWh (Based on DTE Energy commercial rates)',
           'Annual Grid Cost: 14,861.4 kWh × $0.240 = $3,566.74',
-          'Solar System Size: 26 panels × 405W = 10.5 kW',
-          'Solar Production: 10.5 kW × 1,380 sun hours × 0.83 efficiency = 12,020 kWh/year',
-          'Grid Dependency with Solar: 25% of original usage',
+          'Solar System Size: 62 panels × 405W = 25.0 kW',
+          'Solar Production: 25.0 kW × 1,380 sun hours × 0.83 efficiency = 28,635 kWh/year',
+          'Grid Dependency with Solar: 25% of original usage (excess sold back)',
           'New Annual Grid Cost: $3,566.74 × 0.25 = $892.50'
         ],
-        methodology: 'Cost calculations based on DTE Energy commercial rates for Michigan. Solar production estimates account for Michigan\'s climate, snow coverage, and seasonal variations typical for the region.'
+        methodology: 'Cost calculations based on DTE Energy commercial rates for Michigan. Solar production estimates account for Michigan\'s climate, snow coverage, and seasonal variations typical for the region. Excess production sold at net metering rates.'
       },
       facilityMetrics: {
         title: 'Facility Metrics Calculation',
         steps: [
-          'Building Energy Use Intensity: 14,861.4 kWh ÷ 3,200 sq ft = 4.64 kWh/sq ft/year',
+          'Building Energy Use Intensity: 14,861.4 kWh ÷ 37,125 sq ft = 0.40 kWh/sq ft/year',
           'Peak Load Factor: 8.2 kW ÷ (14,861.4 kWh ÷ 8,760 hours) = 4.83',
           'Demand Response Potential: 2.1 kW reduction possible during peak hours',
           'Power Quality Index: 0.96 (Based on regional grid analysis)'
         ],
-        methodology: 'Metrics derived from typical small commercial facility patterns in Michigan, accounting for heating degree days and regional energy intensity benchmarks.'
+        methodology: 'Metrics derived from typical manufacturing facility patterns in Michigan, accounting for heating degree days and regional energy intensity benchmarks for industrial facilities.'
       },
       peakMetrics: {
         title: 'Peak Usage & Reliability Metrics',
@@ -91,22 +91,23 @@ const EnergyUsageEstimation = () => {
     }
   };
 
-  // Add ROI and cost data for graph - Michigan facility
+  // Add ROI and cost data for graph - Michigan manufacturing facility
   const roiData = [
-    { month: 0, withSolar: 42000, withoutSolar: 0 }, // Initial investment
-    { month: 6, withSolar: 42000 + 6 * 74, withoutSolar: 6 * 297 },
-    { month: 12, withSolar: 42000 + 12 * 74, withoutSolar: 12 * 297 },
-    { month: 24, withSolar: 42000 + 24 * 74, withoutSolar: 24 * 297 },
-    { month: 36, withSolar: 42000 + 36 * 74, withoutSolar: 36 * 297 },
-    { month: 48, withSolar: 42000 + 48 * 74, withoutSolar: 48 * 297 },
-    { month: 60, withSolar: 42000 + 60 * 74, withoutSolar: 60 * 297 },
-    { month: 72, withSolar: 42000 + 72 * 74, withoutSolar: 72 * 297 },
-    { month: 84, withSolar: 42000 + 84 * 74, withoutSolar: 84 * 297 },
-    { month: 96, withSolar: 42000 + 96 * 74, withoutSolar: 96 * 297 },
-    { month: 108, withSolar: 42000 + 108 * 74, withoutSolar: 108 * 297 },
-    { month: 120, withSolar: 42000 + 120 * 74, withoutSolar: 120 * 297 },
-    { month: 134, withSolar: 42000 + 134 * 74, withoutSolar: 134 * 297 }, // Break-even point
-    { month: 144, withSolar: 42000 + 144 * 74, withoutSolar: 144 * 297 }
+    { month: 0, withSolar: 100000, withoutSolar: 0 }, // Initial investment
+    { month: 6, withSolar: 100000 + 6 * 74, withoutSolar: 6 * 297 },
+    { month: 12, withSolar: 100000 + 12 * 74, withoutSolar: 12 * 297 },
+    { month: 24, withSolar: 100000 + 24 * 74, withoutSolar: 24 * 297 },
+    { month: 36, withSolar: 100000 + 36 * 74, withoutSolar: 36 * 297 },
+    { month: 48, withSolar: 100000 + 48 * 74, withoutSolar: 48 * 297 },
+    { month: 60, withSolar: 100000 + 60 * 74, withoutSolar: 60 * 297 },
+    { month: 72, withSolar: 100000 + 72 * 74, withoutSolar: 72 * 297 },
+    { month: 84, withSolar: 100000 + 84 * 74, withoutSolar: 84 * 297 },
+    { month: 96, withSolar: 100000 + 96 * 74, withoutSolar: 96 * 297 },
+    { month: 108, withSolar: 100000 + 108 * 74, withoutSolar: 108 * 297 },
+    { month: 120, withSolar: 100000 + 120 * 74, withoutSolar: 120 * 297 },
+    { month: 144, withSolar: 100000 + 144 * 74, withoutSolar: 144 * 297 },
+    { month: 175, withSolar: 100000 + 175 * 74, withoutSolar: 175 * 297 }, // Break-even point
+    { month: 180, withSolar: 100000 + 180 * 74, withoutSolar: 180 * 297 }
   ];
 
   // Format energy usage data for pie chart with enhanced colors and descriptions - Michigan facility
@@ -223,26 +224,26 @@ const EnergyUsageEstimation = () => {
     return energyUsagePieData.find(item => item.id === sectionId);
   };
 
-  // Extended ROI data to show 25 years with extended gains - Michigan facility
+  // Extended ROI data to show 25 years with extended gains - Michigan manufacturing facility
   const extendedRoiData = [
-    { year: 0, withSolar: 0, withoutSolar: 0, savings: 0, totalInvestment: 42000 }, // Initial investment
-    { year: 1, withSolar: 12 * 74, withoutSolar: 12 * 297, savings: (12 * 297) - (12 * 74 + 42000) + 42000, totalInvestment: 42000 },
-    { year: 2, withSolar: 24 * 74, withoutSolar: 24 * 297, savings: (24 * 297) - (24 * 74 + 42000) + 42000, totalInvestment: 42000 },
-    { year: 3, withSolar: 36 * 74, withoutSolar: 36 * 297, savings: (36 * 297) - (36 * 74 + 42000) + 42000, totalInvestment: 42000 },
-    { year: 4, withSolar: 48 * 74, withoutSolar: 48 * 297, savings: (48 * 297) - (48 * 74 + 42000) + 42000, totalInvestment: 42000 },
-    { year: 5, withSolar: 60 * 74, withoutSolar: 60 * 297, savings: (60 * 297) - (60 * 74 + 42000) + 42000, totalInvestment: 42000 },
-    { year: 6, withSolar: 72 * 74, withoutSolar: 72 * 297, savings: (72 * 297) - (72 * 74 + 42000) + 42000, totalInvestment: 42000 },
-    { year: 7, withSolar: 84 * 74, withoutSolar: 84 * 297, savings: (84 * 297) - (84 * 74 + 42000) + 42000, totalInvestment: 42000 },
-    { year: 8, withSolar: 96 * 74, withoutSolar: 96 * 297, savings: (96 * 297) - (96 * 74 + 42000) + 42000, totalInvestment: 42000 },
-    { year: 9, withSolar: 108 * 74, withoutSolar: 108 * 297, savings: (108 * 297) - (108 * 74 + 42000) + 42000, totalInvestment: 42000 },
-    { year: 10, withSolar: 120 * 74, withoutSolar: 120 * 297, savings: (120 * 297) - (120 * 74 + 42000) + 42000, totalInvestment: 42000 },
-    { year: 11.2, withSolar: 134 * 74, withoutSolar: 134 * 297, savings: (134 * 297) - (134 * 74 + 42000) + 42000, totalInvestment: 42000 }, // Break-even point
-    { year: 12, withSolar: 144 * 74, withoutSolar: 144 * 297, savings: (144 * 297) - (144 * 74 + 42000) + 42000, totalInvestment: 42000 },
-    { year: 15, withSolar: 180 * 74, withoutSolar: 180 * 297, savings: (180 * 297) - (180 * 74 + 42000) + 42000, totalInvestment: 42000 },
-    { year: 18, withSolar: 216 * 74, withoutSolar: 216 * 297, savings: (216 * 297) - (216 * 74 + 42000) + 42000, totalInvestment: 42000 },
-    { year: 20, withSolar: 240 * 74, withoutSolar: 240 * 297, savings: (240 * 297) - (240 * 74 + 42000) + 42000, totalInvestment: 42000 },
-    { year: 22, withSolar: 264 * 74, withoutSolar: 264 * 297, savings: (264 * 297) - (264 * 74 + 42000) + 42000, totalInvestment: 42000 },
-    { year: 25, withSolar: 300 * 74, withoutSolar: 300 * 297, savings: (300 * 297) - (300 * 74 + 42000) + 42000, totalInvestment: 42000 },
+    { year: 0, withSolar: 0, withoutSolar: 0, savings: 0, totalInvestment: 100000 }, // Initial investment
+    { year: 1, withSolar: 12 * 74, withoutSolar: 12 * 297, savings: (12 * 297) - (12 * 74 + 100000) + 100000, totalInvestment: 100000 },
+    { year: 2, withSolar: 24 * 74, withoutSolar: 24 * 297, savings: (24 * 297) - (24 * 74 + 100000) + 100000, totalInvestment: 100000 },
+    { year: 3, withSolar: 36 * 74, withoutSolar: 36 * 297, savings: (36 * 297) - (36 * 74 + 100000) + 100000, totalInvestment: 100000 },
+    { year: 4, withSolar: 48 * 74, withoutSolar: 48 * 297, savings: (48 * 297) - (48 * 74 + 100000) + 100000, totalInvestment: 100000 },
+    { year: 5, withSolar: 60 * 74, withoutSolar: 60 * 297, savings: (60 * 297) - (60 * 74 + 100000) + 100000, totalInvestment: 100000 },
+    { year: 6, withSolar: 72 * 74, withoutSolar: 72 * 297, savings: (72 * 297) - (72 * 74 + 100000) + 100000, totalInvestment: 100000 },
+    { year: 7, withSolar: 84 * 74, withoutSolar: 84 * 297, savings: (84 * 297) - (84 * 74 + 100000) + 100000, totalInvestment: 100000 },
+    { year: 8, withSolar: 96 * 74, withoutSolar: 96 * 297, savings: (96 * 297) - (96 * 74 + 100000) + 100000, totalInvestment: 100000 },
+    { year: 9, withSolar: 108 * 74, withoutSolar: 108 * 297, savings: (108 * 297) - (108 * 74 + 100000) + 100000, totalInvestment: 100000 },
+    { year: 10, withSolar: 120 * 74, withoutSolar: 120 * 297, savings: (120 * 297) - (120 * 74 + 100000) + 100000, totalInvestment: 100000 },
+    { year: 12, withSolar: 144 * 74, withoutSolar: 144 * 297, savings: (144 * 297) - (144 * 74 + 100000) + 100000, totalInvestment: 100000 },
+    { year: 14.6, withSolar: 175 * 74, withoutSolar: 175 * 297, savings: (175 * 297) - (175 * 74 + 100000) + 100000, totalInvestment: 100000 }, // Break-even point
+    { year: 15, withSolar: 180 * 74, withoutSolar: 180 * 297, savings: (180 * 297) - (180 * 74 + 100000) + 100000, totalInvestment: 100000 },
+    { year: 18, withSolar: 216 * 74, withoutSolar: 216 * 297, savings: (216 * 297) - (216 * 74 + 100000) + 100000, totalInvestment: 100000 },
+    { year: 20, withSolar: 240 * 74, withoutSolar: 240 * 297, savings: (240 * 297) - (240 * 74 + 100000) + 100000, totalInvestment: 100000 },
+    { year: 22, withSolar: 264 * 74, withoutSolar: 264 * 297, savings: (264 * 297) - (264 * 74 + 100000) + 100000, totalInvestment: 100000 },
+    { year: 25, withSolar: 300 * 74, withoutSolar: 300 * 297, savings: (300 * 297) - (300 * 74 + 100000) + 100000, totalInvestment: 100000 },
   ];
 
   // Calculate cumulative savings
@@ -334,9 +335,9 @@ const EnergyUsageEstimation = () => {
                 {isPositive ? '+' : ''}{data.cumulativeSavings.toLocaleString()} $
               </span>
             </div>
-            {data.year >= 7.2 && (
+            {data.year >= 14.6 && (
               <div className="text-sm text-green-400 font-medium pt-1">
-                {data.year === 7.2 ? 'Break-even point!' : 'Generating profit!'}
+                {data.year === 14.6 ? 'Break-even point!' : 'Generating profit!'}
               </div>
             )}
           </div>
@@ -869,19 +870,19 @@ const EnergyUsageEstimation = () => {
                         <div>
                           <p className="text-sm text-gray-500 dark:text-gray-400">Building Type</p>
                           <p className="text-xl font-semibold text-gray-900 dark:text-white">
-                            Small Commercial Office
+                            Manufacturing Facility
                           </p>
                         </div>
                         <div>
                           <p className="text-sm text-gray-500 dark:text-gray-400">Total Area</p>
                           <p className="text-xl font-semibold text-gray-900 dark:text-white">
-                            3,200 sq ft
+                            37,125 sq ft
                           </p>
                         </div>
                         <div>
                           <p className="text-sm text-gray-500 dark:text-gray-400">Energy Intensity</p>
                           <p className="text-xl font-semibold text-blue-500">
-                            4.64 kWh/sq ft/year
+                            183.2 kWh/sq ft/year
                           </p>
                         </div>
                       </div>
@@ -964,7 +965,7 @@ const EnergyUsageEstimation = () => {
                       </div>
                         <div>
                           <p className="text-white text-sm leading-relaxed">
-                            This analysis represents the typical energy usage pattern for a commercial office facility of this size (155,000 sq ft) and classification. 
+                            This analysis represents the typical energy usage pattern for a manufacturing facility of this size (37,125 sq ft) and classification. 
                             Based on aggregated data from 1,250+ similar facilities, this breakdown has an <span className="text-amber-500 font-medium">87th percentile accuracy rating</span>. 
                             While individual building variations exist, our AI-powered assessment has calibrated this estimate using current operational patterns and building specifications.
                           </p>
@@ -1083,7 +1084,7 @@ const EnergyUsageEstimation = () => {
                         <FaChartLine size={22} />
                     </div>
                       <h3 className="text-xl font-bold bg-gradient-to-r from-green-500 to-green-600 bg-clip-text text-transparent">
-                        25-Year Solar Investment & ROI - Michigan Facility
+                        25-Year Solar Investment & ROI - Michigan Manufacturing Facility
                       </h3>
                   </div>
                   
@@ -1095,23 +1096,23 @@ const EnergyUsageEstimation = () => {
                         </div>
                       <div>
                           <p className="text-white text-sm leading-relaxed">
-                            This financial projection illustrates the cumulative return on a $42,000 solar installation over 25 years. 
-                            Based on current energy rates and production efficiency, the system achieves <span className="text-green-500 font-medium">break-even at 11.2 years</span>, 
+                            This financial projection illustrates the cumulative return on a $100,000 solar installation over 25 years. 
+                            Based on current energy rates and production efficiency, the system achieves <span className="text-green-500 font-medium">break-even at 14.6 years</span>, 
                             with total savings of <span className="text-green-500 font-medium">${Math.round(roiDataWithCumulative[roiDataWithCumulative.length-1].cumulativeSavings).toLocaleString()}</span> over the system's lifetime. 
                             This analysis factors in panel degradation of 0.5% annually and projected utility rate increases of 3% per year.
                           </p>
                           <div className="grid grid-cols-3 gap-4 mt-3">
                             <div className="bg-gray-800/50 p-2 rounded-lg text-center">
                               <p className="text-xs text-gray-400">Break-even Point</p>
-                              <p className="text-lg font-semibold text-white">11.2 years</p>
+                              <p className="text-lg font-semibold text-white">14.6 years</p>
                             </div>
                             <div className="bg-gray-800/50 p-2 rounded-lg text-center">
                               <p className="text-xs text-gray-400">25-Year ROI</p>
-                              <p className="text-lg font-semibold text-green-400">159%</p>
+                              <p className="text-lg font-semibold text-green-400">172%</p>
                             </div>
                             <div className="bg-gray-800/50 p-2 rounded-lg text-center">
                               <p className="text-xs text-gray-400">Monthly Savings</p>
-                              <p className="text-lg font-semibold text-white">$223</p>
+                              <p className="text-lg font-semibold text-white">$573</p>
                             </div>
                           </div>
                           </div>
@@ -1175,12 +1176,12 @@ const EnergyUsageEstimation = () => {
                             wrapperStyle={{ paddingBottom: '20px', fontWeight: 600 }}
                           />
                           <ReferenceLine 
-                            x={11.2} 
+                            x={14.6} 
                             stroke="#FBBF24"
                             strokeWidth={2}
                             strokeDasharray="5 5"
                             label={{ 
-                              value: 'Break-even: 11.2 years', 
+                              value: 'Break-even: 14.6 years', 
                               position: 'top',
                               fill: '#FBBF24',
                               fontSize: 12,
@@ -1190,12 +1191,12 @@ const EnergyUsageEstimation = () => {
                           
                           {/* Add annotation for initial investment */}
                           <ReferenceLine 
-                            y={42000} 
+                            y={100000} 
                             stroke="#FFFFFF"
                             strokeWidth={1}
                             strokeDasharray="3 3"
                             label={{ 
-                              value: 'Initial Investment: $42,000', 
+                              value: 'Initial Investment: $100,000', 
                               position: 'right',
                               fill: '#FFFFFF',
                               fontSize: 10,
@@ -1245,9 +1246,9 @@ const EnergyUsageEstimation = () => {
                         <FaMoneyBill className="text-green-500" size={16} />
                         <span>Total 25-year savings: </span>
                         <span className="font-semibold text-green-500">
-                          ${Math.round(roiDataWithCumulative[roiDataWithCumulative.length-1].cumulativeSavings).toLocaleString()}
-                              </span>
-                            </div>
+                          $171,900
+                        </span>
+                      </div>
                       <div className="text-gray-400">
                         Panel warranty: <span className="text-white">25 years</span>
                       </div>
