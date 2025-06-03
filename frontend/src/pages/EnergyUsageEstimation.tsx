@@ -6,7 +6,7 @@ import { toast } from 'react-hot-toast';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend, LineChart, Line, XAxis, YAxis, CartesianGrid, ReferenceLine, Area, AreaChart } from 'recharts';
 
 // Define a constant for the Solar Window URL
-const SOLAR_WINDOW_URL = 'http://localhost:5173'; // Map application URL
+const SOLAR_WINDOW_URL = 'https://solar-windows.vercel.app/'; // Map application URL
 
 const EnergyUsageEstimation = () => {
   const navigate = useNavigate();

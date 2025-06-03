@@ -73,7 +73,7 @@ const SolarPanelPotential = () => {
   const [iframeError, setIframeError] = useState(false);
   
   // Define a constant for the Solar Window URL
-  const SOLAR_WINDOW_URL = 'http://localhost:5173'; // Map application URL
+  const SOLAR_WINDOW_URL = 'https://solar-windows.vercel.app/'; // Map application URL
   
   // Available solar panel types
   const panelTypes: SolarPanel[] = [
