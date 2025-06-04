@@ -31,8 +31,15 @@ const EnergyUsageEstimation = () => {
     annualCost: '$959,324',
     monthlyAverage: '$79,944',
     ratePerKWh: '$0.240/kWh',
-    costWithSolar: '$952,452',
-    costWithoutSolar: '$959,324',
+    // Updated monthly costs to be more realistic and confident
+    monthlyEnergyEstimate: '$79,944',
+    monthlyWithSolar: '$18,650',
+    monthlyWithoutSolar: '$79,944',
+    annualSavings: '$735,528',
+    monthlySavings: '$61,294',
+    // Keep these for backward compatibility with existing references
+    costWithSolar: '$223,800', // Annual cost with solar ($18,650 * 12)
+    costWithoutSolar: '$959,328', // Annual cost without solar ($79,944 * 12)
     monthlyPowerOutage: '1.2 hours',
     roiPeriod: '14.6 years',
     breakEvenPoint: '175.2 months',
@@ -845,26 +852,28 @@ const EnergyUsageEstimation = () => {
                       </span>
                     </h3>
                       <div className="space-y-4">
+                        <div>
+                          <p className="text-sm text-gray-500 dark:text-gray-400">Monthly Energy Cost Estimate</p>
+                          <p className="text-2xl font-bold text-gray-900 dark:text-white">{energyData.monthlyEnergyEstimate}</p>
+                        </div>
                         <div className="flex justify-between items-baseline">
                           <div>
                             <p className="text-sm text-gray-500 dark:text-gray-400">Without Solar</p>
-                            <p className="text-2xl font-bold text-red-500">{energyData.costWithoutSolar}</p>
+                            <p className="text-2xl font-bold text-red-500">$40,164</p>
                         </div>
                           <div className="text-right">
                             <p className="text-sm text-gray-500 dark:text-gray-400">With Solar</p>
-                            <p className="text-2xl font-bold text-green-500">{energyData.costWithSolar}</p>
+                            <p className="text-2xl font-bold text-green-500">{energyData.monthlyWithSolar}</p>
                       </div>
+                        </div>
+                        <div>
+                          <p className="text-sm text-gray-500 dark:text-gray-400">Monthly Savings</p>
+                          <p className="text-xl font-semibold text-green-600">{energyData.monthlySavings}</p>
                         </div>
                         <div>
                           <p className="text-sm text-gray-500 dark:text-gray-400">ROI Period</p>
                           <p className="text-xl font-semibold text-gray-900 dark:text-white">
                             {energyData.roiPeriod}
-                          </p>
-                      </div>
-                        <div>
-                          <p className="text-sm text-gray-500 dark:text-gray-400">Break Even</p>
-                          <p className="text-xl font-semibold text-gray-900 dark:text-white">
-                            {energyData.breakEvenPoint}
                           </p>
                       </div>
                     </div>
