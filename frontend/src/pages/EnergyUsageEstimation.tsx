@@ -11,7 +11,8 @@ const SOLAR_WINDOW_URL = 'https://solar-windows.vercel.app/'; // Map application
 const EnergyUsageEstimation = () => {
   const navigate = useNavigate();
   const iframeRef = useRef<HTMLIFrameElement>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isPageLoading, setIsPageLoading] = useState(true); // New state for initial page load
+  const [isLoading, setIsLoading] = useState(false); // Existing state for other operations
   const [isCalculating, setIsCalculating] = useState(true);
   const [iframeKey, setIframeKey] = useState(1);
   const [iframeError, setIframeError] = useState(false);
@@ -507,93 +508,131 @@ const EnergyUsageEstimation = () => {
     </button>
   );
 
+  // Add useEffect for initial page loading animation
   useEffect(() => {
-    setIsLoading(true);
-    setTimeout(() => {
-      setIsLoading(false);
-      setTimeout(() => {
-        setIsCalculating(false);
-      }, 5000);
-    }, 5000);
+    // Ensure page starts from the top
+    window.scrollTo(0, 0);
+    
+    // Simulate comprehensive data loading and calculations
+    setIsPageLoading(true);
+    
+    const loadingTimer = setTimeout(() => {
+      setIsPageLoading(false);
+      setIsCalculating(false);
+    }, 4000); // 4 second loading animation
+    
+    return () => clearTimeout(loadingTimer);
   }, []);
 
   const handleContinueToSolarPotential = () => {
     navigate('/solar-panel-potential');
   };
 
-  if (isLoading) {
+  if (isPageLoading) {
     return (
       <div className="min-h-screen bg-[#020305] flex items-center justify-center relative overflow-hidden">
-        {/* Background gradient orbs */}
-        <div className="fixed top-20 right-40 w-96 h-96 bg-gradient-to-br from-orange-500/5 to-transparent rounded-full blur-3xl transform rotate-12 opacity-70 pointer-events-none"></div>
-        <div className="fixed bottom-40 left-20 w-80 h-80 bg-gradient-to-tr from-orange-500/5 to-transparent rounded-full blur-3xl transform -rotate-12 opacity-60 pointer-events-none"></div>
+        {/* Animated background patterns */}
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute inset-0" 
+            style={{
+              backgroundImage: 'repeating-linear-gradient(45deg, transparent, transparent 20px, #ffffff 20px, #ffffff 22px)',
+              backgroundSize: '30px 30px'
+            }}
+          ></div>
+        </div>
         
-        <div className="relative z-10 flex flex-col items-center gap-8">
-          {/* GIF Container */}
-          <div className="relative group">
-            {/* Outer glow effect */}
-            <div className="absolute inset-0 bg-gradient-to-r from-orange-500 to-amber-500 rounded-3xl blur-xl opacity-20 group-hover:opacity-30 transition-opacity duration-500"></div>
-            
-            {/* GIF box with glass effect */}
-            <div className="relative backdrop-blur-sm bg-black/20 p-1 rounded-3xl border border-white/10">
-              <img 
-                src="/images/solar/lq6qgs6wvqjt-6qrUq4uhVhMcVkCQ5a7kiB-12f28adb9cbd7f6cc609b7d9f106cdff-expanded_coverage.gif"
-                alt="Energy Analysis"
-                className="w-[600px] h-[600px] object-cover rounded-2xl"
-              />
+        {/* Animated gradient orbs */}
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-gradient-to-br from-purple-500/20 to-transparent rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-gradient-to-br from-amber-500/20 to-transparent rounded-full blur-3xl animate-pulse delay-1000"></div>
+        <div className="absolute top-1/3 right-1/3 w-80 h-80 bg-gradient-to-br from-green-500/15 to-transparent rounded-full blur-3xl animate-pulse delay-500"></div>
+        
+        <div className="relative z-10 flex flex-col items-center gap-8 max-w-2xl mx-auto px-6">
+          <div className="relative">
+            <div className="absolute inset-0 bg-gradient-to-r from-purple-500 to-amber-600 rounded-full blur-xl opacity-50 animate-pulse"></div>
+            <div className="loading loading-spinner loading-lg text-purple-500 relative"></div>
           </div>
-          </div>
-
-          <div className="text-center">
-            <h2 className="text-2xl font-bold text-white mb-2">Analyzing Energy Usage</h2>
-            <p className="text-gray-400 mb-8">Analyzing facility data and consumption patterns...</p>
+          
+          <div className="text-center space-y-6">
+            <h2 className="text-3xl font-bold text-white mb-4">Analyzing Energy Usage & Logistics</h2>
+            <p className="text-gray-400 text-lg">Processing comprehensive facility data and calculating optimization strategies...</p>
             
-            {/* Progress bars */}
-            <div className="w-[600px] space-y-6">
+            {/* Progress indicators */}
+            <div className="space-y-4 w-full max-w-md">
               <div>
-                <div className="flex justify-between mb-2">
-                  <span className="text-gray-300">Analyzing facility data</span>
-                  <span className="text-orange-500 font-medium">100%</span>
+                <div className="flex justify-between text-white/70 text-sm mb-2">
+                  <span>Gathering facility energy data</span>
+                  <span>Complete</span>
                 </div>
-                <div className="h-2 bg-black/30 rounded-full overflow-hidden">
-                  <div className="h-full w-full bg-gradient-to-r from-orange-500 to-amber-500 rounded-full"></div>
+                <div className="w-full bg-white/10 rounded-full h-2">
+                  <div className="bg-gradient-to-r from-purple-500 to-purple-600 h-2 rounded-full w-full"></div>
                 </div>
               </div>
               
               <div>
-                <div className="flex justify-between mb-2">
-                  <span className="text-gray-300">Processing energy metrics</span>
-                  <span className="text-orange-500 font-medium">85%</span>
+                <div className="flex justify-between text-white/70 text-sm mb-2">
+                  <span>Calculating energy consumption patterns</span>
+                  <span>85%</span>
                 </div>
-                <div className="h-2 bg-black/30 rounded-full overflow-hidden">
-                  <div className="h-full w-[85%] bg-gradient-to-r from-orange-500 to-amber-500 rounded-full"></div>
-                </div>
-              </div>
-              
-              <div>
-                <div className="flex justify-between mb-2">
-                  <span className="text-gray-300">Calculating consumption breakdown</span>
-                  <span className="text-orange-500 font-medium">70%</span>
-                </div>
-                <div className="h-2 bg-black/30 rounded-full overflow-hidden">
-                  <div className="h-full w-[70%] bg-gradient-to-r from-orange-500 to-amber-500 rounded-full"></div>
+                <div className="w-full bg-white/10 rounded-full h-2">
+                  <div className="bg-gradient-to-r from-amber-500 to-amber-600 h-2 rounded-full w-5/6 animate-pulse"></div>
                 </div>
               </div>
               
               <div>
-                <div className="flex justify-between mb-2">
-                  <span className="text-gray-300">Estimating solar ROI</span>
-                  <span className="text-orange-500 font-medium">45%</span>
+                <div className="flex justify-between text-white/70 text-sm mb-2">
+                  <span>Optimizing supply chain logistics</span>
+                  <span>72%</span>
                 </div>
-                <div className="h-2 bg-black/30 rounded-full overflow-hidden">
-                  <div className="h-full w-[45%] bg-gradient-to-r from-orange-500 to-amber-500 rounded-full"></div>
+                <div className="w-full bg-white/10 rounded-full h-2">
+                  <div className="bg-gradient-to-r from-green-500 to-green-600 h-2 rounded-full w-3/4 animate-pulse"></div>
                 </div>
               </div>
               
-              <div className="mt-4 w-full bg-gray-800/50 h-2 rounded-full overflow-hidden">
-                <div className="h-full bg-gradient-to-r from-amber-500 to-amber-600 rounded-full w-0 animate-loadingBar"></div>
+              <div>
+                <div className="flex justify-between text-white/70 text-sm mb-2">
+                  <span>Generating ROI projections</span>
+                  <span>58%</span>
+                </div>
+                <div className="w-full bg-white/10 rounded-full h-2">
+                  <div className="bg-gradient-to-r from-blue-500 to-blue-600 h-2 rounded-full w-3/5 animate-pulse"></div>
+                </div>
+              </div>
+              
+              <div>
+                <div className="flex justify-between text-white/70 text-sm mb-2">
+                  <span>Preparing interactive visualizations</span>
+                  <span>34%</span>
+                </div>
+                <div className="w-full bg-white/10 rounded-full h-2">
+                  <div className="bg-gradient-to-r from-orange-500 to-orange-600 h-2 rounded-full w-1/3 animate-pulse"></div>
+                </div>
               </div>
             </div>
+            
+            {/* Additional loading messages */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-8 text-sm text-white/60">
+              <div className="flex items-center gap-2">
+                <FaCalculator className="text-purple-500" />
+                <span>Processing 247 energy usage patterns</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <FaChartLine className="text-amber-500" />
+                <span>Analyzing seasonal consumption trends</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <FaSolarPanel className="text-green-500" />
+                <span>Calculating solar integration potential</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <FaBolt className="text-blue-500" />
+                <span>Optimizing peak demand management</span>
+              </div>
+            </div>
+          </div>
+          
+          <div className="flex justify-center items-center gap-3 text-white/70 mt-6">
+            <div className="w-3 h-3 rounded-full bg-purple-500 animate-ping"></div>
+            <p className="text-sm">Preparing comprehensive energy analytics dashboard...</p>
           </div>
         </div>
       </div>
